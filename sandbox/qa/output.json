@@ -1,0 +1,222 @@
+[
+  {
+    "symbol": "alpha",
+    "definition": "the fine structure constant",
+    "char_span": [
+      68,
+      95
+    ],
+    "sentence": "\\begin{abstract}\nTwo dimensionless fundamental physical constants, the fine structure constant $\\alpha$ and the proton-to-electron mass ratio $\\frac{m_p}{m_e}$ are attributed a particular importance from the point of view of nuclear synthesis, formation of heavy elements, planets, and life-supporting structures.",
+    "sentence_offset": 0
+  },
+  {
+    "symbol": "c",
+    "definition": "the speed of light in vacuum",
+    "char_span": [
+      586,
+      614
+    ],
+    "sentence": "We find that $\\frac{v_u}{c}=\\alpha\\left(\\frac{m_e}{2m_p}\\right)^{\\frac{1}{2}}$, where $c$ is the speed of light in vacuum.",
+    "sentence_offset": 493
+  },
+  {
+    "symbol": "m_e",
+    "definition": "electron mass",
+    "char_span": [
+      1120,
+      1133
+    ],
+    "sentence": "The Bohr radius gives a characteristic scale of interatomic distance on the order of the Angstrom, in terms of electron mass $m_e$, charge $e$, and Planck constant $\\hbar$.",
+    "sentence_offset": 1009
+  },
+  {
+    "symbol": "hbar",
+    "definition": "Planck constant",
+    "char_span": [
+      1157,
+      1172
+    ],
+    "sentence": "The Bohr radius gives a characteristic scale of interatomic distance on the order of the Angstrom, in terms of electron mass $m_e$, charge $e$, and Planck constant $\\hbar$.",
+    "sentence_offset": 1009
+  },
+  {
+    "symbol": "v",
+    "definition": "the speed of sound",
+    "char_span": [
+      2347,
+      2365
+    ],
+    "sentence": "This balance provides a narrow ``habitable zone'' in the ($\\alpha$,$\\frac{m_p}{m_e}$) space where stars and planets can form and life-supporting molecular structures can emerge \\cite{barrow}.\n\nWe show that a simple combination of $\\alpha$ and $\\frac{m_p}{m_e}$ results in another dimensionless quantity which has an unexpected and specific implication for a key property of condensed phases, the speed at which waves travel in solids and liquids, or the speed of sound, $v$.",
+    "sentence_offset": 1897
+  },
+  {
+    "symbol": "v",
+    "definition": "the speed of elastic interactions in solids",
+    "char_span": [
+      3792,
+      3835
+    ],
+    "sentence": "Here, we propose a new, {\\it upper}, bound for the speed of sound in condensed matter phases in terms of fundamental constants.\n\nApart from setting the speed of elastic interactions in solids, $v$ is related to elasticity, hardness and affects important low-temperature thermodynamic properties such as energy, entropy and heat capacity \\cite{landau}.",
+    "sentence_offset": 3644
+  },
+  {
+    "symbol": "K",
+    "definition": "the bulk modulus",
+    "char_span": [
+      4933,
+      4949
+    ],
+    "sentence": "The longitudinal speed of sound is $v=\\left({\\frac{M}{\\rho}}\\right)^{\\frac{1}{2}}$, where $M=K+\\frac{4}{3}G$, $K$ is the bulk modulus, $G$ is the shear modulus, and $\\rho$ is the density.",
+    "sentence_offset": 4816
+  },
+  {
+    "symbol": "G",
+    "definition": "the shear modulus",
+    "char_span": [
+      4958,
+      4975
+    ],
+    "sentence": "The longitudinal speed of sound is $v=\\left({\\frac{M}{\\rho}}\\right)^{\\frac{1}{2}}$, where $M=K+\\frac{4}{3}G$, $K$ is the bulk modulus, $G$ is the shear modulus, and $\\rho$ is the density.",
+    "sentence_offset": 4816
+  },
+  {
+    "symbol": "rho",
+    "definition": "the density",
+    "char_span": [
+      4991,
+      5002
+    ],
+    "sentence": "The longitudinal speed of sound is $v=\\left({\\frac{M}{\\rho}}\\right)^{\\frac{1}{2}}$, where $M=K+\\frac{4}{3}G$, $K$ is the bulk modulus, $G$ is the shear modulus, and $\\rho$ is the density.",
+    "sentence_offset": 4816
+  },
+  {
+    "symbol": "E",
+    "definition": "the bonding energy",
+    "char_span": [
+      5214,
+      5232
+    ],
+    "sentence": "In particular, a clear relation was established between the bulk modulus $K$ and the bonding energy $E$: $K=f\\frac{E}{a^3}$, where $a$ is the interatomic separation and $f$ is the proportionality coefficient \\cite{diamond,diamond1}.",
+    "sentence_offset": 5133
+  },
+  {
+    "symbol": "f",
+    "definition": "the proportionality coefficient",
+    "char_span": [
+      5309,
+      5340
+    ],
+    "sentence": "In particular, a clear relation was established between the bulk modulus $K$ and the bonding energy $E$: $K=f\\frac{E}{a^3}$, where $a$ is the interatomic separation and $f$ is the proportionality coefficient \\cite{diamond,diamond1}.",
+    "sentence_offset": 5133
+  },
+  {
+    "symbol": "m",
+    "definition": "the mass of the atom or molecule",
+    "char_span": [
+      5875,
+      5907
+    ],
+    "sentence": "Combining $v=\\left({\\frac{M}{\\rho}}\\right)^{\\frac{1}{2}}$ and $M=f\\frac{E}{a^3}$ gives $v=f^{\\frac{1}{2}}\\left(\\frac{E}{m}\\right)^{\\frac{1}{2}}$, where $m$ is the mass of the atom or molecule, and we used $m=\\rho a^3$.",
+    "sentence_offset": 5716
+  },
+  {
+    "symbol": "e",
+    "definition": "electron charge",
+    "char_span": [
+      6397,
+      6412
+    ],
+    "sentence": "Then,\n\n\\begin{equation}\nv=\\left(\\frac{E}{m}\\right)^{\\frac{1}{2}}.\n\\label{v01}\n\\end{equation}\n\nWe now recall that the bonding energy in condensed phases is given by the Rydberg energy on the order of several eV \\cite{ashcroft} as\n\\begin{equation}\nE_{\\rm R}=\\frac{m_ee^4}{32\\pi^2\\epsilon_0^2\\hbar^2},\n\\label{rydberg}\n\\end{equation}\n\\noindent where $e$ and $m_e$ are electron charge and mass.\n\n$E_{\\rm R}$ is used for order-of-magnitude estimations of the bonding energy $E$ \\cite{ashcroft}.",
+    "sentence_offset": 6033
+  },
+  {
+    "symbol": "v",
+    "definition": "The longitudinal speed of sound",
+    "char_span": [
+      6933,
+      6964
+    ],
+    "sentence": "The longitudinal speed of sound, $v$, can be evaluated as the phase velocity from the longitudinal dispersion curve $\\omega=\\omega$($k$) in the Debye approximation: $v=\\frac{\\omega_{\\rm D}}{k_{\\rm D}}$, where $\\omega_{\\rm D}$ and $k_{\\rm D}$ are Debye frequency and wavevector, respectively.",
+    "sentence_offset": 6933
+  },
+  {
+    "symbol": "omega_D",
+    "definition": "Debye frequency",
+    "char_span": [
+      7179,
+      7194
+    ],
+    "sentence": "The longitudinal speed of sound, $v$, can be evaluated as the phase velocity from the longitudinal dispersion curve $\\omega=\\omega$($k$) in the Debye approximation: $v=\\frac{\\omega_{\\rm D}}{k_{\\rm D}}$, where $\\omega_{\\rm D}$ and $k_{\\rm D}$ are Debye frequency and wavevector, respectively.",
+    "sentence_offset": 6933
+  },
+  {
+    "symbol": "k_D",
+    "definition": "wavevector",
+    "char_span": [
+      7199,
+      7209
+    ],
+    "sentence": "The longitudinal speed of sound, $v$, can be evaluated as the phase velocity from the longitudinal dispersion curve $\\omega=\\omega$($k$) in the Debye approximation: $v=\\frac{\\omega_{\\rm D}}{k_{\\rm D}}$, where $\\omega_{\\rm D}$ and $k_{\\rm D}$ are Debye frequency and wavevector, respectively.",
+    "sentence_offset": 6933
+  },
+  {
+    "symbol": "a",
+    "definition": "the interatomic (inter-molecule) separation",
+    "char_span": [
+      7271,
+      7314
+    ],
+    "sentence": "Using $k_{\\rm D}=\\frac{\\pi}{a}$, where $a$ is the interatomic (inter-molecule) separation, gives\n\\begin{equation}\nv=\\frac{1}{\\pi}\\omega_{\\rm D}a.\n\\label{v001}\n\\end{equation}\n\nWe recall that the characteristic scale of interatomic separation is given by the Bohr radius $a_{\\rm B}$ on the order of the Angstrom as\n\\begin{equation}\na_{\\rm B}=\\frac{4\\pi\\epsilon_0\\hbar^2}{m_e e^2}.\n\\label{bohr}\n\\end{equation}\n\nWe now use the known ratio between the phonon energy, $\\hbar\\omega_{\\rm D}$, and $E$.",
+    "sentence_offset": 7225
+  },
+  {
+    "symbol": "a_B",
+    "definition": "the Bohr radius",
+    "char_span": [
+      7478,
+      7493
+    ],
+    "sentence": "Using $k_{\\rm D}=\\frac{\\pi}{a}$, where $a$ is the interatomic (inter-molecule) separation, gives\n\\begin{equation}\nv=\\frac{1}{\\pi}\\omega_{\\rm D}a.\n\\label{v001}\n\\end{equation}\n\nWe recall that the characteristic scale of interatomic separation is given by the Bohr radius $a_{\\rm B}$ on the order of the Angstrom as\n\\begin{equation}\na_{\\rm B}=\\frac{4\\pi\\epsilon_0\\hbar^2}{m_e e^2}.\n\\label{bohr}\n\\end{equation}\n\nWe now use the known ratio between the phonon energy, $\\hbar\\omega_{\\rm D}$, and $E$.",
+    "sentence_offset": 7225
+  },
+  {
+    "symbol": "hbaromega_D",
+    "definition": "the phonon energy",
+    "char_span": [
+      7668,
+      7685
+    ],
+    "sentence": "Using $k_{\\rm D}=\\frac{\\pi}{a}$, where $a$ is the interatomic (inter-molecule) separation, gives\n\\begin{equation}\nv=\\frac{1}{\\pi}\\omega_{\\rm D}a.\n\\label{v001}\n\\end{equation}\n\nWe recall that the characteristic scale of interatomic separation is given by the Bohr radius $a_{\\rm B}$ on the order of the Angstrom as\n\\begin{equation}\na_{\\rm B}=\\frac{4\\pi\\epsilon_0\\hbar^2}{m_e e^2}.\n\\label{bohr}\n\\end{equation}\n\nWe now use the known ratio between the phonon energy, $\\hbar\\omega_{\\rm D}$, and $E$.",
+    "sentence_offset": 7225
+  },
+  {
+    "symbol": "m_p",
+    "definition": "the proton mass",
+    "char_span": [
+      10225,
+      10240
+    ],
+    "sentence": "Its scale is set by the proton mass $m_p$: $m=Am_p$, where $A$ is the atomic mass.",
+    "sentence_offset": 10205
+  },
+  {
+    "symbol": "A",
+    "definition": "the atomic mass",
+    "char_span": [
+      10271,
+      10286
+    ],
+    "sentence": "Its scale is set by the proton mass $m_p$: $m=Am_p$, where $A$ is the atomic mass.",
+    "sentence_offset": 10205
+  },
+  {
+    "symbol": "E_R",
+    "definition": "characteristic values derived for the H atom",
+    "char_span": [
+      10367,
+      10411
+    ],
+    "sentence": "Recall that $a_{\\rm B}$ in (\\ref{bohr}) and $E_{\\rm R}$ in (\\ref{rydberg}) are characteristic values derived for the H atom.",
+    "sentence_offset": 10288
+  }
+
