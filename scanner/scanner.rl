@@ -19,8 +19,10 @@ uint32_t seed0 = 0;
          filename, (unsigned long)filepath_id, (unsigned long)token_id, \
          (unsigned long)parent_id, prefix_len + (int)(ts - in), (int)(te - ts), \
          t, (int)(te - ts), &in[ts - in]); \
-  printf("\n\n  %u  \n\n", token_id);
-
+  printf("\n\n  %u  \n\n", token_id); \
+  int prefix_len = 1; \
+  int suffix_len = 0; \
+  scanner(&in[ts + prefix_len - in], te - (prefix_len + suffix_len) - ts,filename, filepath_id, token_id, prefix_len, suffix_len);
 
 %%{
   machine strings;
