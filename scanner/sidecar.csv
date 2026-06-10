@@ -1,0 +1,566 @@
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:304903625,parent_id:1295329146,offset:59,length:9,type:braces,<tok:{revtex4}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:946368405,parent_id:1295329146,offset:82,length:21,type:usepackage,<tok:\usepackage{graphicx}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1401359073,parent_id:1295329146,offset:104,length:20,type:usepackage,<tok:\usepackage{amsmath}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:985011283,parent_id:1295329146,offset:125,length:20,type:usepackage,<tok:\usepackage{gensymb}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:4274312372,parent_id:1295329146,offset:146,length:18,type:usepackage,<tok:\usepackage{float}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2828728050,parent_id:1295329146,offset:165,length:20,type:usepackage,<tok:\usepackage{physics}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3399957926,parent_id:1295329146,offset:186,length:19,type:usepackage,<tok:\usepackage{xcolor}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2007749581,parent_id:1295329146,offset:206,length:27,type:comment,<tok:%\usepackage{unicode-math}
+>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3705518171,parent_id:1295329146,offset:252,length:3,type:braces,<tok:{o}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:119401143,parent_id:1295329146,offset:257,length:16,type:begin_doc,<tok:\begin{document}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1687913855,parent_id:1295329146,offset:290,length:58,type:title,<tok:\title{Speed of sound from fundamental physical constants}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:113724275,parent_id:1295329146,offset:349,length:21,type:author,<tok:\author{K. Trachenko}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:972723840,parent_id:1295329146,offset:371,length:113,type:affiliation,<tok:\affiliation{School of Physics and Astronomy, Queen Mary University of London, Mile End Road, London, E1 4NS, UK}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3341031707,parent_id:1295329146,offset:485,length:21,type:author,<tok:\author{B. Monserrat}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:291173107,parent_id:1295329146,offset:508,length:145,type:affiliation,<tok:\affiliation{Department of Materials Science and Metallurgy, University of Cambridge, 27 Charles Babbage Road, Cambridge CB3 0FS, United Kingdom}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2300652061,parent_id:1295329146,offset:653,length:2,type:comment,<tok:%
+>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2906265212,parent_id:1295329146,offset:656,length:116,type:affiliation,<tok:\affiliation{Cavendish Laboratory, University of Cambridge, J. J. Thomson Avenue, Cambridge CB3 0HE, United Kingdom}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3524180703,parent_id:1295329146,offset:773,length:22,type:author,<tok:\author{C. J. Pickard}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:291173107,parent_id:1295329146,offset:797,length:145,type:affiliation,<tok:\affiliation{Department of Materials Science and Metallurgy, University of Cambridge, 27 Charles Babbage Road, Cambridge CB3 0FS, United Kingdom}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2300652061,parent_id:1295329146,offset:942,length:2,type:comment,<tok:%
+>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3743224491,parent_id:1295329146,offset:944,length:89,type:affiliation,<tok:\affiliation{Advanced Institute for Materials Research, Tohoku University, Sendai, Japan}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1637074777,parent_id:1295329146,offset:1034,length:23,type:author,<tok:\author{V. V. Brazhkin}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1388637368,parent_id:1295329146,offset:1058,length:87,type:affiliation,<tok:\affiliation{Institute for High Pressure Physics, RAS, 108840, Troitsk, Moscow, Russia}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1989735420,parent_id:1295329146,offset:1147,length:870,type:abstract,<tok:\begin{abstract}
+Two dimensionless fundamental physical constants, the fine structure constant $\alpha$ and the proton-to-electron mass ratio $\frac{m_p}{m_e}$ are attributed a particular importance from the point of view of nuclear synthesis, formation of heavy elements, planets, and life-supporting structures. Here, we show that a combination of these two constants results in a new dimensionless constant which provides the upper bound for the speed of sound in condensed phases, $v_u$. We find that $\frac{v_u}{c}=\alpha\left(\frac{m_e}{2m_p}\right)^{\frac{1}{2}}$, where $c$ is the speed of light in vacuum. We support this result by a large set of experimental data and first principles computations for atomic hydrogen. Our result expands current understanding of how fundamental constants can impose new bounds on important physical properties.
+\end{abstract}
+>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3497665573,parent_id:1295329146,offset:2030,length:22,type:section,<tok:\section{Introduction}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:76726987,parent_id:1295329146,offset:2280,length:5,type:math,<tok:$m_e$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:816449627,parent_id:1295329146,offset:2294,length:3,type:math,<tok:$e$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:340463602,parent_id:1295329146,offset:2319,length:7,type:math,<tok:$\hbar$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:429917333,parent_id:1295329146,offset:2483,length:15,type:cite,<tok:\cite{ashcroft}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1573268529,parent_id:1295329146,offset:2549,length:19,type:braces,<tok:{\it dimensionless}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2581068005,parent_id:1295329146,offset:2642,length:13,type:cite,<tok:\cite{barrow}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2122471043,parent_id:1295329146,offset:2727,length:8,type:math,<tok:$\alpha$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3184337359,parent_id:1295329146,offset:2775,length:17,type:math,<tok:$\frac{m_p}{m_e}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2122471043,parent_id:1295329146,offset:2821,length:8,type:math,<tok:$\alpha$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3184337359,parent_id:1295329146,offset:2834,length:17,type:math,<tok:$\frac{m_p}{m_e}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3814575437,parent_id:1295329146,offset:3100,length:28,type:parens,<tok:($\alpha$,$\frac{m_p}{m_e}$)>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2581068005,parent_id:1295329146,offset:3220,length:13,type:cite,<tok:\cite{barrow}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2122471043,parent_id:1295329146,offset:3273,length:8,type:math,<tok:$\alpha$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3184337359,parent_id:1295329146,offset:3286,length:17,type:math,<tok:$\frac{m_p}{m_e}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:3513,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:3576,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3730642209,parent_id:1295329146,offset:3581,length:5,type:math,<tok:$v_u$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:578174126,parent_id:1295329146,offset:3591,length:108,type:equation,<tok:\begin{equation}
+\frac{v_u}{c}=\alpha\left(\frac{m_e}{2m_p}\right)^{\frac{1}{2}},
+\label{v0}
+\end{equation}
+>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:514015864,parent_id:1295329146,offset:3715,length:3,type:math,<tok:$c$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:758032211,parent_id:1295329146,offset:4114,length:86,type:parens,<tok:(see, e.g., \cite{kss,zaanen3,hartnoll,zaanen2,spin,behnia,zaanen1,behnia1,hartnoll1})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:632748636,parent_id:1295329146,offset:4302,length:11,type:braces,<tok:{\it lower}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2675183149,parent_id:1295329146,offset:4583,length:73,type:cite,<tok:\cite{kss,zaanen3,hartnoll,zaanen2,spin,behnia,zaanen1,behnia1,hartnoll1}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3918824806,parent_id:1295329146,offset:4775,length:13,type:cite,<tok:\cite{sciadv}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1163739713,parent_id:1295329146,offset:4814,length:11,type:braces,<tok:{\it upper}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:4983,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3103754819,parent_id:1295329146,offset:5127,length:13,type:cite,<tok:\cite{landau}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:5181,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:5274,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:4016372219,parent_id:1295329146,offset:5403,length:15,type:cite,<tok:\cite{phillips}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:5457,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3103754819,parent_id:1295329146,offset:5633,length:13,type:cite,<tok:\cite{landau}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:5697,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:489926843,parent_id:1295329146,offset:5748,length:32,type:section,<tok:\section{Results and discussion}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:5816,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1686305430,parent_id:1295329146,offset:5997,length:47,type:math,<tok:$v=\left({\frac{M}{\rho}}\right)^{\frac{1}{2}}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1515701603,parent_id:1295329146,offset:6052,length:18,type:math,<tok:$M=K+\frac{4}{3}G$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3252913906,parent_id:1295329146,offset:6072,length:3,type:math,<tok:$K$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:4200955477,parent_id:1295329146,offset:6097,length:3,type:math,<tok:$G$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1542788793,parent_id:1295329146,offset:6127,length:6,type:math,<tok:$\rho$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3252913906,parent_id:1295329146,offset:6352,length:3,type:math,<tok:$K$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2227979358,parent_id:1295329146,offset:6379,length:3,type:math,<tok:$E$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1925787261,parent_id:1295329146,offset:6384,length:18,type:math,<tok:$K=f\frac{E}{a^3}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1156178167,parent_id:1295329146,offset:6410,length:3,type:math,<tok:$a$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1112483431,parent_id:1295329146,offset:6448,length:3,type:math,<tok:$f$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2227485377,parent_id:1295329146,offset:6487,length:23,type:cite,<tok:\cite{diamond,diamond1}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1112483431,parent_id:1295329146,offset:6696,length:3,type:math,<tok:$f$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2227485377,parent_id:1295329146,offset:6724,length:23,type:cite,<tok:\cite{diamond,diamond1}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1874652519,parent_id:1295329146,offset:6811,length:3,type:math,<tok:$M$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3578744572,parent_id:1295329146,offset:6819,length:15,type:math,<tok:$\frac{E}{a^3}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1686305430,parent_id:1295329146,offset:6872,length:47,type:math,<tok:$v=\left({\frac{M}{\rho}}\right)^{\frac{1}{2}}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:4127027581,parent_id:1295329146,offset:6924,length:18,type:math,<tok:$M=f\frac{E}{a^3}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3937428957,parent_id:1295329146,offset:6949,length:57,type:math,<tok:$v=f^{\frac{1}{2}}\left(\frac{E}{m}\right)^{\frac{1}{2}}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:158786288,parent_id:1295329146,offset:7014,length:3,type:math,<tok:$m$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3434064020,parent_id:1295329146,offset:7067,length:12,type:math,<tok:$m=\rho a^3$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:4136596637,parent_id:1295329146,offset:7092,length:17,type:math,<tok:$f^{\frac{1}{2}}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:7174,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2789841101,parent_id:1295329146,offset:7186,length:86,type:equation,<tok:\begin{equation}
+v=\left(\frac{E}{m}\right)^{\frac{1}{2}}.
+\label{v01}
+\end{equation}
+>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:429917333,parent_id:1295329146,offset:7389,length:15,type:cite,<tok:\cite{ashcroft}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3293702766,parent_id:1295329146,offset:7408,length:101,type:equation,<tok:\begin{equation}
+E_{\rm R}=\frac{m_ee^4}{32\pi^2\epsilon_0^2\hbar^2},
+\label{rydberg}
+\end{equation}
+>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:816449627,parent_id:1295329146,offset:7525,length:3,type:math,<tok:$e$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:76726987,parent_id:1295329146,offset:7533,length:5,type:math,<tok:$m_e$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2094359015,parent_id:1295329146,offset:7570,length:11,type:math,<tok:$E_{\rm R}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2227979358,parent_id:1295329146,offset:7647,length:3,type:math,<tok:$E$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:429917333,parent_id:1295329146,offset:7651,length:15,type:cite,<tok:\cite{ashcroft}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1789797684,parent_id:1295329146,offset:7674,length:13,type:math,<tok:$E=E_{\rm R}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2112336645,parent_id:1295329146,offset:7693,length:15,type:parens,<tok:(\ref{rydberg})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3177061649,parent_id:1295329146,offset:7712,length:11,type:parens,<tok:(\ref{v01})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1055226235,parent_id:1295329146,offset:7730,length:96,type:equation,<tok:\begin{equation}
+v=\alpha\left(\frac{m_e}{2m}\right)^{\frac{1}{2}}c,
+\label{v00}
+\end{equation}
+>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2323881518,parent_id:1295329146,offset:7842,length:52,type:math,<tok:$\alpha=\frac{1}{4\pi\epsilon_0}\frac{e^2}{\hbar c}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3137161627,parent_id:1295329146,offset:7948,length:11,type:parens,<tok:(\ref{v00})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:8112,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3907400250,parent_id:1295329146,offset:8195,length:15,type:math,<tok:$\omega=\omega$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:802738461,parent_id:1295329146,offset:8210,length:5,type:parens,<tok:($k$)>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1882014176,parent_id:1295329146,offset:8244,length:36,type:math,<tok:$v=\frac{\omega_{\rm D}}{k_{\rm D}}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3851713944,parent_id:1295329146,offset:8288,length:16,type:math,<tok:$\omega_{\rm D}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3980431747,parent_id:1295329146,offset:8309,length:11,type:math,<tok:$k_{\rm D}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:664186226,parent_id:1295329146,offset:8377,length:25,type:math,<tok:$k_{\rm D}=\frac{\pi}{a}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1156178167,parent_id:1295329146,offset:8410,length:3,type:math,<tok:$a$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:643450718,parent_id:1295329146,offset:8433,length:16,type:parens,<tok:(inter-molecule)>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3704826975,parent_id:1295329146,offset:8468,length:77,type:equation,<tok:\begin{equation}
+v=\frac{1}{\pi}\omega_{\rm D}a.
+\label{v001}
+\end{equation}
+>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1392097744,parent_id:1295329146,offset:8640,length:11,type:math,<tok:$a_{\rm B}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2690889139,parent_id:1295329146,offset:8684,length:94,type:equation,<tok:\begin{equation}
+a_{\rm B}=\frac{4\pi\epsilon_0\hbar^2}{m_e e^2}.
+\label{bohr}
+\end{equation}
+>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3416623901,parent_id:1295329146,offset:8833,length:21,type:math,<tok:$\hbar\omega_{\rm D}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2227979358,parent_id:1295329146,offset:8860,length:3,type:math,<tok:$E$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3416623901,parent_id:1295329146,offset:8883,length:21,type:math,<tok:$\hbar\omega_{\rm D}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1502300549,parent_id:1295329146,offset:8928,length:48,type:math,<tok:$\hbar\left(\frac{E}{ma^2}\right)^{\frac{1}{2}}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:158786288,parent_id:1295329146,offset:8984,length:3,type:math,<tok:$m$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:241443799,parent_id:1295329146,offset:9030,length:31,type:math,<tok:$\frac{\hbar\omega_{\rm D}}{E}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:4155563000,parent_id:1295329146,offset:9072,length:13,type:math,<tok:$a=a_{\rm B}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:183019717,parent_id:1295329146,offset:9091,length:12,type:parens,<tok:(\ref{bohr})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1789797684,parent_id:1295329146,offset:9108,length:13,type:math,<tok:$E=E_{\rm R}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2112336645,parent_id:1295329146,offset:9127,length:15,type:parens,<tok:(\ref{rydberg})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:241443799,parent_id:1295329146,offset:9149,length:31,type:math,<tok:$\frac{\hbar\omega_{\rm D}}{E}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3281852259,parent_id:1295329146,offset:9225,length:118,type:equation,<tok:\begin{equation}
+\frac{\hbar\omega_{\rm D}}{E}=\left(\frac{m_e}{m}\right)^{\frac{1}{2}}.
+\label{ratio}
+\end{equation}
+>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3922673172,parent_id:1295329146,offset:9350,length:13,type:parens,<tok:(\ref{ratio})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2959070564,parent_id:1295329146,offset:9367,length:12,type:parens,<tok:(\ref{v001})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1920754479,parent_id:1295329146,offset:9386,length:106,type:equation,<tok:\begin{equation}
+v=\frac{Ea}{\pi\hbar}\left(\frac{m_e}{m}\right)^{\frac{1}{2}}.
+\label{v1}
+\end{equation}
+>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:9493,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3137161627,parent_id:1295329146,offset:9500,length:11,type:parens,<tok:(\ref{v00})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:4155563000,parent_id:1295329146,offset:9567,length:13,type:math,<tok:$a=a_{\rm B}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:183019717,parent_id:1295329146,offset:9586,length:12,type:parens,<tok:(\ref{bohr})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1789797684,parent_id:1295329146,offset:9603,length:13,type:math,<tok:$E=E_{\rm R}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2112336645,parent_id:1295329146,offset:9622,length:15,type:parens,<tok:(\ref{rydberg})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:963562228,parent_id:1295329146,offset:9641,length:10,type:parens,<tok:(\ref{v1})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3600421781,parent_id:1295329146,offset:9700,length:3,type:parens,<tok:(a)>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1945425016,parent_id:1295329146,offset:9803,length:27,type:math,<tok:$E=\frac{\hbar^2}{2m_ea^2}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1441744645,parent_id:1295329146,offset:9835,length:3,type:parens,<tok:(b)>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2227979358,parent_id:1295329146,offset:9850,length:3,type:math,<tok:$E$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:4155563000,parent_id:1295329146,offset:9858,length:13,type:math,<tok:$a=a_{\rm B}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:183019717,parent_id:1295329146,offset:9872,length:12,type:parens,<tok:(\ref{bohr})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:963562228,parent_id:1295329146,offset:9888,length:10,type:parens,<tok:(\ref{v1})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:9970,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:10031,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:4155563000,parent_id:1295329146,offset:10090,length:13,type:math,<tok:$a=a_{\rm B}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:183019717,parent_id:1295329146,offset:10107,length:12,type:parens,<tok:(\ref{bohr})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3922673172,parent_id:1295329146,offset:10175,length:13,type:parens,<tok:(\ref{ratio})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3137161627,parent_id:1295329146,offset:10252,length:11,type:parens,<tok:(\ref{v00})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3137161627,parent_id:1295329146,offset:10285,length:11,type:parens,<tok:(\ref{v00})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:76726987,parent_id:1295329146,offset:10319,length:5,type:math,<tok:$m_e$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2787867550,parent_id:1295329146,offset:10471,length:10,type:math,<tok:$\alpha c$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3961039797,parent_id:1295329146,offset:10482,length:36,type:parens,<tok:($\alpha c\propto\frac{e^2}{\hbar}$)>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2787867550,parent_id:1295329146,offset:10584,length:10,type:math,<tok:$\alpha c$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:10599,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:514015864,parent_id:1295329146,offset:10620,length:3,type:math,<tok:$c$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:10648,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2787867550,parent_id:1295329146,offset:10664,length:10,type:math,<tok:$\alpha c$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3137161627,parent_id:1295329146,offset:10682,length:11,type:parens,<tok:(\ref{v00})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:796474893,parent_id:1295329146,offset:10708,length:15,type:math,<tok:$\frac{v_u}{c}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2122471043,parent_id:1295329146,offset:10736,length:8,type:math,<tok:$\alpha$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:638216925,parent_id:1295329146,offset:10752,length:10,type:parens,<tok:(\ref{v0})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:796474893,parent_id:1295329146,offset:10861,length:15,type:math,<tok:$\frac{v_u}{c}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:514541627,parent_id:1295329146,offset:10946,length:21,type:math,<tok:$\frac{v_{\rm F}}{c}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2122471043,parent_id:1295329146,offset:10997,length:8,type:math,<tok:$\alpha$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:362176449,parent_id:1295329146,offset:11006,length:33,type:parens,<tok:(together with $\frac{m_p}{m_e}$)>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2581068005,parent_id:1295329146,offset:11173,length:13,type:cite,<tok:\cite{barrow}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:158786288,parent_id:1295329146,offset:11281,length:3,type:math,<tok:$m$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3137161627,parent_id:1295329146,offset:11288,length:11,type:parens,<tok:(\ref{v00})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:4081345789,parent_id:1295329146,offset:11387,length:5,type:math,<tok:$m_p$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:4142054299,parent_id:1295329146,offset:11394,length:8,type:math,<tok:$m=Am_p$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1338835853,parent_id:1295329146,offset:11410,length:3,type:math,<tok:$A$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1392097744,parent_id:1295329146,offset:11446,length:11,type:math,<tok:$a_{\rm B}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:183019717,parent_id:1295329146,offset:11461,length:12,type:parens,<tok:(\ref{bohr})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2094359015,parent_id:1295329146,offset:11478,length:11,type:math,<tok:$E_{\rm R}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2112336645,parent_id:1295329146,offset:11493,length:15,type:parens,<tok:(\ref{rydberg})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2960855925,parent_id:1295329146,offset:11576,length:5,type:math,<tok:$A=1$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1316468532,parent_id:1295329146,offset:11586,length:7,type:math,<tok:$m=m_p$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3137161627,parent_id:1295329146,offset:11597,length:11,type:parens,<tok:(\ref{v00})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:11641,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3137161627,parent_id:1295329146,offset:11648,length:11,type:parens,<tok:(\ref{v00})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3730642209,parent_id:1295329146,offset:11661,length:5,type:math,<tok:$v_u$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2412975698,parent_id:1295329146,offset:11672,length:134,type:equation,<tok:\begin{equation}
+v_u=\alpha\left(\frac{m_e}{2m_p}\right)^{\frac{1}{2}}c~\approx~36,100~\frac{\rm m}{\rm s},
+\label{v3}
+\end{equation}
+>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3730642209,parent_id:1295329146,offset:11834,length:5,type:math,<tok:$v_u$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2122471043,parent_id:1295329146,offset:11940,length:8,type:math,<tok:$\alpha$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2982880790,parent_id:1295329146,offset:11998,length:10,type:parens,<tok:(\ref{v3})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3137161627,parent_id:1295329146,offset:12029,length:11,type:parens,<tok:(\ref{v00})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:12079,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3137161627,parent_id:1295329146,offset:12131,length:11,type:parens,<tok:(\ref{v00})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2982880790,parent_id:1295329146,offset:12144,length:10,type:parens,<tok:(\ref{v3})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:4142054299,parent_id:1295329146,offset:12160,length:8,type:math,<tok:$m=Am_p$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2574798916,parent_id:1295329146,offset:12175,length:71,type:equation,<tok:\begin{equation}
+v=\frac{v_u}{A^\frac{1}{2}}.
+\label{a}
+\end{equation}
+>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3137161627,parent_id:1295329146,offset:12306,length:11,type:parens,<tok:(\ref{v00})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2982880790,parent_id:1295329146,offset:12345,length:10,type:parens,<tok:(\ref{v3})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:586812962,parent_id:1295329146,offset:12356,length:9,type:parens,<tok:(\ref{a})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:4016372219,parent_id:1295329146,offset:12910,length:15,type:cite,<tok:\cite{phillips}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:4198969183,parent_id:1295329146,offset:13082,length:14,type:cite,<tok:\cite{zaccone}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:847664205,parent_id:1295329146,offset:13187,length:148,type:parens,<tok:(but differently to other properties such as the classical energy and specific heat which are universal in the harmonic approximation \cite{landau})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:13369,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:158786288,parent_id:1295329146,offset:13376,length:3,type:math,<tok:$m$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1338835853,parent_id:1295329146,offset:13383,length:3,type:math,<tok:$A$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1756941070,parent_id:1295329146,offset:13561,length:129,type:parens,<tok:(including mixed covalent-ionic bonding between the same atomic pairs as well as different bonding types between different pairs)>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:586812962,parent_id:1295329146,offset:13708,length:9,type:parens,<tok:(\ref{a})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:13764,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1338835853,parent_id:1295329146,offset:13785,length:3,type:math,<tok:$A$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1156064554,parent_id:1295329146,offset:13813,length:35,type:cite,<tok:\cite{handbook,handbook1,handbook2}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2262842779,parent_id:1295329146,offset:13857,length:15,type:ref,<tok:\ref{elemental}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:586812962,parent_id:1295329146,offset:13989,length:9,type:parens,<tok:(\ref{a})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2262842779,parent_id:1295329146,offset:14028,length:15,type:ref,<tok:\ref{elemental}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2982880790,parent_id:1295329146,offset:14082,length:10,type:parens,<tok:(\ref{v3})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2960855925,parent_id:1295329146,offset:14097,length:5,type:math,<tok:$A=1$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:4080144166,parent_id:1295329146,offset:14183,length:20,type:parens,<tok:($\log$ A, $\log$ v)>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2305504446,parent_id:1295329146,offset:14207,length:7,type:math,<tok:$-0.71$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:4168279224,parent_id:1295329146,offset:14321,length:18,type:cite,<tok:\cite{correlation}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:14382,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:4065160191,parent_id:1295329146,offset:14440,length:15,type:math,<tok:$f^\frac{1}{2}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3177061649,parent_id:1295329146,offset:14499,length:11,type:parens,<tok:(\ref{v01})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3379082736,parent_id:1295329146,offset:14513,length:646,type:figure,<tok:\begin{figure}
+{\scalebox{0.37}{\includegraphics{elemental.pdf}}}
+\caption{Experimental longitudinal speed of sound \cite{handbook,handbook1,handbook2} in 36 elemental solids (blue bullets) as a function of atomic mass. The solid line is the plot of Eq. (\ref{a}): $v=\frac{v_u}{A^\frac{1}{2}}$. The red diamond shows the upper bound of the speed of sound (\ref{v3}). The dashed line is the fit to the experimental data points. In order of increasing mass, the solids are: Li, Be, B, C, Na, Mg, Al, Si, S, K, Ti, Mn, Fe, Ni, Co, Cu, Zn, Ge, Y, Nb, Mo, Pd, Ag, Cd, In, Sn, Sb, Ta, W, Pt, Au, Tl, Pb, Bi, Th and U.
+}
+\label{elemental}
+\end{figure}
+>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:586812962,parent_id:1295329146,offset:15266,length:9,type:parens,<tok:(\ref{a})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2262842779,parent_id:1295329146,offset:15303,length:15,type:ref,<tok:\ref{elemental}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:586812962,parent_id:1295329146,offset:15357,length:9,type:parens,<tok:(\ref{a})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2867650855,parent_id:1295329146,offset:15415,length:21,type:math,<tok:$\frac{\rm m}{\rm s}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3730642209,parent_id:1295329146,offset:15466,length:5,type:math,<tok:$v_u$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2982880790,parent_id:1295329146,offset:15475,length:10,type:parens,<tok:(\ref{v3})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3137161627,parent_id:1295329146,offset:15540,length:11,type:parens,<tok:(\ref{v00})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:586812962,parent_id:1295329146,offset:15720,length:9,type:parens,<tok:(\ref{a})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3137161627,parent_id:1295329146,offset:15766,length:11,type:parens,<tok:(\ref{v00})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3730642209,parent_id:1295329146,offset:15815,length:5,type:math,<tok:$v_u$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2982880790,parent_id:1295329146,offset:15828,length:10,type:parens,<tok:(\ref{v3})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3730642209,parent_id:1295329146,offset:15857,length:5,type:math,<tok:$v_u$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:280762983,parent_id:1295329146,offset:15909,length:9,type:ref,<tok:\ref{all}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:15941,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1156064554,parent_id:1295329146,offset:15945,length:35,type:cite,<tok:\cite{handbook,handbook1,handbook2}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2262842779,parent_id:1295329146,offset:16060,length:15,type:ref,<tok:\ref{elemental}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:16106,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3730642209,parent_id:1295329146,offset:16155,length:5,type:math,<tok:$v_u$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2982880790,parent_id:1295329146,offset:16164,length:10,type:parens,<tok:(\ref{v3})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3730642209,parent_id:1295329146,offset:16176,length:5,type:math,<tok:$v_u$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:16209,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2653151248,parent_id:1295329146,offset:16283,length:89,type:parens,<tok:(the in-plane speed of sound in graphite is slightly above $v$ in diamond \cite{behnia1})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1337605511,parent_id:1295329146,offset:16375,length:1491,type:figure,<tok:\begin{figure}
+{\scalebox{0.37}{\includegraphics{sound-speeds.pdf}}}
+\caption{Experimental longitudinal speed of sound \cite{handbook,handbook1,handbook2} in 124 solids (circles) and 9 liquids \cite{handbook} (diamonds) at ambient conditions as a function of the system number. Solids are: Al, Be, Brass, Cu, Duralumin, Au, Fe, Pb, Mg, Diamond, Ni, Pt, Ag, Steel, Sn, Ti, W, Zn, Fused silica, Pyrex glass, Lucite, Polyethylene, Polyesterene, WC, B, Mo, NaCl, RbCl, RbI, Tl, Li, Na, Si, S, K, Mn, Co, Ge, Y, Nb, Mo, Pd, Cd, In, Sb, Ta, Bi, Th, U, LiF, LiCl, BeO, NH$_4$H$_2$PO$_4$, NH$_4$Cl, NH$_4$Br, NaNO$_3$, NaClO$_3$, NaF, NaBr, NaBrO$_3$, NaI, Mg$_2$SiO$_4$, $\alpha$-Al$_2$O$_8$, AlPO$_4$, AlSb, KH$_2$PO$_4$, KAl(SO$_4$)$_2$, KCl, KBr, KI, CaBaTiO$_3$, CaF$_2$, ZnO, $\alpha$-ZnS, GaAs, GaSb, RbF, RbBr, Sr(NO$_3$)$_2$, SrSO$_4$, SrTiO$_3$, AgCl, AgBr, CdS, InSb, CsCl, CsBr, CsI, CsF, Ba(NO$_3$)$_2$, BaF$_2$, BaSO$_4$, BaTiO$_3$, TlCl, Pb(NO$_3$)$_2$, PbS, Apatite, Aragonite, Barite, Beryl, Biotite, Galena, Hematite, Garnet, Diopside, Calcite, Cancrinite, Alpha-quartz, Corundum, Labradorite, Magnetite, Microcline, Muscovite, Nepheline, Pyrite, Rutile, Staurolite, Tourmaline, Phlogopite, Chromite, Celestine, Zircon, Spinel and Aegirite. Liquids are: Mercury, Water, Acetone, Ethanol, Ethylene, Benzene, Nitrobenzene, Butane and Glycerol. See Refs. \cite{handbook,handbook1,handbook2} for system specifications, including density and symmetry groups.
+}
+\label{all}
+\end{figure}
+>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:586812962,parent_id:1295329146,offset:17871,length:9,type:parens,<tok:(\ref{a})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:17958,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3630693755,parent_id:1295329146,offset:17963,length:17,type:math,<tok:$A^{\frac{1}{2}}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:586812962,parent_id:1295329146,offset:18001,length:9,type:parens,<tok:(\ref{a})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:586812962,parent_id:1295329146,offset:18149,length:9,type:parens,<tok:(\ref{a})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:18178,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:643181005,parent_id:1295329146,offset:18185,length:35,type:math,<tok:$v\approx 4,513\frac{\rm m}{\rm s}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2867650855,parent_id:1295329146,offset:18259,length:21,type:math,<tok:$\frac{\rm m}{\rm s}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:358728929,parent_id:1295329146,offset:18330,length:93,type:comment,<tok:% agreement with 5,267 $\frac{\rm m}{\rm s}$, the average over all solids in Fig. \ref{all}.
+>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:280762983,parent_id:1295329146,offset:18509,length:9,type:ref,<tok:\ref{all}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:18533,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2867650855,parent_id:1295329146,offset:18562,length:21,type:math,<tok:$\frac{\rm m}{\rm s}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:18585,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2867650855,parent_id:1295329146,offset:18700,length:21,type:math,<tok:$\frac{\rm m}{\rm s}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1575395121,parent_id:1295329146,offset:18722,length:13,type:cite,<tok:\cite{metals}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:18758,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3730642209,parent_id:1295329146,offset:18791,length:5,type:math,<tok:$v_u$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:18829,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3730642209,parent_id:1295329146,offset:18837,length:5,type:math,<tok:$v_u$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2779809631,parent_id:1295329146,offset:18883,length:9,type:cite,<tok:\cite{f2}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3467156894,parent_id:1295329146,offset:18962,length:14,type:cite,<tok:\cite{frenkel}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:18987,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3485658016,parent_id:1295329146,offset:19071,length:12,type:parens,<tok:(short-time)>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2174282748,parent_id:1295329146,offset:19091,length:19,type:cite,<tok:\cite{frenkel,boon}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2112336645,parent_id:1295329146,offset:19204,length:15,type:parens,<tok:(\ref{rydberg})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:183019717,parent_id:1295329146,offset:19228,length:12,type:parens,<tok:(\ref{bohr})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:19263,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:19404,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1902411760,parent_id:1295329146,offset:19495,length:15,type:cite,<tok:\cite{f1,f2,f3}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:19630,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3177061649,parent_id:1295329146,offset:19753,length:11,type:parens,<tok:(\ref{v01})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:4196151825,parent_id:1295329146,offset:19879,length:12,type:cite,<tok:\cite{gitis}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3928063118,parent_id:1295329146,offset:20100,length:59,type:math,<tok:$v\propto\left(\frac{m_e}{m}\right)^{\frac{1}{2}}v_{\rm F}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3771832551,parent_id:1295329146,offset:20167,length:11,type:math,<tok:$v_{\rm F}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:429917333,parent_id:1295329146,offset:20201,length:15,type:cite,<tok:\cite{ashcroft}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:430131255,parent_id:1295329146,offset:20228,length:33,type:math,<tok:$v\propto\frac{1}{A^\frac{1}{2}}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:586812962,parent_id:1295329146,offset:20272,length:9,type:parens,<tok:(\ref{a})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3521778858,parent_id:1295329146,offset:20282,length:127,type:parens,<tok:(the factor $\left(\frac{m_e}{m}\right)^{\frac{1}{2}}$ also appears in the ratio of sound to melting velocity \cite{hartnoll1})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:4270318261,parent_id:1295329146,offset:20545,length:19,type:cite,<tok:\cite{gitis,metals}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:20618,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3137161627,parent_id:1295329146,offset:20765,length:11,type:parens,<tok:(\ref{v00})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2982880790,parent_id:1295329146,offset:20781,length:10,type:parens,<tok:(\ref{v3})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:20839,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3137161627,parent_id:1295329146,offset:20846,length:11,type:parens,<tok:(\ref{v00})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2982880790,parent_id:1295329146,offset:20878,length:10,type:parens,<tok:(\ref{v3})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2112336645,parent_id:1295329146,offset:20934,length:15,type:parens,<tok:(\ref{rydberg})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:183019717,parent_id:1295329146,offset:20966,length:12,type:parens,<tok:(\ref{bohr})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3922673172,parent_id:1295329146,offset:20979,length:13,type:parens,<tok:(\ref{ratio})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:21026,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2227979358,parent_id:1295329146,offset:21355,length:3,type:math,<tok:$E$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3329069466,parent_id:1295329146,offset:21359,length:13,type:cite,<tok:\cite{vadim1}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:21385,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3730642209,parent_id:1295329146,offset:21429,length:5,type:math,<tok:$v_u$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:21599,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2262842779,parent_id:1295329146,offset:21705,length:15,type:ref,<tok:\ref{elemental}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3600421781,parent_id:1295329146,offset:21757,length:3,type:parens,<tok:(a)>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:21773,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:963562228,parent_id:1295329146,offset:21780,length:10,type:parens,<tok:(\ref{v1})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1945425016,parent_id:1295329146,offset:21795,length:27,type:math,<tok:$E=\frac{\hbar^2}{2m_ea^2}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1925260931,parent_id:1295329146,offset:21829,length:21,type:math,<tok:$v\propto\frac{1}{a}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1441744645,parent_id:1295329146,offset:21855,length:3,type:parens,<tok:(b)>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:21912,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1669955715,parent_id:1295329146,offset:21935,length:52,type:parens,<tok:(we are grateful to K. Behnia for pointing this out)>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:22014,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2227979358,parent_id:1295329146,offset:22065,length:3,type:math,<tok:$E$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1156178167,parent_id:1295329146,offset:22073,length:3,type:math,<tok:$a$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:22216,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:22249,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2982880790,parent_id:1295329146,offset:22374,length:10,type:parens,<tok:(\ref{v3})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:4097396754,parent_id:1295329146,offset:22498,length:23,type:cite,<tok:\cite{silvera,loubeyre}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:22635,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3792236121,parent_id:1295329146,offset:22807,length:51,type:parens,<tok:(see, e.g., Refs. \cite{silvera,loubeyre,hydrogen})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3469282951,parent_id:1295329146,offset:23009,length:10,type:math,<tok:$I4_1/amd$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3276497929,parent_id:1295329146,offset:23030,length:31,type:cite,<tok:\cite{i41amd,pickard_h_natphys}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:768167687,parent_id:1295329146,offset:23233,length:5,type:math,<tok:$400$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:780021899,parent_id:1295329146,offset:23240,length:5,type:math,<tok:$500$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2269651173,parent_id:1295329146,offset:23250,length:32,type:cite,<tok:\cite{azadi_metal,morales_metal}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3469282951,parent_id:1295329146,offset:23355,length:10,type:math,<tok:$I4_1/amd$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3566698918,parent_id:1295329146,offset:23413,length:5,type:math,<tok:$250$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3566698918,parent_id:1295329146,offset:23484,length:5,type:math,<tok:$250$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3899602956,parent_id:1295329146,offset:23491,length:6,type:math,<tok:$1000$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1349764476,parent_id:1295329146,offset:23577,length:14,type:ref,<tok:\ref{abinitio}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2801857405,parent_id:1295329146,offset:23702,length:12,type:math,<tok:$\mathbf{q}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3746312736,parent_id:1295329146,offset:23723,length:318,type:figure,<tok:\begin{figure}
+{\scalebox{0.33}{\includegraphics{fig3.pdf}}}
+%{\scalebox{0.33}{\includegraphics{speed-ab-initio1.pdf}}}
+\caption{Calculated speed of sound in atomic hydrogen as a function of pressure (top) and density (bottom). The dashed line shows the upper bound $v_u$ in (\ref{v3}).}
+\label{abinitio}
+\end{figure}
+>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2982880790,parent_id:1295329146,offset:24058,length:10,type:parens,<tok:(\ref{v3})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3730642209,parent_id:1295329146,offset:24205,length:5,type:math,<tok:$v_u$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1349764476,parent_id:1295329146,offset:24245,length:14,type:ref,<tok:\ref{abinitio}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:24290,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3730642209,parent_id:1295329146,offset:24308,length:5,type:math,<tok:$v_u$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3730642209,parent_id:1295329146,offset:24367,length:5,type:math,<tok:$v_u$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:361895838,parent_id:1295329146,offset:24717,length:13,type:cite,<tok:\cite{vadim2}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:24768,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1349764476,parent_id:1295329146,offset:24798,length:14,type:ref,<tok:\ref{abinitio}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3469282951,parent_id:1295329146,offset:24879,length:10,type:math,<tok:$I4_1/amd$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2622624968,parent_id:1295329146,offset:25079,length:5,type:math,<tok:$v^2$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2637108791,parent_id:1295329146,offset:25108,length:13,type:cite,<tok:\cite{behnia}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3787817719,parent_id:1295329146,offset:25258,length:16,type:cite,<tok:\cite{hartnoll1}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3431336955,parent_id:1295329146,offset:25362,length:20,type:math,<tok:$\frac{c}{\sqrt{3}}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:510122975,parent_id:1295329146,offset:25397,length:33,type:parens,<tok:(see, e.g., Ref. \cite{hadronic})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:638216925,parent_id:1295329146,offset:25470,length:10,type:parens,<tok:(\ref{v0})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2122471043,parent_id:1295329146,offset:25546,length:8,type:math,<tok:$\alpha$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:796474893,parent_id:1295329146,offset:25739,length:15,type:math,<tok:$\frac{v_u}{c}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:638216925,parent_id:1295329146,offset:25762,length:10,type:parens,<tok:(\ref{v0})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3900740402,parent_id:1295329146,offset:25813,length:15,type:cite,<tok:\cite{hadronic}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:25852,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2368287904,parent_id:1295329146,offset:26151,length:12,type:math,<tok:$k_{\rm B}T$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1111088113,parent_id:1295329146,offset:26219,length:37,type:math,<tok:$\tau_\hbar>\frac{\hbar}{k_{\rm B}T}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2743923265,parent_id:1295329146,offset:26257,length:31,type:cite,<tok:\cite{zaanen3,hartnoll,zaanen2}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:632748636,parent_id:1295329146,offset:26311,length:11,type:braces,<tok:{\it lower}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:799117206,parent_id:1295329146,offset:26469,length:48,type:cite,<tok:\cite{kss,zaanen3,hartnoll,zaanen2,spin,zaanen1}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3794530545,parent_id:1295329146,offset:26607,length:12,type:math,<tok:$\tau_\hbar$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1163739713,parent_id:1295329146,offset:26630,length:11,type:braces,<tok:{\it upper}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:26682,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:26695,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:26752,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2959070564,parent_id:1295329146,offset:26763,length:12,type:parens,<tok:(\ref{v001})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3834369926,parent_id:1295329146,offset:26807,length:26,type:math,<tok:$v=\frac{a}{\tau_{\rm D}}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1465993502,parent_id:1295329146,offset:26841,length:14,type:math,<tok:$\tau_{\rm D}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1465993502,parent_id:1295329146,offset:26887,length:14,type:math,<tok:$\tau_{\rm D}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2499377412,parent_id:1295329146,offset:26977,length:8,type:math,<tok:$\tau_0$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:420066351,parent_id:1295329146,offset:27016,length:33,type:math,<tok:$\tau_0>\frac{\hbar}{k_{\rm B}T}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:239133907,parent_id:1295329146,offset:27090,length:20,type:math,<tok:$v=\frac{a}{\tau_0}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2565265686,parent_id:1295329146,offset:27117,length:29,type:math,<tok:$v<a\frac{k_{\rm B}T}{\hbar}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:534881459,parent_id:1295329146,offset:27296,length:5,type:math,<tok:$T_m$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:27350,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2057937506,parent_id:1295329146,offset:27366,length:31,type:math,<tok:$v<a\frac{k_{\rm B}T_m}{\hbar}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3787817719,parent_id:1295329146,offset:27434,length:16,type:cite,<tok:\cite{hartnoll1}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:617393003,parent_id:1295329146,offset:27538,length:12,type:math,<tok:$a\approx 1$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:534881459,parent_id:1295329146,offset:27586,length:5,type:math,<tok:$T_m$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:788102785,parent_id:1295329146,offset:27595,length:6,type:math,<tok:$10^3$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:27630,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2255253246,parent_id:1295329146,offset:27650,length:8,type:math,<tok:$10^{4}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3730642209,parent_id:1295329146,offset:27699,length:5,type:math,<tok:$v_u$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2982880790,parent_id:1295329146,offset:27708,length:10,type:parens,<tok:(\ref{v3})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2982880790,parent_id:1295329146,offset:27729,length:10,type:parens,<tok:(\ref{v3})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1329155215,parent_id:1295329146,offset:27823,length:3,type:math,<tok:$v$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1525445732,parent_id:1295329146,offset:27957,length:45,type:math,<tok:$\frac{S}{V}=\frac{2\pi^2}{15(\hbar u)^3}T^3$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2212894664,parent_id:1295329146,offset:28007,length:44,type:math,<tok:$\frac{C}{V}=\frac{2\pi^2}{5(\hbar u)^3}T^3$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:466084684,parent_id:1295329146,offset:28059,length:3,type:math,<tok:$u$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3760243213,parent_id:1295329146,offset:28097,length:13,type:math,<tok:$k_{\rm B}=1$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3103754819,parent_id:1295329146,offset:28111,length:13,type:cite,<tok:\cite{landau}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:466084684,parent_id:1295329146,offset:28153,length:3,type:math,<tok:$u$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:4155964290,parent_id:1295329146,offset:28236,length:31,type:section,<tok:\section{Materials and Methods}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3427144627,parent_id:1295329146,offset:28336,length:12,type:braces,<tok:{\sc castep}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3338573542,parent_id:1295329146,offset:28357,length:13,type:cite,<tok:\cite{castep}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2921808116,parent_id:1295329146,offset:28404,length:5,type:parens,<tok:(PBE)>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:445127331,parent_id:1295329146,offset:28442,length:10,type:cite,<tok:\cite{pbe}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:516984944,parent_id:1295329146,offset:28474,length:6,type:math,<tok:$1200$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:4101070027,parent_id:1295329146,offset:28491,length:12,type:math,<tok:$\mathbf{k}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1331006247,parent_id:1295329146,offset:28526,length:17,type:math,<tok:$2\pi\times0.025$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:1558389525,parent_id:1295329146,offset:28548,length:7,type:math,<tok:$^{-1}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3969343651,parent_id:1295329146,offset:28689,length:9,type:math,<tok:$10^{-4}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2167647484,parent_id:1295329146,offset:28750,length:9,type:math,<tok:$10^{-5}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:737443670,parent_id:1295329146,offset:28848,length:16,type:cite,<tok:\cite{fd_martin}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3148990562,parent_id:1295329146,offset:28908,length:18,type:cite,<tok:\cite{nondiagonal}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3520025664,parent_id:1295329146,offset:28934,length:17,type:math,<tok:$4\times4\times4$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2801857405,parent_id:1295329146,offset:28959,length:12,type:math,<tok:$\mathbf{q}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2801857405,parent_id:1295329146,offset:29099,length:12,type:math,<tok:$\mathbf{q}$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3807939749,parent_id:1295329146,offset:29133,length:8,type:math,<tok:$\Gamma$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2956137794,parent_id:1295329146,offset:29229,length:21,type:section,<tok:\section{Conclusions}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2982880790,parent_id:1295329146,offset:29336,length:10,type:parens,<tok:(\ref{v3})>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2061211640,parent_id:1295329146,offset:29350,length:108,type:equation,<tok:\begin{equation}
+\frac{v_u}{c}=\alpha\left(\frac{m_e}{2m_p}\right)^{\frac{1}{2}},
+\label{v4}
+\end{equation}
+>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2122471043,parent_id:1295329146,offset:29582,length:8,type:math,<tok:$\alpha$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3639707074,parent_id:1295329146,offset:29679,length:13,type:math,<tok:$\frac{v_u}c$>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:3659775179,parent_id:1295329146,offset:29696,length:6695,type:bibliography,<tok:\begin{thebibliography}{99}
+
+\bibitem{ashcroft} N. W. Ashcroft and N. D. Mermin, {\it Solid State Physics} (Saunders College Publishing, 1976).
+
+\bibitem{barrow} J. D. Barrow, {\it The Constants of Nature} (Pantheon Books, 2003).
+
+\bibitem{kss} P. K. Kovtun, D. T. Son and A. O. Starinets, Starinets, Viscosity in strongly interacting quantum field
+theories from black hole physics. {\it Phys. Rev. Lett.} {\bf 94}, 111601 (2005).
+
+\bibitem{zaanen3} J. Zaanen, Why the temperature is high. {\it Nature} {\bf 430}, 512-513 (2004).
+
+\bibitem{hartnoll} S. A. Hartnoll, Theory of universal incoherent metallic transport. {\it Nat. Phys.} {\bf 11}, 54-61 (2015).
+
+\bibitem{zaanen2} J. Zaanen, Planckian dissipation, minimal viscosity and the transport in cuprate strange
+metals. {\it SciPost Phys.} {\bf 6}, 061 (2019).
+
+\bibitem{spin} C. Luciuk et al, Observation of quantum-limited spin transport in strongly interacting two-dimensional
+Fermi gases. {\it Phys. Rev. Lett.} {\bf 118}, 130405 (2017).
+
+\bibitem{behnia} K. Behnia and A. Kapitulnik, A lower bound to the thermal diffusivity
+of insulators. {\it J. Phys.: Condens. Matt.} {\bf 31}, 405702 (2019).
+
+\bibitem{zaanen1} J. Zaanen, Y. Liu, Y. W. Sun and K. Schalm, Holographic duality in condensed matter physics (Cambridge University Press, 2015).
+
+\bibitem{behnia1} Y. Machida, N. Matsumoto, T. Isono and K. Behnia, Phonon hydrodynamics and ultrahigh–roomtemperature
+thermal conductivity in thin graphite. {\it Science}, {\bf 367}, 309 (2020).
+
+\bibitem{hartnoll1} C. H. Mousatov and S. A. Hartnoll, On the Planckian bound for heat diffusion in insulators. {\it Nat. Phys.} {\bf 16}, 579-584 (2020).
+
+\bibitem{sciadv} K. Trachenko and V. V. Brazhkin, Minimal quantum viscosity from fundamental physical constants. {\it Science Adv.} {\bf 6}, eaba3747 (2020).
+
+\bibitem{landau} L. D. Landau and E. M. Lifshitz, Statistical Physics
+(Oxford: Pergamon, 1969).
+
+\bibitem{phillips} J. C. Phillips, Ionicity of the chemical bond in crystals. {\it Rev. Mod. Phys.} {\bf 42}, 317-356 (1970).
+
+\bibitem{zaccone} B. Cui, A. Zaccone and D. Rodney, Nonaffine lattice dynamics with the Ewald method reveals strongly nonaffine elasticity of $\alpha$-quartz.
+{\it J. Chem. Phys.} {\bf 151}, 224509 (2019).
+
+\bibitem{diamond} V. V. Brazhkin, A. G. Lyapin and R. J. Hemley, {\it Phil. Mag.} {\bf 82}, 231-253 (2002).
+
+\bibitem{diamond1} V. V. Brazhkin and V. L. Solozhenko, Myths about new ultrahard phases: Why materials that are significantly superior to diamond in elastic moduli and hardness are impossible. {\it J. Appl. Phys.} {\bf 125}, 130901 (2019).
+
+%\bibitem{young} D. A. Young, Phase Diagrams of Elements (University of California Press, 1991).
+
+\bibitem{handbook} CRC Handbook of Chemistry and Physics (ed. D. R. Lide, CRC Press, 2004).
+
+\bibitem{handbook1} I. N. Frantsevich, F. F. Voronov and S. A. Bakuta, {\it Elastic constants and elastic moduli of metals and non-metals} (Kyiv, Naukova Dumka, 1982).
+
+\bibitem{handbook2} Properties of Elements (Ed. M. E. Drits, Moscow Metallurgy, 1997).
+
+\bibitem{correlation} B. Ratner, {\it Statistical and machine-learning data mining} (CRC Press, Taylor and Francis, 2011).
+
+\bibitem{metals} T. Iida and R. I. L. Guthrie, {\it The Physical Properties of Liquid Metals} (Oxford University Press, 1988).
+
+\bibitem{f2} V. V. Brazhkin and K. Trachenko, What separates a liquid from a gas? {\it Physics Today} 65(11), 68 (2012).
+
+\bibitem{frenkel} J. Frenkel, {\it Kinetic Theory of Liquids} (Oxford University Press, New York, 1947).
+
+\bibitem{boon} J. P. Boon and S. Yip, {\it Molecular Hydrodynamics} (New York: Dover, 1980).
+
+\bibitem{f1} V. V. Brazhkin et al, ``Liquid-gas'' transition in the supercritical region: fundamental changes in particle dynamics. {\it Phys. Rev. Lett.} {\bf 111}, 145901 (2013).
+
+\bibitem{f3} K. Trachenko and V. V. Brazhkin, Collective modes and thermodynamics of the liquids state. {\it Rep. Prog. Phys.} {\bf 79}, 016502 (2016).
+
+\bibitem{gitis} M. B. Gitis and I. G. Mikhailov, On calculation of the speed of sound in liquid metals. {\it Acoustical Journal} {\bf 13}, 556-561 (1967) (in Russian).
+
+\bibitem{vadim1} V. V. Brazhkin, Interparticle interaction in condensed media: some elements are ``more equal than others''. {\it Phys. Uspekhi} {\bf 52}, 369-376 (2009).
+
+\bibitem{silvera} R. P. Dias and I. F. Silvera, Observation of the Wigner-Huntington transition to metallic hydrogen. {\it Science} {\bf 355}, 715-718 (2017).
+
+\bibitem{loubeyre} P. Loubeyre, F. Occelli, and P. Dumas, Synchrotron infrared spectroscopic evidence of the probable transition to metal hydrogen. {\it Nature} {\bf 577}, 631-635 (2020).
+
+\bibitem{hydrogen} J. M. McMahon, M. A. Morales, C. Pierleoni, and D. M. Ceperley, The properties of hydrogen and helium under extreme conditions. {\it Rev. Mod. Phys.} {\bf 84}, 1607-1653 (2012).
+
+\bibitem{i41amd} K. Nagao, H. Nagara, and S. Matsubara, Structures of hydorgen at megabar pressures. {\it Phys. Rev. B} {\bf 56}, 2295-2298 (1997).
+
+\bibitem{pickard_h_natphys} C. J. Pickard and R. J. Needs, Structure of phase III of solid hydrogen. {\it Nat. Phys.} {\bf 3}, 473 (2007).
+
+\bibitem{azadi_metal} S. Azadi, B. Monserrat, W. M. C. Foulkes, and R. J. Needs, Dissociation of High-Pressure Solid Molecular Hydrogen: A Quantum Monte Carlo and Anharmonic Vibrational Study. {\it Phys. Rev. Lett.} {\bf 112}, 165501 (2014).
+
+\bibitem{morales_metal} J. McMinis, R. C. Clay, D. Lee, and M. A. Morales, Molecular to Atomic Phase Transition in Hydrogen under High Pressure. {\it Phys. Rev. Lett.} {\bf 114}, 105305 (2015).
+
+\bibitem{vadim2} V. V. Brazhkin and A. G. Lyapin, The inversion of relative shear rigidity in different material classes at megabar pressures. {\it J. Phys.: Condens. Matter} {\bf 14}, 10861-10867 (2002).
+
+\bibitem{hadronic} P. Bedaque and A. W. Steiner, Sound Velocity Bound and Neutron Stars. {\it Phys. Rev. Lett.} {\bf 114}, 031103 (2015).
+
+\bibitem{castep} S. J. Clark, M. D. Segall, C. J. Pickard, P. J. Hasnip, M. I. J. Probert, K. Refson, and M. C. Payne, First principles methods using CASTEP {\it Z. Kristallogr.} {\bf 220}, 567-570 (2005).
+
+\bibitem{pbe} J. P. Perdew, K. Burke, and M. Ernzerhof, Generalized gradient approximation made simple, {\it Phys. Rev. Lett.} {\bf 77}, 3865-3868 (1996).
+
+\bibitem{fd_martin} K. Kunc and R. M. Martin, Ab Initio Force Constants of GaAs: A New Approach to Calculation of Phonons and Dielectric Properties. {\it Phys. Rev. Lett.} {\bf 48}, 406-409 (1978).
+
+\bibitem{nondiagonal} J. H. Lloyd-Williams and B. Monserrat, Lattice dynamics and electron-phonon coupling calculations using nondiagonal supercells. {\it Phys. Rev. B} {\bf 92}, 184301 (2015).
+
+\end{thebibliography}
+>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:890734121,parent_id:1295329146,offset:36392,length:26,type:section,<tok:\section{Acknowledgements}>}
+{<filepath:/home/user/latex-analysis-pipeline/scanner/sound1.tex>,filepath_id:1295329146,token_id:2310379719,parent_id:1295329146,offset:37095,length:14,type:end_doc,<tok:\end{document}>}
