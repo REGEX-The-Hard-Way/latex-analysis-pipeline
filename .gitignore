@@ -1,3 +1,4 @@
+
 src/*.so
 curl/
 hiredis/
@@ -17,7 +18,6 @@ src/Punkt_LaTeX_SENT_Tokenizer.pickle
 2003_errors
 websocket/websocket.so
 *.out
-a.out
 nltk_data
 lex.yy.c
 2003

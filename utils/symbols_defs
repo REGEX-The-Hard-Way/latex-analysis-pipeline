@@ -1,1 +1,0 @@
-grep -oP ',.*?,' -hr|grep '\$.*?\$ is the'  -P 
