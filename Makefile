@@ -12,4 +12,4 @@ sent_split:
 	$(CC) -DTEST -O2  sent_split.c -o sent_split.out
 
 clean:
-	rm scanner.out sent_split.out	
+	rm scanner.out sent_split.out scanner.c sent_split.c	
