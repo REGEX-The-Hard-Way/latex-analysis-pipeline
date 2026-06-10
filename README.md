@@ -18,10 +18,12 @@ nested `(...)`, with exact byte offsets and hierarchical relationships.
 
 It turns LaTeX from opaque text into a **queryable token tree**.
 
-### In One Command
 
 ```bash
-$ 
+$cd scanner; 
+make scanner
+make sent_split
+./scanner.out sound1.tex tex$ 2> sidecar.csv | ./sent_split.out > clean.txt
 ```
 
 ## Why This Matters
