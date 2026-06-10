@@ -32,8 +32,7 @@ submission.tex:3502: INFO: \label{tab:appendix} defined but never referenced
 ## Why This Matters
 
 - **Pharma companies** submit regulatory documents with thousands of
-  cross-references. One broken `\ref` can cause a rejection costing
-  hundreds of thousands of dollars in delay.
+  cross-references. One broken `\ref` can cause a rejection costing time and money in unnecessary delays.
 - **Academic publishers** process millions of manuscripts. Undefined
   references and broken citations waste reviewer time and damage
   credibility.
