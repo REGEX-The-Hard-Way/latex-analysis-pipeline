@@ -276,7 +276,3 @@ Issues and pull requests welcome. Before opening a PR:
 1. Run the test suite: `make test`
 2. Add tests for new functionality
 3. Ensure the arXiv corpus pass rate doesn't regress
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
-
-## License
