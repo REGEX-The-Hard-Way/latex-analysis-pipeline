@@ -21,12 +21,7 @@ It turns LaTeX from opaque text into a **queryable token tree**.
 ### In One Command
 
 ```bash
-$ latex-scanner --validate-refs submission.tex
-submission.tex:1247: ERROR: \ref{sec:methods} has no matching \label
-submission.tex:89: WARNING: \ref{fig:overview} references \label defined later
-submission.tex:3502: INFO: \label{tab:appendix} defined but never referenced
-
-3 issues found (1 error, 1 warning, 1 info)
+$ 
 ```
 
 ## Why This Matters
