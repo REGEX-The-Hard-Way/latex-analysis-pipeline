@@ -2,7 +2,7 @@
 
 A high-performance, hierarchical LaTeX tokenizer and cross-reference validator.
 Handles context-sensitive grammars with arbitrary nesting depth. Processes
-500 levels of nested environments in **4 milliseconds**.
+500+ levels of nested environments in **4 milliseconds**.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)]()
@@ -49,7 +49,7 @@ both problems.
 |-----------|---------|------|
 | 500 nested identical `\begin{abstract}` blocks | 500 levels | [X] ms |
 | 500 nested unique environments | 500 levels | [X] ms |
-| 500 nested parentheses `(((...)))` | 500 levels | **0.004s** |
+| 500+ nested parentheses `(((...)))` | 500 levels | **0.004s** |
 
 All benchmarks with memory-mapped I/O.
 
