@@ -23,7 +23,7 @@ It turns LaTeX from opaque text into a **queryable token tree**.
 $cd scanner; 
 make scanner
 make sent_split
-./scanner.out sound1.tex tex$ 2> sidecar.csv | ./sent_split.out > clean.txt
+./scanner.out sound1.tex tex$ 2> sidecar.tok | ./sent_split.out > clean.sent
 ```
 
 ## Why This Matters
