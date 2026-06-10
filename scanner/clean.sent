@@ -1,10 +1,18 @@
 \documentclass[aps,prl,groupedaddress,fleqn,twocolumn,10pt]  304903625   \pdfoutput=1   946368405     1401359073     985011283     4274312372     2828728050     3399957926     2007749581  \newcommand\omicron  3705518171
-119401143
+3434746723
+begin  1217089479
 \raggedbottom
 1687913855     113724275     972723840     3341031707      291173107    2300652061     2906265212     3524180703      291173107    2300652061    3743224491     1637074777     1388637368
 1989735420
+begin  1918437342   Two dimensionless fundamental physical constants, the fine structure constant   2122471043   and the proton-to-electron mass ratio   3184337359   are attributed a particular importance from the point of view of nuclear synthesis, formation of heavy elements, planets, and life-supporting structures.
+Here, we show that a combination of these two constants results in a new dimensionless constant which provides the upper bound for the speed of sound in condensed phases,   3730642209  .
+We find that   4022052096  , where   514015864   is the speed of light in vacuum.
+We support this result by a large set of experimental data and first principles computations for atomic hydrogen.
+Our result expands current understanding of how fundamental constants can impose new bounds on important physical properties.
+\end  1918437342
 \maketitle
 3497665573
+section  4248078621
 Several notable properties of condensed matter phases are defined by fundamental physical constants.
 The Bohr radius gives a characteristic scale of interatomic distance on the order of the Angstrom, in terms of electron mass   76726987  , charge   816449627  , and Planck constant   340463602  .
 These same fundamental constants enter the Rydberg energy, setting the scale of a characteristic bonding energy in condensed phases and chemical compounds   429917333  .
@@ -15,7 +23,7 @@ This balance provides a narrow ``habitable zone'' in the   3814575437   space wh
 We show that a simple combination of   2122471043   and   3184337359   results in another dimensionless quantity which has an unexpected and specific implication for a key property of condensed phases, the speed at which waves travel in solids and liquids, or the speed of sound,   1329155215  .
 We find that this combination provides an upper bound for   1329155215  ,   3730642209  , as
 578174126
-\noindent where   514015864   is the speed of light in vacuum.
+begin  3119931285     3516303764  =\alpha  1719989662  ^  3179439190  , \label  393140867   \end  3119931285   \noindent where   514015864   is the speed of light in vacuum.
 We support this result with a large set of experimental data for different systems, and the first principles modelling of atomic hydrogen.
 Identifying and understanding bounds on physical properties is important from the point of view of fundamental physics, predictions for theory and experiment, as well as searching for and rationalizing universal behavior   758032211  .
 Properties for which bounds were recently discussed include viscosity and diffusivity.
@@ -29,6 +37,7 @@ These strongly depend on the bonding type and structure which are inter-dependen
 As a result, it was not thought that   1329155215   can be predicted analytically without simulations, contrary to other properties such as energy or heat capacity which are universal in the classical harmonic approximation   3103754819  .
 In view of this, representing the upper bound of   1329155215   in terms of fundamental constants is notable.
 489926843
+section  1841173002
 There are two approaches in which   1329155215   can be evaluated.
 The two approaches start with system elasticity and vibrational properties, respectively.
 We begin with system elasticity.
@@ -42,25 +51,35 @@ Combining   1686305430   and   4127027581   gives   3937428957  , where   158786
 The factor   4136596637   is about 1-2 and can be dropped in an approximate evaluation of   1329155215  .
 Then,
 2789841101
+begin  3119931285   v=  2687153591  ^  3179439190  .
+\label  1867788670   \end  3119931285
 We now recall that the bonding energy in condensed phases is given by the Rydberg energy on the order of several eV   429917333   as
 3293702766
-\noindent where   816449627   and   76726987   are electron charge and mass.
+begin  3119931285   E_  966510688  =  676649584  , \label  2251406090   \end  3119931285   \noindent where   816449627   and   76726987   are electron charge and mass.
 2094359015   is used for order-of-magnitude estimations of the bonding energy   2227979358     429917333  .
 Using   1789797684   from   2112336645   in   3177061649   gives
 1055226235
-\noindent where   2323881518   is the fine structure constant.
+begin  3119931285   v=\alpha  972034211  ^  3179439190  c, \label  3708550915   \end  3119931285   \noindent where   2323881518   is the fine structure constant.
 A result similar to   3137161627   can be obtained in the second approach that starts with the consideration of the vibrational properties of the system.
 The longitudinal speed of sound,   1329155215  , can be evaluated as the phase velocity from the longitudinal dispersion curve   3907400250    802738461   in the Debye approximation:   1882014176  , where   3851713944   and   3980431747   are Debye frequency and wavevector, respectively.
 Using   664186226  , where   1156178167   is the interatomic   643450718   separation, gives
 3704826975
+begin  3119931285   v=  4279628506  \omega_  3558739353  a.
+\label  1453661309   \end  3119931285
 We recall that the characteristic scale of interatomic separation is given by the Bohr radius   1392097744   on the order of the Angstrom as
 2690889139
+begin  3119931285   a_  2787783613  =  3829437273  .
+\label  1907356622   \end  3119931285
 We now use the known ratio between the phonon energy,   3416623901  , and   2227979358  .
 The phonon energy   3416623901   can be approximated as   1502300549  , where   158786288   is the mass of the atom.
 Taking the ratio   241443799   and using   4155563000   from   183019717   and   1789797684   from   2112336645   gives   241443799  , up to a constant factor close to unity, as
 3281852259
+begin  3119931285     2040255427  =  3695375396  ^  3179439190  .
+\label  2215587399   \end  3119931285
 Using   3922673172   in   2959070564   gives
 1920754479
+begin  3119931285   v=  1878321480    3695375396  ^  3179439190  .
+\label  3447684035   \end  3119931285
 1329155215   in   3137161627  , up to a constant factor, can now be obtained by using   4155563000   from   183019717   and   1789797684   from   2112336645   in   963562228  .
 Alternatively, the same result can be found by   3600421781   recalling that the bonding energy, or the characteristic energy of electromagnetic interaction, is   1945425016   and   1441744645   using this   2227979358   and   4155563000     183019717   in   963562228  .
 As compared to the first approach, the second approach to evaluating   1329155215   involves additional approximations, including evaluating   1329155215   from the dispersion relation in the Debye model, using   4155563000   in   183019717  , and the ratio between the phonon and bonding energies   3922673172  .
@@ -76,11 +95,14 @@ Its scale is set by the proton mass   4081345789  :   4142054299  , where   1338
 Recall that   1392097744   in   183019717   and   2094359015   in   2112336645   are characteristic values derived for the H atom.
 We similarly set   2960855925   and   1316468532   in   3137161627   to arrive at the upper bound of   1329155215   in   3137161627  ,   3730642209  , as
 2412975698
+begin  3119931285   v_u=\alpha  1719989662  ^  3179439190  c~\approx~36,100~  3779078983  , \label  4270708931   \end  3119931285
 \noindent and observe that   3730642209   depends on fundamental physical constants only, including the dimensionless fine structure constant   2122471043   and the proton-to-electron mass ratio.
 Equation   2982880790   is the extension of   3137161627   to atomic hydrogen.
 We will calculate   1329155215   in atomic H later in the paper.
 Combining Eqs.   3137161627  ,   2982880790  , and   4142054299   gives
 2574798916
+begin  3119931285   v=  808440827  .
+\label  2905758221   \end  3119931285
 Before discussing the experimental data in relation to Eq.   3137161627   and its consequences, Eqs.   2982880790  -  586812962  , we note that the speed of sound is governed by the elastic moduli and density which substantially vary with bonding type: from strong covalent, ionic, or metallic bonding, typically giving a large bonding energy to intermediate hydrogen-bonding, and weak dipole and van der Waals interactions.
 Elastic moduli and density also vary with the particular structure that a system adopts.
 Furthermore, the bonding type and structure are themselves inter-dependent: covalent and ionic bonding result in open and close-packed structures, respectively   4016372219  .
@@ -94,6 +116,7 @@ The linear Pearson correlation coefficient calculated for the experimental set  
 Its absolute value is slightly above the boundary notionally separating moderate and strong correlations   4168279224  .
 The ratio of calculated and experimental   1329155215   is in the range 0.6-2.4, consistent with the range of   4065160191   approximated by 1 in the derivation of Eq.   3177061649  .
 3379082736
+begin  1033761899     4109449863   \caption  4158870612   \label  1294321469   \end  1033761899
 We also show the fit of the experimental data points to the inverse square root function predicted by Eq.   586812962   as the dashed line in Fig.   2262842779   and observe that it lies close to Eq.   586812962  .
 The fitted curve gives the intercept at 37,350   2867650855  , in about 3\% agreement with   3730642209   in   2982880790  .
 This indicates that the numerical coefficient in Eq.   3137161627  , which is subject to an approximation as mentioned earlier, and discussed below in more detail, gives good agreement with the experimental trend.
@@ -102,6 +125,7 @@ We now show that   3730642209   agrees with a wider experimental set.
 In Fig.   280762983  , we show experimental   1329155215     1156064554   in 133 systems, including compounds together with the elemental solids in Fig.   2262842779  .
 We observe that experimental   1329155215   are smaller than the upper theoretical bound   3730642209   in   2982880790  .   3730642209   is about twice as large as   1329155215   in diamond, the highest speed of sound measured at ambient conditions   2653151248  .
 1337605511
+begin  1033761899     3096193044   \caption  527608618   \label  2745635749   \end  1033761899
 Eq.   586812962   can be used to roughly predict the average, or characteristic speed of sound   1329155215  .   3630693755   which, according to   586812962   is relevant for the speed of sound, varies across the periodic table in the range of about 1-15, with an average value of 8.
 According to   586812962  , the corresponding   1329155215   is   643181005  .
 This is in 16\% agreement with 5,392   2867650855  , the average over all elemental solids and in 14\  358728929   We have included the experimental speed of sound of room-temperature liquids in Fig.   280762983  , with typical   1329155215   in the range 1,000-2,000   2867650855  .   1329155215   in high-temperature liquid metals such as Al, Fe, Mg, and Ni extends to higher values in the range 4,000-5,000   2867650855     1575395121  .
@@ -133,6 +157,7 @@ This structure is calculated to become thermodynamically stable in the pressure 
 However, we find that   3469282951   is dynamically stable at pressures above about   3566698918   GPa, and therefore we perform calculations in the pressure range   3566698918  --  3899602956   GPa.
 The speed of sound as a function of pressure and density reported in Fig.   1349764476   corresponds to the highest energy acoustic branch and is averaged over stochastically generated directions in   2801857405  -space.
 3746312736
+begin  1033761899     1951445086     2903003394  \caption  839279168   \label  634741023   \end  1033761899
 Our upper bound   2982880790   does not account for the enthalpic contribution to the system energy as mentioned earlier; including the pressure effect would increase   3730642209   considerably at pressures in Fig.   1349764476  .
 Despite this, the calculated   1329155215   remains below   3730642209   in a wide pressure range and starts increasing above   3730642209   only above very high pressure of about 600 GPa.
 In this regard, we note that hydrogen is a unique element with no core electrons.
@@ -158,17 +183,65 @@ As discussed above,   1329155215   features in several thermodynamic properties 
 For example, the low-temperature entropy and heat capacity per volume are   1525445732   and   2212894664  , where   466084684   is the average speed of sound and   3760243213     3103754819  .
 Hence, the upper bound for   466084684   gives the smallest possible entropy and heat capacity at a given temperature.
 4155964290
+section  2648689801
 We have performed density functional theory calculations using the   3427144627   package   3338573542  , with the Perdew-Burke-Ernzerhof   2921808116   exchange-correlation functional   445127331  , an energy cutoff of   516984944  \,eV and a   4101070027  -point grid of spacing   1331006247  \,\AA  1558389525   to sample the electronic Brillouin zone.
 We have relaxed the cell parameters and internal coordinates to obtain a pressure to within   3969343651   GPa of the target pressure and forces smaller than   2167647484  \,eV/\AA.
 We have then calculated the phonon spectrum using the finite difference method   737443670   in conjunction with nondiagonal supercells   3148990562   with a   3520025664   coarse   2801857405  -point grid to sample the vibrational Brillouin zone.
 We have used Fourier interpolation to calculate the phonon frequencies at   2801857405  -vectors close to the   3807939749  -point and then used finite differences to calculate the corresponding speed of sound.
 2956137794
+section  4204243122
 We conclude by returning to dimensionless fundamental physical constants.
 Rewriting   2982880790   as
 2061211640
-\noindent we observe that the combination of two important dimensionless fundamental constants, the fine structure constant   2122471043   and the electron-to-proton mass ratio, interestingly gives the new dimensionless ratio,   3639707074  .
+begin  3119931285     3516303764  =\alpha  1719989662  ^  3179439190  , \label  2081675368   \end  3119931285   \noindent we observe that the combination of two important dimensionless fundamental constants, the fine structure constant   2122471043   and the electron-to-proton mass ratio, interestingly gives the new dimensionless ratio,   3639707074  .
 3659775179
+begin  2918974256    2825237811
+\bibitem  1683329786   N. W. Ashcroft and N. D. Mermin,   3527415215     1644553893  .
+\bibitem  1059019650   J. D. Barrow,   3456540747     712845570  .
+\bibitem  3098906468   P. K. Kovtun, D. T. Son and A. O. Starinets, Starinets, Viscosity in strongly interacting quantum field theories from black hole physics.   907026644     1483291246  , 111601   2187836140  .
+\bibitem  2434174357   J. Zaanen, Why the temperature is high.   2961157166     3129376116  , 512-513   2242221480  .
+\bibitem  2753040572   S. A. Hartnoll, Theory of universal incoherent metallic transport.   754910780     2829690860  , 54-61   3441705496  .
+\bibitem  2886051053   J. Zaanen, Planckian dissipation, minimal viscosity and the transport in cuprate strange metals.   3421224102     143990280  , 061   2880195781  .
+\bibitem  1519633118   C. Luciuk et al, Observation of quantum-limited spin transport in strongly interacting two-dimensional Fermi gases.   907026644     184809368  , 130405   1736930173  .
+\bibitem  3833287308   K. Behnia and A. Kapitulnik, A lower bound to the thermal diffusivity of insulators.   1011039289     3920620740  , 405702   2880195781  .
+\bibitem  404801493   J. Zaanen, Y. Liu, Y. W. Sun and K. Schalm, Holographic duality in condensed matter physics   3538203718  .
+\bibitem  4193495869   Y. Machida, N. Matsumoto, T. Isono and K. Behnia, Phonon hydrodynamics and ultrahigh–roomtemperature thermal conductivity in thin graphite.   4217805731  ,   3410263142  , 309   3144644987  .
+\bibitem  193502695   C. H. Mousatov and S. A. Hartnoll, On the Planckian bound for heat diffusion in insulators.   754910780     2307374606  , 579-584   3144644987  .
+\bibitem  611545548   K. Trachenko and V. V. Brazhkin, Minimal quantum viscosity from fundamental physical constants.   1861476406     143990280  , eaba3747   3144644987  .
+\bibitem  1726861542   L. D. Landau and E. M. Lifshitz, Statistical Physics   1443150595  .
+\bibitem  1548069857   J. C. Phillips, Ionicity of the chemical bond in crystals.   4049764846     2608863518  , 317-356   1750777066  .
+\bibitem  1039355494   B. Cui, A. Zaccone and D. Rodney, Nonaffine lattice dynamics with the Ewald method reveals strongly nonaffine elasticity of   2122471043  -quartz.
+3878879305     3954904140  , 224509   2880195781  .
+\bibitem  1842132624   V. V. Brazhkin, A. G. Lyapin and R. J. Hemley,   585680077     1080881514  , 231-253   868933280  .
+\bibitem  1406569268   V. V. Brazhkin and V. L. Solozhenko, Myths about new ultrahard phases: Why materials that are significantly superior to diamond in elastic moduli and hardness are impossible.   1431547386     2458363740  , 130901   2880195781  .
+3981275354   \bibitem  548632313   CRC Handbook of Chemistry and Physics   312357648  .
+\bibitem  1002950912   I. N. Frantsevich, F. F. Voronov and S. A. Bakuta,   1488990623     1328268802  .
+\bibitem  1313263013   Properties of Elements   332571412  .
+\bibitem  1741307499   B. Ratner,   3582155295     158678173  .
+\bibitem  4200553221   T. Iida and R. I. L. Guthrie,   409027704     291992467  .
+\bibitem  112027272   V. V. Brazhkin and K. Trachenko, What separates a liquid from a gas?   2098636511   65  1728101181  , 68   2479118364  .
+\bibitem  978409113   J. Frenkel,   1462901438     2788036758  .
+\bibitem  3701254054   J. P. Boon and S. Yip,   637121786     1292458171  .
+\bibitem  911000525   V. V. Brazhkin et al, ``Liquid-gas'' transition in the supercritical region: fundamental changes in particle dynamics.   907026644     1647131892  , 145901   3748832473  .
+\bibitem  869342695   K. Trachenko and V. V. Brazhkin, Collective modes and thermodynamics of the liquids state.   3860075299     591223399  , 016502   3373515703  .
+\bibitem  766603075   M. B. Gitis and I. G. Mikhailov, On calculation of the speed of sound in liquid metals.   3733908131     3280948835  , 556-561   3785324893     117052799  .
+\bibitem  3278800985   V. V. Brazhkin, Interparticle interaction in condensed media: some elements are ``more equal than others''.   1885297655     3174233100  , 369-376   67303470  .
+\bibitem  815200563   R. P. Dias and I. F. Silvera, Observation of the Wigner-Huntington transition to metallic hydrogen.   4217805731     2017938287  , 715-718   1736930173  .
+\bibitem  2663562327   P. Loubeyre, F. Occelli, and P. Dumas, Synchrotron infrared spectroscopic evidence of the probable transition to metal hydrogen.   2961157166     3767055419  , 631-635   3144644987  .
+\bibitem  1878535554   J. M. McMahon, M. A. Morales, C. Pierleoni, and D. M. Ceperley, The properties of hydrogen and helium under extreme conditions.   4049764846     186596447  , 1607-1653   2479118364  .
+\bibitem  1944776501   K. Nagao, H. Nagara, and S. Matsubara, Structures of hydorgen at megabar pressures.   1611755933     2027471788  , 2295-2298   1250293337  .
+\bibitem  3545604427   C. J. Pickard and R. J. Needs, Structure of phase III of solid hydrogen.   754910780     3411808200  , 473   608396365  .
+\bibitem  3510043134   S. Azadi, B. Monserrat, W. M. C. Foulkes, and R. J. Needs, Dissociation of High-Pressure Solid Molecular Hydrogen: A Quantum Monte Carlo and Anharmonic Vibrational Study.   907026644     901171070  , 165501   2641763042  .
+\bibitem  669522089   J. McMinis, R. C. Clay, D. Lee, and M. A. Morales, Molecular to Atomic Phase Transition in Hydrogen under High Pressure.   907026644     3281965051  , 105305   3441705496  .
+\bibitem  1072720895   V. V. Brazhkin and A. G. Lyapin, The inversion of relative shear rigidity in different material classes at megabar pressures.   196829743     472342684  , 10861-10867   868933280  .
+\bibitem  96043646   P. Bedaque and A. W. Steiner, Sound Velocity Bound and Neutron Stars.   907026644     3281965051  , 031103   3441705496  .
+\bibitem  2313256524   S. J. Clark, M. D. Segall, C. J. Pickard, P. J. Hasnip, M. I. J. Probert, K. Refson, and M. C. Payne, First principles methods using CASTEP   3396868272     2624895771  , 567-570   2187836140  .
+\bibitem  1046846665   J. P. Perdew, K. Burke, and M. Ernzerhof, Generalized gradient approximation made simple,   907026644     2118747843  , 3865-3868   775770188  .
+\bibitem  3436887669   K. Kunc and R. M. Martin, Ab Initio Force Constants of GaAs: A New Approach to Calculation of Phonons and Dielectric Properties.   907026644     3563527774  , 406-409   969767802  .
+\bibitem  3987526977   J. H. Lloyd-Williams and B. Monserrat, Lattice dynamics and electron-phonon coupling calculations using nondiagonal supercells.   1611755933     2830989996  , 184301   3441705496  .
+\end  2918974256
 890734121
+section  2023960343
 We are grateful to M. Baggioli, K. Behnia, S. Hartnoll, J. Zaanen and A. Zaccone for discussions.
 C.J.P. is supported by the Royal Society through a Royal Society Wolfson Research Merit Award and the EPSRC through Grant No. EP/P022596/1.
 K.
