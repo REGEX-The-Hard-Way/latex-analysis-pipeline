@@ -1,6 +1,11 @@
 %%{
   machine latex;
 
+display_math_begin = '\\[' @{n++; };
+display_math_end  = '\\]' @{n--; };
+display_math_body = any+ - (display_math_begin|display_math_end);
+display_math = '\\[' @{n=1;}  (display_math_begin|display_math_end|display_math_body)*    display_math_end  :> any when{!n};
+
 
 comment= '%' (any{0,100}-'\n') :> '\n';
 abstract_begin = '\\begin{abstract}' @{n++; };
