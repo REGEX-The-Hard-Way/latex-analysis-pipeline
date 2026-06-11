@@ -11,6 +11,8 @@ uint32_t seed0 = 0;
          t, (int)(te - ts), &in[ts - in]); \
   printf("  %u  ", token_id);
 
+#define EMIT_TOK(t) \
+  printf("%.*s",(int)(te-ts),&in[ts-in]);
 
 #define EMIT_BLOCK(t,prefix_len,suffix_len) \
   uint32_t token_id = murmur3_seeded_v2(seed0, &in[ts - in], te - ts); \
