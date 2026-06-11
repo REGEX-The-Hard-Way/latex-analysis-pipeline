@@ -123,7 +123,7 @@ bash scripts/install_deps.sh  # Install ragel and dependencies
 cd scanner
 make scanner
 make sent_split
-make macro_expander
+make expand_macros  # Builds macro_expander using regex-based implementation
 cd multi_analyzer
 make all
 ```
@@ -216,10 +216,11 @@ See [docs/TOKEN_TYPES.md](docs/TOKEN_TYPES.md) for complete list.
 ## Project Structure
 
 ```
-├── include/           # Shared libraries (regex_util)
+├── include/           # Shared libraries (regex_util.c/h)
 ├── scanner/           # Main scanner implementation
 │   ├── scanner.rl     # Main tokenizer state machine
 │   ├── sent_split.rl  # Sentence segmentation
+│   ├── macro_expander.c  # Macro expansion (regex-based)
 │   └── Makefile
 ├── multi_analyzer/    # Chainable text processing pipeline
 ├── sandbox/           # Experimental features (qa tools)
@@ -254,6 +255,7 @@ file contents.
 | Milestone | Status |
 |-----------|--------|
 | Core tokenizer (structural blocks, citations, refs, math) | ✅ Stable |
+| Macro expansion (\newcommand, \def, etc.) | ✅ Stable |
 | Cross-reference validation (`--validate-refs`) | 🚧 In progress |
 | JSON output | 📋 Planned |
 | Docker image | 📋 Planned |

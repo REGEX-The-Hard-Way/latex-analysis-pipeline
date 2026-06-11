@@ -12,7 +12,10 @@ sent_split:
 	$(CC) -DTEST -O2  sent_split.c -o sent_split.out
 
 macro_expander:
-	$(CC) -O2 newcommand.c -o macro_expander.out
+	ragel -m -G2 expand_macros.rl
+	$(CC) -O2 -I../include macro_expander.c ../include/regex_util.c -o macro_expander.out
+
+build_macros: macro_expander
 
 get_sample_data:
 	wget https://www.cs.cornell.edu/projects/kddcup/download/hep-th-2003.tar.gz --no-check-certificate
@@ -20,5 +23,6 @@ get_sample_data:
 	cd 2003 && find . -type f |grep -v tex$ |xargs -i mv "{}" "{}".tex 
 	gcc strip_non_ascii.c -o strip_non_ascii.out
 	bash pre-process-dataset.sh
+
 clean:
-	rm scanner.out sent_split.out scanner.c sent_split.c	
+	rm -f scanner.out sent_split.out scanner.c sent_split.c macro_expander.out

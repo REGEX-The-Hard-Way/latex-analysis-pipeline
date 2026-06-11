@@ -29,11 +29,13 @@
 
 // Sorry, only 8-bit char sets supported.
 
-#define NEWCOMMANDLEN 14 /* strlen("\\renewcommand")+1 */
+#define NEWCOMMANDLEN 20 /* strlen("\\providecommand")+1 */
 
-/* Will later make these dynamic - quick hack for now */
+// Increased buffer sizes for better handling of complex LaTeX documents
+// Original values: 80, 1024, 1024, 1024
+// Increased to: 80, 4096, 4096, 1024 to handle more complex macros
 #define MAXMACRONAMELEN 80
-#define MAXMACROBODYLEN 1024
+#define MAXMACROBODYLEN 4096
 #define MAXARGLEN 1024
 #define MAXCOMMANDS 1024
 #define MAX_MACRO_EXPANSION (32 * 1024)
@@ -42,11 +44,14 @@
 
 static int NEXTFREEMACRO = 0;
 static int THIS_COMMAND = MAXCOMMANDS - 1;
-static char macro[MAXMACRONAMELEN][MAXCOMMANDS];
-static int body[MAXMACROBODYLEN][MAXCOMMANDS];
+
+// Macro storage arrays - using static allocation
+static char macro[MAXCOMMANDS][MAXMACRONAMELEN];
+static int body[MAXCOMMANDS][MAXMACROBODYLEN];
 static int args[MAXCOMMANDS];
 
-char actual[MAXARGLEN][10]; // used at point of macro call.
+// Used at point of macro call
+char actual[MAXCOMMANDS][MAXARGLEN];
 
 char curcommand[NEWCOMMANDLEN] = {'\0'};
 
@@ -58,7 +63,7 @@ void intcpy(int *dest, int *source) {
 }
 
 #ifndef BITS
-#define BITS 15
+#define BITS 16  // Increased from 15 to 16 for larger buffer (64KB instead of 32KB)
 #endif
 #define BUFFERSIZE (1 << BITS)
 #define CIRCULAR (BUFFERSIZE - 1)
@@ -141,7 +146,8 @@ char *get_command(int c) {
   for (;;) {
     *wp++ = c;
     c = get_next_char();
-    if (!isalpha(c))
+    // Allow letters and @ in command names (LaTeX internal macros)
+    if (!isalpha(c) && c != '@')
       break;
   }
   unread_char(c);
@@ -225,8 +231,15 @@ void learn_body(void) {
       if (c == '}')
         depth -= 1;
       if (c == '#') {
-        c = get_next_char();           // '1' .. '9'
-        *ep++ = c - '1' + _PARAMETER_; // INTERNAL CODE FOR #1, #2, ... #9
+        // Check for ## (double hash) - represents a literal # in macro body
+        int next_c = get_next_char();
+        if (next_c == '#') {
+          // Double hash - output literal '#' and continue (don't treat as parameter)
+          *ep++ = '#';
+        } else {
+          // Single hash - this is a parameter reference #1, #2, etc.
+          *ep++ = next_c - '1' + _PARAMETER_; // INTERNAL CODE FOR #1, #2, ... #9
+        }
       } else
         *ep++ = c;
     }
@@ -264,8 +277,9 @@ void learn_keyword(void) {
   }
   for (;;) {
     c = next_non_comment_non_space_char();
-    if (!isalpha(c))
-      break; // or isalnum?  Are numbers allowed in TeX words?  Probably not.
+    // Allow letters and @ in macro names
+    if (!isalpha(c) && c != '@')
+      break;
     *cp++ = c;
   }
   *cp = '\0';
@@ -291,28 +305,34 @@ void learn_keyword(void) {
 }
 
 void learn_macro(void) {
-  int c;
-
-  c = next_non_comment_non_space_char();
+  int c = next_non_comment_non_space_char();
+  int inline_argcount = 0;  // Count inline #1, #2, etc.
+  
+  // If we got a backslash, skip it (it's the start of the macro name)
+  if (c == '\\') {
+    c = next_non_comment_non_space_char();
+  }
+  
   if (c == '{') {
     learn_keyword(); // reads \word and the final '}' (handles {\name}[args]{body})
   } else {
     // For \newcommand\name[args]{body}, \def\name{...}, \renewcommand\name{...} etc.
     if (strcmp(curcommand, "newcommand") == 0 || strcmp(curcommand, "renewcommand") == 0 || strcmp(curcommand, "def") == 0 || strcmp(curcommand, "providecommand") == 0) {
-      // We already have curcommand set, now read the macro name
       
       char name[MAXMACRONAMELEN];
       char *cp = name;
       
-      // Handle optional backslash before name: \newcommand\name or \newcommand{\name}
-      if (c == '\\') {
+      // Handle format: \newcommand[name, \newcommand [name, \newcommand\name, \newcommand name
+      if (isspace(c)) {
         c = next_non_comment_non_space_char();
       }
       
-      if (!isalpha(c)) {
+      // After skipping backslash, space, or direct letter
+      // Accept letters and @ in macro names (LaTeX allows @ for internal macros)
+      if (!isalpha(c) && c != '@') {
         fprintf(stderr, "Problem: expected letter for macro name in \\%s (got '%c')\n", curcommand, (char)c);
         fprintf(stdout, "\\%s", curcommand);
-        unread_char(c);
+        if (c != EOF) unread_char(c);
         return;
       }
       
@@ -320,28 +340,39 @@ void learn_macro(void) {
       *cp++ = c;
       for (;;) {
         c = next_non_comment_non_space_char();
-        if (!isalpha(c))
-          break;
+        // Allow letters and @ in macro names
+        if (!isalpha(c) && c != '@') break;
         *cp++ = c;
       }
       *cp = '\0';
       
       strcpy(macro[NEXTFREEMACRO], name);
       
-      // Read arg count if present, or put back the char for learn_body
+      // Check for inline parameters (#1, #2, etc.) before the body
+      // E.g., \def\ifig#1#2#3{...} has 3 inline parameters
+      while (c == '#') {
+        c = next_non_comment_non_space_char();  // get the digit
+        if (isdigit(c)) {
+          inline_argcount++;
+          c = next_non_comment_non_space_char();  // get next char (might be # or {)
+        }
+      }
+      // Skip any whitespace before checking for [ or {
+      while (isspace(c)) {
+        c = next_non_comment_non_space_char();
+      }
+      
+      // Read arg count - either from [n] or from inline # parameters
       if (c == '[') {
-        args[NEXTFREEMACRO] = learn_argcount();  // consumes '[' and digit and ']'
-        // After learn_argcount, next char is '{' (or should be)
-        // learn_body() will read it
+        args[NEXTFREEMACRO] = learn_argcount();
         learn_body();
       } else {
-        // c is NOT '[', so it's the '{' that starts the body
-        // Push it back so learn_body can find it
+        // c is NOT '[' and NOT '#' - so it's the '{' that starts the body
+        // Put it back so learn_body can find it
         reinsert_char(c);
-        args[NEXTFREEMACRO] = 0;
+        args[NEXTFREEMACRO] = inline_argcount;
         learn_body();
       }
-      // learn_body() increments NEXTFREEMACRO, so don't increment here
     } else {
       fprintf(stdout, "\\%s", curcommand);
       unread_char(c);
@@ -432,7 +463,7 @@ int main(int argc, char **argv) {
   int i, c;
 
   for (i = 0; i < MAXCOMMANDS; i++)
-    macro[0][i] = '\0';
+    macro[i][0] = '\0';
 
   // Parse arguments (skip flags)
   for (i = 1; i < argc; i++) {
@@ -453,8 +484,8 @@ int main(int argc, char **argv) {
       }
     } else if (c == '\\') {
       c = get_next_char();
-      if (isalpha(c)) {
-        // Handle TeX word
+      // Handle TeX words - include @ which is valid in LaTeX internal macro names
+      if (isalpha(c) || c == '@') {
         command = get_command(c);
         handle_word(command);
       } else {

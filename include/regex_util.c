@@ -3,6 +3,7 @@
 #include <regex.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 /* ------------------------------------------------------------------ */
 /* Internal: a small auto-growing byte buffer for building strings.    */
@@ -254,4 +255,51 @@ int regex_find(const char *input,
     if (start_out) *start_out = (size_t)m.rm_so;
     if (end_out)   *end_out   = (size_t)m.rm_eo;
     return 1;
+}
+
+/*
+ * regex_macro_expand: Expand LaTeX macros.
+ *
+ * macros[] contains strings in format "name\0replacement"
+ * The function looks for \name and replaces it with replacement.
+ */
+char *regex_macro_expand(const char *input,
+                         const char *macros[],
+                         int nmacros)
+{
+    if (!input || !macros || nmacros <= 0) return NULL;
+
+    buf_t out;
+    buf_init(&out);
+    const char *cursor = input;
+    
+    while (*cursor) {
+        int expanded = 0;
+        for (int i = 0; i < nmacros && macros[i]; i++) {
+            const char *name = macros[i];
+            const char *replacement = strchr(name, '\0') + 1;
+            int name_len = strlen(name);
+            
+            // Check for \name at current position  
+            if (cursor[0] == '\\' && 
+                strncmp(cursor + 1, name, name_len) == 0 &&
+                (cursor[1 + name_len] == '\0' || !isalpha(cursor[1 + name_len]))) {
+                if (!buf_append(&out, replacement, strlen(replacement))) goto fail;
+                cursor += 1 + name_len;
+                expanded = 1;
+                break;
+            }
+        }
+        
+        if (!expanded) {
+            if (!buf_append(&out, cursor, 1)) goto fail;
+            cursor++;
+        }
+    }
+
+    return buf_finish(&out);
+
+fail:
+    free(out.data);
+    return NULL;
 }

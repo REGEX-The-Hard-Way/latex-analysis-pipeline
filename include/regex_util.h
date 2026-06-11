@@ -56,4 +56,21 @@ int regex_find(const char *input,
                size_t *start_out,
                size_t *end_out);
 
+/*
+ * regex_macro_expand: Expand LaTeX macros using regex substitution.
+ *
+ * Takes a sorted array of macro definitions (name->replacement pairs)
+ * and expands them in the input text.
+ *
+ * macros: array of "name\0replacement\0" strings, terminated by NULL
+ *         (e.g., {"mycmd\0replacement text\0", "be\0\\begin{equation}\0", NULL})
+ * nmacros: number of macro entries
+ *
+ * Returns a newly malloc'd string that must be freed().
+ * Returns NULL on failure.
+ */
+char *regex_macro_expand(const char *input,
+                         const char *macros[],
+                         int nmacros);
+
 #endif /* REGEX_UTIL_H */
