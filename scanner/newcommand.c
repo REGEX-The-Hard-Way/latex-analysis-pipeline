@@ -179,52 +179,63 @@ int next_non_comment_non_space_char(void) {
 
 void learn_body(void) {
   int c;
-  c = next_non_comment_non_space_char();
+  // Don't skip space here - the '{' might have whitespace before it
+  c = get_next_char();
   if (c != '{') {
-    // single token.  Not yet handled.
-  } else {
-    // READ BODY UP TO AND INCLUDING FINAL '}' BUT NOT BEYOND
-    static int expansion[MAXMACROBODYLEN];
-    int *ep = expansion;
-    int c, depth = 0;
-
-    for (;;) {
-      c = get_next_char(); // We'll include comments in the macro expansion
-                           // *but* must be careful not to count braces within
-                           // comments
-      if (c == '\\') {
-        *ep++ = c;
-        c = get_next_char();
-        *ep++ = c;
-      } else if (c == '%') {
-        // Copy rest of comment
-        for (;;) {
-          *ep++ = c;
-          if (c == '\n')
-            break;
-          c = get_next_char();
-        }
-      } else {
-        // regular character - proess it normally:
-        if (c == '{')
-          depth += 1;
-        if ((c == '}') && (depth == 0))
-          break;
-        if (c == '}')
-          depth -= 1;
-        if (c == '#') {
-          c = get_next_char();           // '1' .. '9'
-          *ep++ = c - '1' + _PARAMETER_; // INTERNAL CODE FOR #1, #2, ... #9
-        } else
-          *ep++ = c;
+    // Single token or badly formatted. Try to recover.
+    if (isspace(c)) {
+      // Skip whitespace and look for '{'
+      c = next_non_comment_non_space_char();
+      if (c != '{') {
+        fprintf(stderr, "Problem: expected '{' for macro body\n");
+        return;
       }
+    } else {
+      fprintf(stderr, "Problem: expected '{' for macro body (got '%c')\n", (char)c);
+      return;
     }
-    *ep = '\0';
-
-    intcpy(body[NEXTFREEMACRO], expansion);
-    NEXTFREEMACRO = NEXTFREEMACRO + 1; // We now have all the pieces.
-    // Need to add check to see if we've busted the array bounds.
   }
+  // Read body up to and including final '}' but not beyond
+  static int expansion[MAXMACROBODYLEN];
+  int *ep = expansion;
+  int depth = 0;
+
+  for (;;) {
+    c = get_next_char(); // We'll include comments in the macro expansion
+                         // *but* must be careful not to count braces within
+                         // comments
+    if (c == '\\') {
+      *ep++ = c;
+      c = get_next_char();
+      *ep++ = c;
+    } else if (c == '%') {
+      // Copy rest of comment
+      for (;;) {
+        *ep++ = c;
+        if (c == '\n')
+          break;
+        c = get_next_char();
+      }
+    } else {
+      // regular character - process it normally:
+      if (c == '{')
+        depth += 1;
+      if ((c == '}') && (depth == 0))
+        break;
+      if (c == '}')
+        depth -= 1;
+      if (c == '#') {
+        c = get_next_char();           // '1' .. '9'
+        *ep++ = c - '1' + _PARAMETER_; // INTERNAL CODE FOR #1, #2, ... #9
+      } else
+        *ep++ = c;
+    }
+  }
+  *ep = '\0';
+
+  intcpy(body[NEXTFREEMACRO], expansion);
+  NEXTFREEMACRO = NEXTFREEMACRO + 1; // We now have all the pieces.
+  // Need to add check to see if we've busted the array bounds.
 }
 
 int learn_argcount(void) {
@@ -284,17 +295,16 @@ void learn_macro(void) {
 
   c = next_non_comment_non_space_char();
   if (c == '{') {
-    learn_keyword(); // reads \word and the final '}'
+    learn_keyword(); // reads \word and the final '}' (handles {\name}[args]{body})
   } else {
-    // For \def\name{...}, \renewcommand\name{...}, \providecommand\name{...} format
-    // and other badly formatted definitions
-    if (strcmp(curcommand, "def") == 0 || strcmp(curcommand, "renewcommand") == 0 || strcmp(curcommand, "providecommand") == 0) {
+    // For \newcommand\name[args]{body}, \def\name{...}, \renewcommand\name{...} etc.
+    if (strcmp(curcommand, "newcommand") == 0 || strcmp(curcommand, "renewcommand") == 0 || strcmp(curcommand, "def") == 0 || strcmp(curcommand, "providecommand") == 0) {
       // We already have curcommand set, now read the macro name
       
       char name[MAXMACRONAMELEN];
       char *cp = name;
       
-      // Handle optional backslash before name: \def\name or \def name
+      // Handle optional backslash before name: \newcommand\name or \newcommand{\name}
       if (c == '\\') {
         c = next_non_comment_non_space_char();
       }
@@ -315,24 +325,22 @@ void learn_macro(void) {
         *cp++ = c;
       }
       *cp = '\0';
-      // c is now '{', push it back so learn_body can find it
-      unread_char(c);
+      
       strcpy(macro[NEXTFREEMACRO], name);
       
-      // Read arg count if present
-      c = next_non_comment_non_space_char();
+      // Read arg count if present, or put back the char for learn_body
       if (c == '[') {
-        args[NEXTFREEMACRO] = learn_argcount();
-        c = next_non_comment_non_space_char(); // get char after ']'
-        if (c != '{') {
-          fprintf(stderr, "Problem: expected '{' after arg count in \\%s\n", curcommand);
-          return;
-        }
+        args[NEXTFREEMACRO] = learn_argcount();  // consumes '[' and digit and ']'
+        // After learn_argcount, next char is '{' (or should be)
+        // learn_body() will read it
+        learn_body();
       } else {
+        // c is NOT '[', so it's the '{' that starts the body
+        // Push it back so learn_body can find it
         reinsert_char(c);
         args[NEXTFREEMACRO] = 0;
+        learn_body();
       }
-      learn_body();
       // learn_body() increments NEXTFREEMACRO, so don't increment here
     } else {
       fprintf(stdout, "\\%s", curcommand);
@@ -354,7 +362,11 @@ void expand_macro(void) {
   // fprintf(stdout, "%% COMPLEX EXPANSION OF \\%s WITH %d ARGS\n",
   // macro[THIS_COMMAND], args[THIS_COMMAND]); // add %c? - do tests and check
   for (i = 0; i < argcount; i++) {
-    c = get_next_char();
+    // Skip whitespace before argument (handles \macro[1] {arg} with space)
+    do {
+      c = get_next_char();
+    } while (isspace(c));
+    
     if (c == '{') {
       // READ PARAM INTO actual[i]
       char *ap = actual[i];
@@ -368,14 +380,10 @@ void expand_macro(void) {
       *ap = '\0';
       // fprintf(stdout, "%% Got actual parameter #%d: %s\n", i+1, actual[i]);
     } else {
-      // parameter is a single atom - not handled!
-      fprintf(
-          stderr,
-          "Sorry - I expected a {} parameter (#%d) to \\%s but found '%c'\n",
-          i + 1, macro[THIS_COMMAND], c);
-      fprintf(stderr, "This is either a program bug or you need to edit the "
-                      "source text to add {}'s\n");
-      exit(1);
+      // Parameter is a single atom (not braced) - just take the next non-space char
+      actual[i][0] = c;
+      actual[i][1] = '\0';
+      // fprintf(stdout, "%% Got actual parameter #%d: %c (single atom)\n", i+1, c);
     }
   }
   // NOW EXPAND THE BODY, SUBSTITUTING ARGS 1..n AS NECESSARY
@@ -426,6 +434,14 @@ int main(int argc, char **argv) {
   for (i = 0; i < MAXCOMMANDS; i++)
     macro[0][i] = '\0';
 
+  // Parse arguments (skip flags)
+  for (i = 1; i < argc; i++) {
+    if (argv[i][0] == '-') {
+      // Skip flags
+      continue;
+    }
+  }
+
   for (;;) {
     c = get_next_char();
     if (c == EOF)
@@ -451,7 +467,7 @@ int main(int argc, char **argv) {
       fputc(c, stdout);
     }
   }
-  // clean up
+  
   exit(0);
   return (1);
 }
