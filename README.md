@@ -138,11 +138,18 @@ Configurable: add custom types via pattern definitions.
 ### Quick Start
 
 ```bash
+
 ```
 
 ### Build from Source
 
 ```bash
+   bash scripts/install_deps.sh
+   cd scanner
+   make scanner
+   make sent_split
+   make macro_expander 
+   make get_sample_data
 ```
 
 **Prerequisites:** Ragel [version], C compiler (GCC or Clang), Make
