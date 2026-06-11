@@ -34,6 +34,7 @@ main :=|*
 
   begin_doc => { EMIT("begin_doc"); };
   end_doc => { EMIT("end_doc"); };
+  bibitem               => { EMIT("bibitem"); };
   label               => { EMIT("label"); };
   frac               => { EMIT("frac"); };
   cite               => { EMIT("cite"); };

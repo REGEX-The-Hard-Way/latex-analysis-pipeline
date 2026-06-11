@@ -817,10 +817,10 @@ comma_body = any - (left_comma|right_comma);
 commas = '(' @{n=0;} (left_comma|right_comma|comma_body)* :> ')' when{!n};
 cite = '\\cite' (braces|brackets braces| braces braces) ;
 ref = '\\ref' braces;
-bibitem_start = '\\bibitem' ;
+bibitem_start = 'bibitem' ;
 bibitem_body = any+ - bibitem_start;
+bibitem = bibitem_start braces (bibitem_body)* :>> '\n\\' ;
 
-bibitem = bibitem_start braces (bibitem_body)*:> '\n' ;
 url = '\\url' braces | '\\href' braces;
 affiliation = '\\affiliation' braces; 
 usepackage = '\\usepackage' ( braces | brackets braces ); 
