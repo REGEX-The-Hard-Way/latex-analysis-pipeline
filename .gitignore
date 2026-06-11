@@ -48,7 +48,10 @@ Thumbs.db
 
 # Data directories (generated from sample data)
 2003/
-2003_errors/
+.poolside/
+scanner/2003_errors
+scanner/hep-th-2003.tar.gz
+testing/
 
 # Jupyter
 .ipynb_checkpoints/

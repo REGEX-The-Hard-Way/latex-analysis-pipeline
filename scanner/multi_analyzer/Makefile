@@ -2,12 +2,12 @@
 # This builds the chainable text processing pipeline
 
 CC = gcc
-CFLAGS = -O2 -g -Wall -Wextra -std=c99 -D_GNU_SOURCE
+CFLAGS = -O2 -g -Wall -Wextra -std=c99 -D_GNU_SOURCE -I../../include
 LDFLAGS =
 
 # Source files
 RL_SOURCES = src/multi_analyzer.rl
-C_SOURCES = src/main.c src/regex_util.c src/porter2.c
+C_SOURCES = src/main.c src/porter2.c ../../include/regex_util.c
 
 # Generated files (from .rl)
 GENERATED = src/multi_analyzer.c

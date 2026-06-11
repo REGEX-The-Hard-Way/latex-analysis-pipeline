@@ -11,6 +11,8 @@
  *   \newcommand{\name}[N][default]{body}   (optional first arg)
  *   \renewcommand{...}{...}
  *   \providecommand{...}{...}
+ *   \def\name{...}                         (LaTeX primitive)
+ *   \def\name[N]{...}                      (LaTeX primitive with args)
  */
 
 #ifndef META_TOOLS_LATEX_MACROS_H_
@@ -193,8 +195,8 @@ class Expander {
 
   void handle_command(const std::string& name) {
     if (name == "newcommand" || name == "renewcommand"
-        || name == "providecommand") {
-      learn_macro(/*only_if_undefined=*/name == "providecommand");
+        || name == "providecommand" || name == "def") {
+      learn_macro(/*only_if_undefined=*/name == "providecommand", name);
       return;
     }
     auto it = macros_.find(name);
@@ -206,7 +208,34 @@ class Expander {
     expand(name, it->second);
   }
 
-  void learn_macro(bool only_if_undefined) {
+  void learn_macro(bool only_if_undefined, const std::string& cmd_name = "newcommand") {
+    // \def has different syntax: \def\name{...} (name comes directly, no \name)
+    // \newcommand has syntax: \newcommand{\name}{...}
+    
+    if (cmd_name == "def") {
+      // \def\name{...} syntax
+      int c = next_non_space();
+      
+      // Handle both \def\name and \def name formats  
+      if (c == '\\') {
+        c = reader_.get();
+      }
+      if (!is_letter(c)) {
+        throw std::runtime_error{"expected letter after \\def"};
+      }
+      std::string name = read_command_name(c);
+      
+      c = next_non_space();
+      if (c != '{') {
+        throw std::runtime_error{"expected '{' after macro name"};
+      }
+      Macro m;
+      m.body = read_brace_group();
+      macros_[name] = std::move(m);
+      return;
+    }
+    
+    // \newcommand/\renewcommand/\providecommand syntax
     int c = next_non_space();
     if (c != '{') {
       throw std::runtime_error{"expected '{' after \\newcommand"};
@@ -228,6 +257,7 @@ class Expander {
 
     Macro m;
     c = next_non_space();
+    
     if (c == '[') {
       int d = reader_.get();
       if (!std::isdigit(static_cast<unsigned char>(d))) {

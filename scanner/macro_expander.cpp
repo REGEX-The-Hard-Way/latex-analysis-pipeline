@@ -1,7 +1,7 @@
 /**
  * @file macro_expander.cpp
  *
- * Expands LaTeX \newcommand / \renewcommand / \providecommand macros in
+ * Expands LaTeX \newcommand / \renewcommand / \providecommand / \def macros in
  * a UTF-8 text stream so downstream tools that don't run TeX can still
  * see fully-resolved input. Implementation lives in latex_macros.h.
  *
@@ -9,8 +9,9 @@
  *   \newcommand{\name}{body}
  *   \newcommand{\name}[N]{body}
  *   \newcommand{\name}[N][default]{body}   (optional first arg)
- *   \renewcommand{...}{...}
- *   \providecommand{...}{...}
+ *   \renewcommand{\name}{body}
+ *   \providecommand{\name}{body}
+ *   \def\name{body}                         (LaTeX primitive)
  *
  * Usage:
  *   macro-expander input.tex [output.tex]

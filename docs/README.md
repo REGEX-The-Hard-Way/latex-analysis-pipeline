@@ -8,6 +8,7 @@ Welcome to the documentation for the LaTeX Analysis Pipeline.
 - **[Architecture Guide](ARCHITECTURE.md)** - Detailed architecture documentation
 - **[Token Types Reference](TOKEN_TYPES.md)** - Complete list of supported token types
 - **[Issues Analysis](ISSUES_ANALYSIS.md)** - GitHub issues analysis and TODO list
+- **[Issues Index](issues/README.md)** - Individual issue tracking
 
 ## Getting Started
 
@@ -42,7 +43,8 @@ make scanner
 │   ├── README.md           - Documentation index
 │   ├── ARCHITECTURE.md     - Architecture guide
 │   ├── TOKEN_TYPES.md      - Token types reference
-│   └── ISSUES_ANALYSIS.md  - Issues analysis
+│   ├── ISSUES_ANALYSIS.md  - Issues analysis
+│   └── issues/             - Individual issue files
 ├── tests/
 │   ├── README.md           - Test documentation
 │   └── test_issues.py      - Test cases
