@@ -12,7 +12,7 @@ sent_split:
 	$(CC) -DTEST -O2  sent_split.c -o sent_split.out
 
 macro_expander:
-	g++ macro_expander.cpp -o macro_expander.out 
+	$(CC) -O2 newcommand.c -o macro_expander.out
 
 get_sample_data:
 	wget https://www.cs.cornell.edu/projects/kddcup/download/hep-th-2003.tar.gz --no-check-certificate
