@@ -1,14 +1,27 @@
 # latex-analysis-pipeline
 
-A high-performance, hierarchical LaTeX tokenizer and cross-reference validator.
-Handles context-sensitive grammars with arbitrary nesting depth. Processes
-500+ levels of nested environments in **4 milliseconds**.
-
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)]()
 [![Version](https://img.shields.io/badge/version-0.1.0-blue)]()
 
----
+A high-performance, hierarchical LaTeX tokenizer and cross-reference validator.
+Handles context-sensitive grammars with arbitrary nesting depth. Processes
+500+ levels of nested environments in **4 milliseconds**.
+
+## Quick Start
+
+```bash
+# Build the scanner
+cd scanner
+make scanner
+make sent_split
+
+# Tokenize a LaTeX file
+./scanner.out sound1.tex tex > sidecar.tok
+
+# Split into sentences
+./sent_split.out < sidecar.tok > clean.sent
+```
 
 ## What This Does
 
@@ -17,14 +30,6 @@ everything: every `\cite`, every `\ref`, every `\begin{equation}`, every
 nested `(...)`, with exact byte offsets and hierarchical relationships.
 
 It turns LaTeX from opaque text into a **queryable token tree**.
-
-
-```bash
-$cd scanner; 
-make scanner
-make sent_split
-./scanner.out sound1.tex tex$ 2> sidecar.tok | ./sent_split.out > clean.sent
-```
 
 ## Why This Matters
 
@@ -102,22 +107,95 @@ abstract       = '\\begin{abstract}' @{n=1;}
 Handles arbitrary nesting of identical environments without recursion
 in the C call stack.
 
+## Installation
+
+### Prerequisites
+
+- GCC or Clang
+- Ragel (for building from source)
+- Make
+- Python 3 (for validation scripts)
+
+### Build from Source
+
+```bash
+bash scripts/install_deps.sh  # Install ragel and dependencies
+cd scanner
+make scanner
+make sent_split
+make macro_expander
+cd multi_analyzer
+make all
+```
+
+## Usage
+
+### Basic Tokenization
+
+```bash
+# Single file
+./scanner.out input.tex tex > output.tok
+
+# Directory with pattern matching
+./scanner.out /path/to/docs '.*\.tex$' > output.tok
+```
+
+### Sentence Segmentation
+
+```bash
+cat output.tok | ./sent_split.out > output.sent
+```
+
+### Cross-Reference Validation
+
+```bash
+python resolve_ref_labels.py
+```
+
+Exit codes: `0` = clean, `1` = warnings, `2` = errors found
+
+### Multi-Analyzer Pipeline
+
+The `multi_analyzer` provides a chainable text processing pipeline:
+
+```bash
+# Tokenize
+echo "Hello world" | ./multi_analyzer.out --tokenize
+
+# Tokenize + lowercase
+echo "Hello World" | ./multi_analyzer.out --tokenize --lower
+
+# Full pipeline: tokenize + normalize + stem
+echo "_running running" | ./multi_analyzer.out --tokenize --lower --stem
+```
+
 ## Output Format
 
 Each token is a structured record:
 
 ```
-{filepath:/path/to/file.tex,
- filepath_id:3725270426,
- token_id:4107091439,
- parent_id:2511937068,      ← Links to containing block or file
- offset:1,                  ← Byte offset in original file
- length:83,                 ← Span length in bytes
- type:parens,               ← Semantic token type
- tok:(((...)))}              ← Raw matched text
+{filepath:/path/to/file.tex, filepath_id:1425541370, token_id:3328404677,
+ parent_id:1425541370, offset:1, length:71, type:equation,
+ tok:\begin{equation}\n \label{test}\n  \frac{x}{2}=\\alpha(y)\n\end{equation}}
+
+{filepath:/path/to/file.tex, filepath_id:1425541370, token_id:1585187646,
+ parent_id:3328404677, offset:18, length:12, type:label,
+ tok:\label{test}}
+
+{filepath:/path/to/file.tex, filepath_id:1425541370, token_id:302638469,
+ parent_id:3328404677, offset:17, length:11, type:frac,
+ tok:\frac{x}{2}}
+
+{filepath:/path/to/file.tex, filepath_id:1425541370, token_id:20558579,
+ parent_id:3328404677, offset:52, length:3, type:parens,
+ tok:(y)}
 ```
 
-### Supported Token Types
+The `\label`, `\frac`, and `(y)` are all children of the `equation` block
+(`parent_id: 3328404677`). The `(y)` token is itself a block whose interior
+could be further decomposed if it contained recognized patterns.
+
+## Supported Token Types
 
 | Type | Example |
 |------|---------|
@@ -133,88 +211,24 @@ Each token is a structured record:
 
 Configurable: add custom types via pattern definitions.
 
-## Installation
+See [docs/TOKEN_TYPES.md](docs/TOKEN_TYPES.md) for complete list.
 
-### Quick Start
-
-```bash
+## Project Structure
 
 ```
-
-### Build from Source
-
-```bash
-   bash scripts/install_deps.sh
-   cd scanner
-   make scanner
-   make sent_split
-   make macro_expander 
-   make get_sample_data
+├── include/           # Shared libraries (regex_util)
+├── scanner/           # Main scanner implementation
+│   ├── scanner.rl     # Main tokenizer state machine
+│   ├── sent_split.rl  # Sentence segmentation
+│   └── Makefile
+├── multi_analyzer/    # Chainable text processing pipeline
+├── sandbox/           # Experimental features (qa tools)
+├── scripts/           # Installation and utility scripts
+├── benchmarks/        # Performance benchmarks
+└── docs/              # Documentation
+    ├── ARCHITECTURE.md
+    └── TOKEN_TYPES.md
 ```
-
-**Prerequisites:** Ragel [version], C compiler (GCC or Clang), Make
-
-### Docker
-
-```bash
-```
-
-## Usage
-
-### Basic Tokenization
-
-```bash
-```
-
-### Cross-Reference Validation
-
-```bash
-```
-
-Exit codes: `0` = clean, `1` = warnings, `2` = errors found
-
-### JSON Output
-
-```bash
-./scanner --format=json input.tex > output.json
-```
-
-### Incremental Mode
-
-```bash
-```
-
-
-**Input (`sample.tex`):**
-```latex
-\begin{equation}
- \label{test}
-  \frac{x}{2} = \alpha(y)
-\end{equation}
-```
-
-**Output (`.tok`):**
-```
-{filepath:sample.tex, filepath_id:1425541370, token_id:3328404677,
- parent_id:1425541370, offset:1, length:71, type:equation,
- tok:\begin{equation}\n \label{test}\n  \frac{x}{2}=\\alpha(y)\n\end{equation}}
-
-{filepath:sample.tex, filepath_id:1425541370, token_id:1585187646,
- parent_id:3328404677, offset:18, length:12, type:label,
- tok:\label{test}}
-
-{filepath:sample.tex, filepath_id:1425541370, token_id:302638469,
- parent_id:3328404677, offset:17, length:11, type:frac,
- tok:\frac{x}{2}}
-
-{filepath:sample.tex, filepath_id:1425541370, token_id:20558579,
- parent_id:3328404677, offset:52, length:3, type:parens,
- tok:(y)}
-```
-
-The `\label`, `\frac`, and `(y)` are all children of the `equation` block
-(`parent_id: 3328404677`). The `(y)` token is itself a block whose interior
-could be further decomposed if it contained recognized patterns.
 
 ## Design Principles
 
@@ -223,7 +237,6 @@ Containment is explicit. No separate AST construction required.
 
 **Error-tolerant by design.** Malformed input doesn't crash the tokenizer.
 Well-formed regions parse correctly regardless of errors elsewhere.
-Unmatched delimiters are detected in a separate pass with exact byte offsets.
 
 **Modular output.** `.tok` and `.sent` files are independent sidecars.
 Regenerate either from source. Join on offset ranges. No monolithic format.
@@ -236,47 +249,18 @@ reprocessing.
 allocation on the hot path. The tokenizer operates directly on mapped
 file contents.
 
-## Transfer to Code Analysis
-
-This architecture is not LaTeX-specific. The same approach—hierarchical
-tokenization, parent_id chains, exact source locations—applies to:
-
-- Configuration languages (HCL, YAML)
-- Infrastructure-as-code (Dockerfiles, Terraform)
-- Query languages (SQL, Elasticsearch DSL)
-- Any language with nested, context-sensitive structures
-
-The same architecture applied to Dockerfile security analysis.
-
-## What This Enables
-
-- **Cross-reference validation:** Every `\ref` checked against defined `\label`s
-- **Citation graph construction:** Directed graph of `\cite` relationships
-- **Structural queries:** "All `\ref` tokens inside `abstract` blocks"
-- **Sentence-level alignment:** NLP constituency parses joined to LaTeX offsets
-- **Incremental reprocessing:** Re-tokenize only changed document regions
-
 ## Roadmap
 
 | Milestone | Status |
 |-----------|--------|
 | Core tokenizer (structural blocks, citations, refs, math) | ✅ Stable |
 | Cross-reference validation (`--validate-refs`) | 🚧 In progress |
-| JSON output |  |
-| Docker image |  |
+| JSON output | 📋 Planned |
+| Docker image | 📋 Planned |
 | Incremental mode (`--watch`) | 📋 Planned |
 | Compliance rule engine | 📋 Planned |
 | Corpus-wide analytics | 📋 Planned |
 | Sentence-level offset alignment | 🔬 Research |
-
-## Invariants
-
-Maintained by construction and verified by test suite:
-
-1. **Span containment:** Child tokens are fully contained within parent byte ranges
-2. **Non-overlap at same level:** No two sibling tokens have overlapping ranges
-3. **Monotonic offsets:** Tokens within a block appear in ascending order
-4. **Hash consistency:** Same LaTeX command maps to same hash ID across documents
 
 ## Contributing
 
@@ -285,3 +269,7 @@ Issues and pull requests welcome. Before opening a PR:
 1. Run the test suite: `make test`
 2. Add tests for new functionality
 3. Ensure the arXiv corpus pass rate doesn't regress
+
+## License
+
+MIT License - see [LICENSE](LICENSE) file for details.

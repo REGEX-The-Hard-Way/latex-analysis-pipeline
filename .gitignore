@@ -1,2 +1,60 @@
-sent_split.c
+# Generated Ragel files
 scanner.c
+sent_split.c
+scanner/multi_analyzer/src/multi_analyzer.c
+
+# Built binaries
+scanner.out
+sent_split.out
+macro_expander.out
+multi_analyzer.out
+strip_non_ascii.out
+scanner/scanner.c
+scanner/sent_split.c
+
+# Test and temporary files
+test_regex_util.c
+*.tmp
+*.temp
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.Python
+*.egg-info/
+.eggs/
+*.egg
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Object files
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dylib
+
+# Data directories (generated from sample data)
+2003/
+2003_errors/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Upstream data (snapshot from other repo)
+issues_list.json
+
+# Upstream data (snapshot from other repo)
+issues_list.json

@@ -9,6 +9,9 @@
 
 #include <stddef.h>
 
+/* Include the shared regex_util from the common location */
+#include "../include/regex_util.h"
+
 /* Analyzer function type */
 typedef void (*analyzer_fn)(const char *input, int len,
                             void (*emit)(const char *tok, int len, void *ctx),

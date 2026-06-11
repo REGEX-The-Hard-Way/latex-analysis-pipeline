@@ -3,7 +3,6 @@
 #include "globals.h"
 #include <assert.h>
 #include <ctype.h>
-#include <err.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <ftw.h>
@@ -11,11 +10,8 @@
 #include <regex.h>
 #include <stdint.h>
 #include <stdio.h>
-#include <stdio.h> /* printf */
 #include <stdlib.h>
-#include <stdlib.h> /* atoi, malloc */
 #include <string.h>
-#include <string.h> /* strcpy */
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <sys/time.h>
