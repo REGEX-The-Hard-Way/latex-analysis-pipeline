@@ -63,7 +63,7 @@ void intcpy(int *dest, int *source) {
 }
 
 #ifndef BITS
-#define BITS 16  // Increased from 15 to 16 for larger buffer (64KB instead of 32KB)
+#define BITS 18  // Increased from 15 to 18 for larger buffer (256KB instead of 32KB)
 #endif
 #define BUFFERSIZE (1 << BITS)
 #define CIRCULAR (BUFFERSIZE - 1)
@@ -205,19 +205,39 @@ void learn_body(void) {
   static int expansion[MAXMACROBODYLEN];
   int *ep = expansion;
   int depth = 0;
+  int body_len = 0;
 
   for (;;) {
     c = get_next_char(); // We'll include comments in the macro expansion
                          // *but* must be careful not to count braces within
                          // comments
+    
+    // Check for buffer overflow
+    if (body_len >= MAXMACROBODYLEN - 1) {
+      fprintf(stderr, "Warning: macro body too large, truncating\n");
+      // Skip to end of body
+      int brace_depth = depth;
+      for (;;) {
+        if (c == '{') brace_depth++;
+        if (c == '}') {
+          if (brace_depth == 0) break;
+          brace_depth--;
+        }
+        c = get_next_char();
+      }
+      break;
+    }
+    
     if (c == '\\') {
       *ep++ = c;
       c = get_next_char();
       *ep++ = c;
+      body_len += 2;
     } else if (c == '%') {
       // Copy rest of comment
       for (;;) {
         *ep++ = c;
+        body_len++;
         if (c == '\n')
           break;
         c = get_next_char();
@@ -236,17 +256,23 @@ void learn_body(void) {
         if (next_c == '#') {
           // Double hash - output literal '#' and continue (don't treat as parameter)
           *ep++ = '#';
+          body_len++;
         } else {
           // Single hash - this is a parameter reference #1, #2, etc.
           *ep++ = next_c - '1' + _PARAMETER_; // INTERNAL CODE FOR #1, #2, ... #9
+          body_len += 1;
         }
-      } else
+      } else {
         *ep++ = c;
+        body_len++;
+      }
     }
   }
   *ep = '\0';
 
-  intcpy(body[NEXTFREEMACRO], expansion);
+  if (body_len < MAXMACROBODYLEN - 1) {
+    intcpy(body[NEXTFREEMACRO], expansion);
+  }
   NEXTFREEMACRO = NEXTFREEMACRO + 1; // We now have all the pieces.
   // Need to add check to see if we've busted the array bounds.
 }
@@ -363,9 +389,43 @@ void learn_macro(void) {
       }
       
       // Read arg count - either from [n] or from inline # parameters
+      // Note: [ is only an argument specification if followed by a digit and ]
       if (c == '[') {
-        args[NEXTFREEMACRO] = learn_argcount();
-        learn_body();
+        // Peek ahead to see if this is really [n] format
+        int next = get_next_char();
+        if (isdigit(next)) {
+          // This is an argument specification [n]
+          // Put both back in reverse order
+          reinsert_char(c);  // '['
+          reinsert_char(next);  // digit
+          args[NEXTFREEMACRO] = learn_argcount(); // reads [digit] and the final ']'
+          // After [n], there might be inline parameters like #2
+          c = get_next_char();
+          while (c == '#') {
+            c = get_next_char();  // get the digit
+            if (isdigit(c)) {
+              inline_argcount++;  // increment for each #n found
+              c = get_next_char();  // get next char
+            }
+          }
+          // Skip any whitespace before checking for {
+          while (isspace(c)) {
+            c = get_next_char();
+          }
+          // Put back the char (should be '{') and call learn_body
+          reinsert_char(c);
+          // Note: total arg count is the max of [n] and inline # count
+          if (inline_argcount > args[NEXTFREEMACRO]) {
+            args[NEXTFREEMACRO] = inline_argcount;
+          }
+          learn_body();
+        } else {
+          // Not [n] format - [ is part of the body, put everything back
+          reinsert_char(next);
+          reinsert_char(c);  // the original c (should be '[')
+          args[NEXTFREEMACRO] = inline_argcount;
+          learn_body();
+        }
       } else {
         // c is NOT '[' and NOT '#' - so it's the '{' that starts the body
         // Put it back so learn_body can find it

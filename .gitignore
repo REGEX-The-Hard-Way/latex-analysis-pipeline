@@ -12,6 +12,7 @@ strip_non_ascii.out
 scanner/scanner.c
 scanner/sent_split.c
 scanner/newcommand.out
+scanner/expand_macros.c
 
 # Test and temporary files
 test_regex_util.c
