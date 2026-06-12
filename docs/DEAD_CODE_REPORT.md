@@ -101,10 +101,6 @@ Generated 2026-06-12 from a full project audit.
 - **Reality:** The Makefile has `macro_expander` target (not `expand_macros`), and it references a non-existent source file `expand_macros.rl`.
 - **Action:** Fix the Makefile `macro_expander` target to actually work, or remove it if `macro_expander.c` is the canonical macro expander.
 
-### Duplicate `.gitignore` entry
-- `issues_list.json` appears twice in `.gitignore` (lines 62 and 65).
-- **Action:** Remove the duplicate.
-
 ---
 
 ## 6. Upstream Issue Mirror Files (22 files)
