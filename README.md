@@ -336,7 +336,7 @@ file contents.
 | Sentence segmentation | ✅ Stable |
 | Multi-analyzer pipeline (tokenize → normalize → stem) | ✅ Stable |
 | Cross-reference validation (`\ref` → `\label`) | ✅ Functional |
-| JSON output format | 📋 Planned |
+| JSON output format |  ✅ Functional |
 | Docker image | 📋 Planned |
 | Incremental mode (`--watch`) | 📋 Planned |
 | Compliance rule engine | 📋 Planned |
