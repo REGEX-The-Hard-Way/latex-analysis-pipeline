@@ -19,7 +19,7 @@ A gold-standard LaTeX processor must satisfy five criteria:
 | **Correctness** | Respects TeX semantics: expansion order, catcodes, grouping | C (macro expander is line-at-a-time, not token-at-a-time) |
 | **Performance** | Processes a million-document corpus in minutes, not hours | A (4ms for 500-level nesting, memory-mapped I/O) |
 | **Robustness** | Graceful degradation on malformed input, never crashes | B+ (error-tolerant, but no formal fuzzing) |
-| **Interoperability** | Standard output formats, Docker, library API, CI/CD | D (no JSON output, no Docker, no library API, no CI) |
+| **Interoperability** | Standard output formats, Docker, library API, CI/CD | D (no Docker, no library API, no CI) |
 
 Current overall grade: **C+ → B-**. The path to A+ is defined below.
 
