@@ -36,11 +36,6 @@ Generated 2026-06-12 from a full project audit.
 - **Why dead:** Unfinished. Comments say "Macro expansion would go here…" and only counts definitions. Uses C++ (`iostream`, `using namespace std`) which is inconsistent with the rest of the C codebase.
 - **Action:** Either complete the implementation or delete. If kept as research, move to a `research/` or `experiments/` directory with a README explaining its status.
 
-### `sandbox/statechart.rl` (117 lines)
-- **Status:** A Ragel "atoi" demo (string-to-integer parser).
-- **Why dead:** This is a Ragel tutorial example copied from Ragel documentation. It has zero connection to LaTeX processing.
-- **Action:** Delete. This appears to be a learning artifact.
-
 ---
 
 ## 2. Duplicate Scripts
@@ -54,20 +49,6 @@ Generated 2026-06-12 from a full project audit.
 - **Status:** Shell wrapper that runs `make` in the `multi_analyzer/` directory.
 - **Why dead:** The `scanner/multi_analyzer/Makefile` already handles the build. This script adds no value beyond what `cd multi_analyzer && make` does.
 - **Action:** Delete, or merge its diagnostic output into the Makefile as an `info` target.
-
----
-
-## 3. Incomplete / Stub Implementations
-
-### `scanner/read_tok.py` (142 lines)
-- **Status:** Ad-hoc analysis script for `.tok` output.
-- **Why dead:** Contains `exit()` calls halfway through the file (lines 59, 84), rendering large sections unreachable. References `nltk.tokenize.mwe` and `tqdm` which are not in the project's documented dependencies. References a `2003/` directory that doesn't match the project's `scanner/2003/` structure. Has commented-out code blocks.
-- **Action:** Either fix and move to `tests/` or `scripts/`, or delete. The functionality overlaps with `tests/validation_tests.py`.
-
-### `scanner/resolve_ref_labels.py` (74 lines)
-- **Status:** Hard-coded reference resolver for `sidecar.tok`.
-- **Why dead:** References `sidecar.tok` as a hard-coded path. Functionality is superseded by `tests/validation_tests.py` which is cleaner, documented, and accepts command-line arguments.
-- **Action:** Delete. `tests/validation_tests.py` is the maintained replacement.
 
 ---
 
