@@ -4,26 +4,22 @@ int n;
 uint32_t seed0 = 0;
 #define EMIT(t) \
   uint32_t token_id = murmur3_seeded_v2(seed0, &in[ts - in], te - ts); \
-  fprintf(stderr, "{<filepath:%s>,filepath_id:%lu,token_id:%lu,parent_id:%lu,offset:%d," \
+  printf("{<filepath:%s>,filepath_id:%lu,token_id:%lu,parent_id:%lu,offset:%d," \
          "length:%d,type:%s,<tok:%.*s>}\n", \
          filename, (unsigned long)filepath_id, (unsigned long)token_id, \
          (unsigned long)parent_id, prefix_len + (int)(ts - in), (int)(te - ts), \
-         t, (int)(te - ts), &in[ts - in]); \
-  printf("  %u  ", token_id);
-
-#define EMIT_TOK(t) \
-  printf("%.*s",(int)(te-ts),&in[ts-in]);
+         t, (int)(te - ts), &in[ts - in]); 
 
 #define EMIT_BLOCK(t,prefix_len,suffix_len) \
   uint32_t token_id = murmur3_seeded_v2(seed0, &in[ts - in], te - ts); \
-  fprintf(stderr, "{<filepath:%s>,filepath_id:%lu,token_id:%lu,parent_id:%lu,offset:%d," \
+  printf("{<filepath:%s>,filepath_id:%lu,token_id:%lu,parent_id:%lu,offset:%d," \
          "length:%d,type:%s,<tok:%.*s>}\n", \
          filename, (unsigned long)filepath_id, (unsigned long)token_id, \
          (unsigned long)parent_id, prefix_len + (int)(ts - in), (int)(te - ts), \
          t, (int)(te - ts), &in[ts - in]); \
-  printf("\n\n  %u  \n\n", token_id); \
-  scanner(&in[ts + prefix_len - in], te - (prefix_len + suffix_len) - ts,filename, filepath_id, token_id, prefix_len, suffix_len);
-
+  if((int)(te-(prefix_len+suffix_len)-ts)>0){ \
+  	scanner(&in[ts + prefix_len - in], te - (prefix_len + suffix_len) - ts,filename, filepath_id, token_id, prefix_len, suffix_len); \
+  }
 %%{
   machine strings;
   include latex "latex.rl";
@@ -34,7 +30,7 @@ main :=|*
 
   begin_doc => { EMIT("begin_doc"); };
   end_doc => { EMIT("end_doc"); };
-  bibitem               => { EMIT("bibitem"); };
+  bibitem => { EMIT("bibitem"); };
   label               => { EMIT("label"); };
   frac               => { EMIT("frac"); };
   cite               => { EMIT("cite"); };
@@ -221,6 +217,7 @@ tcolorbox => { EMIT_BLOCK("tcolorbox", 17 , 15 ); };
 teo => { EMIT_BLOCK("teo", 11 , 9 ); };
 theacknowledgments => { EMIT_BLOCK("theacknowledgments", 26 , 24 ); };
 thebibliography => { EMIT_BLOCK("thebibliography", 23 , 21 ); };
+
 theo => { EMIT_BLOCK("theo", 12 , 10 ); };
 theorem => { EMIT_BLOCK("theorem", 15 , 13 ); };
 thm => { EMIT_BLOCK("thm", 11 , 9 ); };
@@ -238,13 +235,8 @@ widetext => { EMIT_BLOCK("widetext", 16 , 14 ); };
 wrapfigure => { EMIT_BLOCK("wrapfigure", 18 , 16 ); };
 
 
-  sc_prose           => { printf("%.*s", (int)(te-ts), ts); };
 
-  [ \t]+             => { printf(" "); };
-  '\n'               => { printf("\n"); };
-  '\r' '\n'?         => { printf("\n"); };
-
-  any                => { printf("%c", *ts); };
+  any                => { };
 *| ;
 }%%
 
