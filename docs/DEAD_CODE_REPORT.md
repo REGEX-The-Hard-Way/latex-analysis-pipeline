@@ -103,15 +103,6 @@ Generated 2026-06-12 from a full project audit.
 
 ---
 
-## 6. Upstream Issue Mirror Files (22 files)
-
-### `docs/issues/issue_002.md` through `docs/issues/issue_031.md`
-- **Status:** 22 markdown files that mirror individual GitHub issues from the upstream `allofphysicsgraph/latex-in-arxiv` repository.
-- **Why dead:** These contain verbatim issue descriptions from a different repository's issue tracker. They are not actionable within this project. The summary is already in `docs/ISSUES_ANALYSIS.md`.
-- **Action:** Delete all 22 files and the `docs/issues/` directory. The analysis in `docs/ISSUES_ANALYSIS.md` is the consolidated, useful version.
-
----
-
 ## 7. Unused/Dead Code Paths in Active Files
 
 ### `macro_expander.c` — unused global variables
