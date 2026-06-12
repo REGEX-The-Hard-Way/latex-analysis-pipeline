@@ -1,23 +1,33 @@
 #include "globals.h"
-
+#include "file_mmap.h"
 int n;
 uint32_t seed0 = 0;
+
+
 #define EMIT(t) \
   uint32_t token_id = murmur3_seeded_v2(seed0, &in[ts - in], te - ts); \
-  printf("{<filepath:%s>,filepath_id:%lu,token_id:%lu,parent_id:%lu,offset:%d," \
-         "length:%d,type:%s,<tok:%.*s>}\n", \
-         filename, (unsigned long)filepath_id, (unsigned long)token_id, \
-         (unsigned long)parent_id, prefix_len + (int)(ts - in), (int)(te - ts), \
-         t, (int)(te - ts), &in[ts - in]); 
-
-#define EMIT_BLOCK(t,prefix_len,suffix_len) \
-  uint32_t token_id = murmur3_seeded_v2(seed0, &in[ts - in], te - ts); \
-  printf("{<filepath:%s>,filepath_id:%lu,token_id:%lu,parent_id:%lu,offset:%d," \
+  char emit_buf[(int)(te-ts)+250]; \
+  memset(emit_buf,'\0',(int)(te-ts)+250); \
+  int emit_len = snprintf(emit_buf, sizeof(emit_buf), \
+         "{<filepath:%s>,filepath_id:%lu,token_id:%lu,parent_id:%lu,offset:%d," \
          "length:%d,type:%s,<tok:%.*s>}\n", \
          filename, (unsigned long)filepath_id, (unsigned long)token_id, \
          (unsigned long)parent_id, prefix_len + (int)(ts - in), (int)(te - ts), \
          t, (int)(te - ts), &in[ts - in]); \
-  if((int)(te-(prefix_len+suffix_len)-ts)>0){ \
+  file_create_or_append("sidecar.tok", emit_buf, emit_len);
+
+#define EMIT_BLOCK(t,prefix_len,suffix_len) \
+  uint32_t token_id = murmur3_seeded_v2(seed0, &in[ts - in], te - ts); \
+  char emit_buf[(int)(te-ts)+250]; \
+  memset(emit_buf,'\0',(int)(te-ts)+250); \
+  int emit_len = snprintf(emit_buf, sizeof(emit_buf), \
+         "{<filepath:%s>,filepath_id:%lu,token_id:%lu,parent_id:%lu,offset:%d," \
+         "length:%d,type:%s,<tok:%.*s>}\n", \
+         filename, (unsigned long)filepath_id, (unsigned long)token_id, \
+         (unsigned long)parent_id, prefix_len + (int)(ts - in), (int)(te - ts), \
+         t, (int)(te - ts), &in[ts - in]); \
+  file_create_or_append("sidecar.tok", emit_buf, emit_len); \
+	if((int)(te-(prefix_len+suffix_len)-ts)>0){ \
   	scanner(&in[ts + prefix_len - in], te - (prefix_len + suffix_len) - ts,filename, filepath_id, token_id, prefix_len, suffix_len); \
   }
 %%{
