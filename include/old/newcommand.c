@@ -1,564 +1,1159 @@
-// FOR DOCUMENTATION, SEE MY BLOG POST:
-//    http://techennui.blogspot.com/2007/11/quick-hack-17-in-series-of-42-inlining.html
-
-// Expands LaTeX \newcommand macros to allow submission of documents
-// to print services which do not allow user-defined macros.
-
-// Valid input formats are:
-// \newcommand{\whatever}{Replacement text}
-// \newcommand{\whatever}[2]{Expand #1 and #2 but not \#1 or even $\#1$}
-// - anything else ought to be passed through verbatim; if an inurmountable
-// error is detected, the program exits with a non-0 return code.
-
-// The purpose of this utility is similar to:
-//    http://winedt.org/Macros/LaTeX/uncommand.php
-// which I wasn't aware of when I wrote it.  Though I would like to see how
-// well that program handles the test input file, to see if it does the
-// right thing with some of the more complex definitions :-)
-//
-// See also http://texcatalogue.sarovar.org/entries/de-macro.html
-// and http://www.mackichan.com/index.html?techtalk/685.htm~mainFrame
+/*
+ * newcommand.c — LaTeX Macro Handler
+ *
+ * Properly handles: \newcommand, \renewcommand, \def, \edef, \xdef,
+ * \let, \expandafter, \aftergroup, \noexpand
+ *
+ * Build: gcc -O2 newcommand.c -o newcommand.out
+ * Usage: ./newcommand.out < file.tex > expanded.tex
+ *        ./newcommand.out --report file1.tex file2.tex ...
+ */
 
 #include <ctype.h>
+#include <stdint.h>
 #include <stdio.h>
-#include <stdlib.h> /* exit() */
-#include <string.h> /* strcpy(), strcmp() */
+#include <stdlib.h>
+#include <string.h>
 
-#define TRUE (0 == 0)
-#define FALSE (0 != 0)
-
-// Sorry, only 8-bit char sets supported.
-
-#define NEWCOMMANDLEN 20 /* strlen("\\providecommand")+1 */
-
-// Increased buffer sizes for better handling of complex LaTeX documents
-// Original values: 80, 1024, 1024, 1024
-// Increased to: 80, 4096, 4096, 1024 to handle more complex macros
-#define MAXMACRONAMELEN 80
-#define MAXMACROBODYLEN 4096
-#define MAXARGLEN 1024
-#define MAXCOMMANDS 1024
-#define MAX_MACRO_EXPANSION (32 * 1024)
-#define _PROTECTED_ 256
-#define _PARAMETER_ 512
-
-static int NEXTFREEMACRO = 0;
-static int THIS_COMMAND = MAXCOMMANDS - 1;
-
-// Macro storage arrays - using static allocation
-static char macro[MAXCOMMANDS][MAXMACRONAMELEN];
-static int body[MAXCOMMANDS][MAXMACROBODYLEN];
-static int args[MAXCOMMANDS];
-
-// Used at point of macro call
-char actual[MAXCOMMANDS][MAXARGLEN];
-
-char curcommand[NEWCOMMANDLEN] = {'\0'};
-
-static int in_comment = FALSE;
-
-void intcpy(int *dest, int *source) {
-  while ((*dest++ = *source++) != 0)
-    ;
+/* Safe string copy: always NUL-terminates, copies at most dstsize-1 chars */
+static void safe_strcpy(char *dst, const char *src, int dstsize) {
+    if (dstsize <= 0) return;
+    int i;
+    for (i = 0; i < dstsize - 1 && src[i]; i++)
+        dst[i] = src[i];
+    dst[i] = '\0';
 }
 
-#ifndef BITS
-#define BITS 18  // Increased from 15 to 18 for larger buffer (256KB instead of 32KB)
-#endif
-#define BUFFERSIZE (1 << BITS)
-#define CIRCULAR (BUFFERSIZE - 1)
-static int buffer[BUFFERSIZE]; // deliberately int, not char, for _protected_
-static int get_index = 0, put_index = 0;
+/* ------------------------------------------------------------------ */
+/*  Configuration                                                     */
+/* ------------------------------------------------------------------ */
+#define MAX_MACRO_NAME    128
+#define MAX_MACRO_BODY    16384
+#define MAX_MACROS        4096
+#define MAX_INPUT_SIZE    (64 * 1024 * 1024)  /* 64 MB max input */
+#define OUTPUT_CHUNK      (1024 * 1024)
+#define PARAM_COUNT       10
+#define MAX_PUSHBACK      65536   /* pushback buffer for \expandafter expansions */
+#define MAX_AFTERGROUP    64     /* deferred tokens from \aftergroup */
 
-// nasty pushback buffer because we always insert text *before* the current
-// 'get' pointer and step the get pointer backwards.  This is OK if we insert a
-// whole string at a time but if we push back two strings in a row, they can be
-// inserted out of order unless we're very careful!  I.e. not as simple as the
-// usual put/get from a cyclic buffer :-(
+/* ------------------------------------------------------------------ */
+/*  Macro types                                                       */
+/* ------------------------------------------------------------------ */
+typedef enum {
+    MT_NEWCOMMAND,
+    MT_RENEWCOMMAND,
+    MT_PROVIDECOMMAND,
+    MT_DEF,
+    MT_EDEF,        /* expand body at definition time */
+    MT_XDEF,        /* global \edef */
+    MT_GDEF,        /* \gdef — global def */
+    MT_LET,         /* \let\a\b — copy */
+    MT_NONE
+} MacroType;
 
-int get_next_char(void) {
-  int c;
+/* ------------------------------------------------------------------ */
+/*  Macro definition storage                                          */
+/* ------------------------------------------------------------------ */
+typedef struct {
+    char   name[MAX_MACRO_NAME];
+    char   body[MAX_MACRO_BODY];
+    int    num_params;       /* 0-9: how many #1..#9 the macro takes */
+    MacroType type;
+    int    active;           /* 1 if defined */
+    char   let_target[MAX_MACRO_NAME]; /* for MT_LET: target name */
+} MacroDef;
 
-  if (get_index == put_index)
-    return (fgetc(stdin));
-  c = buffer[get_index];
-  get_index = (get_index + 1) & CIRCULAR;
-  return c;
+typedef struct {
+    MacroDef entries[MAX_MACROS];
+    int      count;
+} MacroDB;
+
+static MacroDB g_db;
+
+/* ------------------------------------------------------------------ */
+/*  Macro DB operations                                               */
+/* ------------------------------------------------------------------ */
+static void db_init(void) {
+    memset(&g_db, 0, sizeof(g_db));
 }
 
-int locate_macro_name(char *def) {
-  int i = 0;
-  for (;;) {
-    if (i == NEXTFREEMACRO)
-      break;
-    if (strcmp(def, macro[i]) == 0)
-      break;
-    i += 1;
-    if (i == MAXCOMMANDS) {
-      fprintf(stderr, "Coding error #1.  Aborted.\n");
-      exit(1);
+static MacroDef *db_find(const char *name) {
+    for (int i = 0; i < g_db.count; i++) {
+        if (g_db.entries[i].active && !strcmp(g_db.entries[i].name, name))
+            return &g_db.entries[i];
     }
-  }
-  return i;
+    return NULL;
 }
 
-void reinsert_char(int c) {
-  buffer[put_index] = c;
-  put_index = (put_index + 1) & CIRCULAR;
-  if (put_index == get_index) {
-    fprintf(stderr,
-            "Sorry, a large expansion ran me out of space. Please recompile "
-            "with -DBITS=%d\n",
-            BITS + 1);
-    exit(1);
-  }
+static MacroDef *db_add(const char *name) {
+    if (g_db.count >= MAX_MACROS) {
+        fprintf(stderr, "WARNING: too many macros (max %d)\n", MAX_MACROS);
+        return NULL;
+    }
+    MacroDef *m = &g_db.entries[g_db.count++];
+    memset(m, 0, sizeof(*m));
+    safe_strcpy(m->name, name, MAX_MACRO_NAME - 1);
+    m->name[MAX_MACRO_NAME - 1] = '\0';
+    m->active = 1;
+    return m;
 }
 
-void unread_char(
-    int c) // PUT AT *HEAD* OF RE-READ BUFFER.  JUST LIKE ungetc(stdin, c)
-{
-  get_index = (get_index - 1) & CIRCULAR;
-  buffer[get_index] = c;
-  if (put_index == get_index) {
-    fprintf(stderr,
-            "Sorry, a large expansion ran me out of space. Please recompile "
-            "with -DBITS=%d\n",
-            BITS + 1);
-    exit(1);
-  }
-}
-
-void unread_string(char *s) {
-  char *start = s;
-  while (*s != '\0')
-    s += 1;
-  for (;;) {
-    s -= 1;
-    unread_char(*s);
-    if (s == start)
-      break;
-  }
-}
-
-char *get_command(int c) {
-  static char w[MAXMACRONAMELEN];
-  char *wp = w;
-  for (;;) {
-    *wp++ = c;
-    c = get_next_char();
-    // Allow letters and @ in command names (LaTeX internal macros)
-    if (!isalpha(c) && c != '@')
-      break;
-  }
-  unread_char(c);
-  *wp = '\0';
-  return w;
-}
-
-int next_non_comment_char(void) {
-  int c;
-
-  for (;;) {
-    c = get_next_char();
-    if (c == '%') {
-      for (;;) {
-        if (c == '\n')
-          break;
-        c = get_next_char();
-      }
-      continue; // try again
+static void db_store(MacroDef *m) {
+    MacroDef *existing = db_find(m->name);
+    if (existing) {
+        /* overwrite */
+        *existing = *m;
     } else {
-      break;
+        MacroDef *slot = db_add(m->name);
+        if (slot) *slot = *m;
     }
-  }
-  return c;
 }
 
-int next_non_comment_non_space_char(void) {
-  int c;
-  for (;;) {
-    c = next_non_comment_char();
-    if (!isspace(c))
-      return (c);
-  }
+/* ------------------------------------------------------------------ */
+/*  Output buffer                                                     */
+/* ------------------------------------------------------------------ */
+static char  *g_outbuf = NULL;
+static size_t g_outlen = 0;
+static size_t g_outcap = 0;
+
+static void out_init(void) {
+    g_outcap = OUTPUT_CHUNK;
+    g_outbuf = (char *)malloc(g_outcap);
+    g_outlen = 0;
+    if (g_outbuf) g_outbuf[0] = '\0';
 }
 
-void learn_body(void) {
-  int c;
-  // Don't skip space here - the '{' might have whitespace before it
-  c = get_next_char();
-  if (c != '{') {
-    // Single token or badly formatted. Try to recover.
-    if (isspace(c)) {
-      // Skip whitespace and look for '{'
-      c = next_non_comment_non_space_char();
-      if (c != '{') {
-        fprintf(stderr, "Problem: expected '{' for macro body\n");
-        return;
-      }
-    } else {
-      fprintf(stderr, "Problem: expected '{' for macro body (got '%c')\n", (char)c);
-      return;
-    }
-  }
-  // Read body up to and including final '}' but not beyond
-  static int expansion[MAXMACROBODYLEN];
-  int *ep = expansion;
-  int depth = 0;
-  int body_len = 0;
-
-  for (;;) {
-    c = get_next_char(); // We'll include comments in the macro expansion
-                         // *but* must be careful not to count braces within
-                         // comments
-    
-    // Check for buffer overflow
-    if (body_len >= MAXMACROBODYLEN - 1) {
-      fprintf(stderr, "Warning: macro body too large, truncating\n");
-      // Skip to end of body
-      int brace_depth = depth;
-      for (;;) {
-        if (c == '{') brace_depth++;
-        if (c == '}') {
-          if (brace_depth == 0) break;
-          brace_depth--;
+static void out_append(const char *s, int len) {
+    if (len <= 0) return;
+    if (g_outlen + len + 1 > g_outcap) {
+        size_t newcap = (g_outlen + len + 1) * 2;
+        char *nb = (char *)realloc(g_outbuf, newcap);
+        if (!nb) {
+            fprintf(stderr, "FATAL: out of memory\n");
+            exit(1);
         }
-        c = get_next_char();
-      }
-      break;
+        g_outbuf = nb;
+        g_outcap = newcap;
     }
-    
-    if (c == '\\') {
-      *ep++ = c;
-      c = get_next_char();
-      *ep++ = c;
-      body_len += 2;
-    } else if (c == '%') {
-      // Copy rest of comment
-      for (;;) {
-        *ep++ = c;
-        body_len++;
-        if (c == '\n')
-          break;
-        c = get_next_char();
-      }
-    } else {
-      // regular character - process it normally:
-      if (c == '{')
-        depth += 1;
-      if ((c == '}') && (depth == 0))
-        break;
-      if (c == '}')
-        depth -= 1;
-      if (c == '#') {
-        // Check for ## (double hash) - represents a literal # in macro body
-        int next_c = get_next_char();
-        if (next_c == '#') {
-          // Double hash - output literal '#' and continue (don't treat as parameter)
-          *ep++ = '#';
-          body_len++;
-        } else {
-          // Single hash - this is a parameter reference #1, #2, etc.
-          *ep++ = next_c - '1' + _PARAMETER_; // INTERNAL CODE FOR #1, #2, ... #9
-          body_len += 1;
-        }
-      } else {
-        *ep++ = c;
-        body_len++;
-      }
+    memcpy(g_outbuf + g_outlen, s, len);
+    g_outlen += len;
+    g_outbuf[g_outlen] = '\0';
+}
+
+static void out_append_str(const char *s) {
+    out_append(s, (int)strlen(s));
+}
+
+static void out_append_char(char c) {
+    out_append(&c, 1);
+}
+
+/* ------------------------------------------------------------------ */
+/*  Input scanner helpers                                             */
+/* ------------------------------------------------------------------ */
+typedef struct {
+    const char *p;
+    const char *pe;     /* end of input */
+    const char *start;  /* original start */
+} Scanner;
+
+static Scanner g_sc;
+
+/* Pushback buffer — used by \expandafter to inject expanded tokens
+ * back into the input stream so that chained commands can re-parse. */
+static char  g_pushback[MAX_PUSHBACK];
+static int   g_pushback_len = 0;
+static int   g_pushback_pos = 0;
+
+static void pushback_clear(void) {
+    g_pushback_len = 0;
+    g_pushback_pos = 0;
+}
+
+/* Append text to the pushback buffer (inserts at current read position).
+ * Returns 1 on success, 0 on overflow. */
+static int pushback_text(const char *s, int len) {
+    if (len <= 0) return 1;
+    int remaining = g_pushback_len - g_pushback_pos;
+    if (g_pushback_pos + remaining + len > MAX_PUSHBACK) {
+        return 0;  /* overflow — caller should fall back to literal output */
     }
-  }
-  *ep = '\0';
-
-  if (body_len < MAXMACROBODYLEN - 1) {
-    intcpy(body[NEXTFREEMACRO], expansion);
-  }
-  NEXTFREEMACRO = NEXTFREEMACRO + 1; // We now have all the pieces.
-  // Need to add check to see if we've busted the array bounds.
+    /* Move unread pushback data forward to make room */
+    memmove(g_pushback + g_pushback_pos + len,
+            g_pushback + g_pushback_pos, remaining);
+    memcpy(g_pushback + g_pushback_pos, s, len);
+    g_pushback_len += len;
+    return 1;
 }
 
-int learn_argcount(void) {
-  int c, argcount;
+/* Expand a macro and push the result into the pushback buffer for
+ * re-scanning. On overflow or excessive depth, leaves the expansion
+ * in the output buffer or outputs the command name literally. */
 
-  c = get_next_char();
-  argcount = c - '0'; // eg "[3]" -> 3
-  // VERIFY THAT isdigit(c)
-  c = get_next_char(); // ']'
-  // VERIFY THAT c == ']'
-  return argcount;
+/* Group-depth tracking for \aftergroup */
+static int  g_group_depth = 0;
+static char g_aftergroup_tokens[MAX_AFTERGROUP][MAX_MACRO_BODY];
+static int  g_aftergroup_depths[MAX_AFTERGROUP];
+static int  g_aftergroup_count = 0;
+
+/* Expansion depth guard — prevents infinite recursion in \def\a{\a}.
+ * Incremented on each macro expansion, never decremented within one
+ * top-level process_input call. */
+static int  g_expansion_depth = 0;
+#define MAX_EXPANSION_DEPTH 500
+
+/* Forward declarations for cross-calls */
+static void expand_macro(MacroDef *m, char args[PARAM_COUNT][MAX_MACRO_BODY], int nargs_provided);
+static void expand_to_pushback(MacroDef *m, char args[PARAM_COUNT][MAX_MACRO_BODY], int np);
+static void out_append_str(const char *s);
+
+static void aftergroup_add(const char *tok) {
+    if (g_aftergroup_count >= MAX_AFTERGROUP) return;
+    safe_strcpy(g_aftergroup_tokens[g_aftergroup_count], tok, MAX_MACRO_BODY - 1);
+    g_aftergroup_tokens[g_aftergroup_count][MAX_MACRO_BODY - 1] = '\0';
+    g_aftergroup_depths[g_aftergroup_count] = g_group_depth;
+    g_aftergroup_count++;
 }
 
-void learn_keyword(void) {
-  static char name[MAXMACRONAMELEN];
-  char *cp = name;
-  int c, argcount;
-
-  c = next_non_comment_non_space_char();
-  if (c != '\\') {
-    fprintf(stderr,
-            "Problem at \"\\%s{%c\"  <-- last char should be a '\\' (was ascii "
-            "%d)\n",
-            curcommand, c, c);
-    exit(1);
-  }
-  for (;;) {
-    c = next_non_comment_non_space_char();
-    // Allow letters and @ in macro names
-    if (!isalpha(c) && c != '@')
-      break;
-    *cp++ = c;
-  }
-  *cp = '\0';
-  if (c != '}') {
-    fprintf(stderr,
-            "Problem at \"\\%s{\\%s%c\"  <-- last char should be a '}' (was "
-            "ascii %d)\n",
-            curcommand, name, c, c);
-    exit(1);
-  }
-  strcpy(macro[NEXTFREEMACRO], name);
-
-  // NOW READ ARG COUNT IF PRESENT FOLLOWED BY BODY
-  c = next_non_comment_non_space_char();
-  if (c == '[') {
-    argcount = learn_argcount(); // reads n and the final ']'
-  } else {
-    reinsert_char(c);
-    argcount = 0;
-  }
-  args[NEXTFREEMACRO] = argcount;
-  learn_body();
-}
-
-void learn_macro(void) {
-  int c = next_non_comment_non_space_char();
-  int inline_argcount = 0;  // Count inline #1, #2, etc.
-  
-  // If we got a backslash, skip it (it's the start of the macro name)
-  if (c == '\\') {
-    c = next_non_comment_non_space_char();
-  }
-  
-  if (c == '{') {
-    learn_keyword(); // reads \word and the final '}' (handles {\name}[args]{body})
-  } else {
-    // For \newcommand\name[args]{body}, \def\name{...}, \renewcommand\name{...} etc.
-    if (strcmp(curcommand, "newcommand") == 0 || strcmp(curcommand, "renewcommand") == 0 || strcmp(curcommand, "def") == 0 || strcmp(curcommand, "providecommand") == 0) {
-      
-      char name[MAXMACRONAMELEN];
-      char *cp = name;
-      
-      // Handle format: \newcommand[name, \newcommand [name, \newcommand\name, \newcommand name
-      if (isspace(c)) {
-        c = next_non_comment_non_space_char();
-      }
-      
-      // After skipping backslash, space, or direct letter
-      // Accept letters and @ in macro names (LaTeX allows @ for internal macros)
-      if (!isalpha(c) && c != '@') {
-        fprintf(stderr, "Problem: expected letter for macro name in \\%s (got '%c')\n", curcommand, (char)c);
-        fprintf(stdout, "\\%s", curcommand);
-        if (c != EOF) unread_char(c);
-        return;
-      }
-      
-      // c is the first character of the macro name - include it!
-      *cp++ = c;
-      for (;;) {
-        c = next_non_comment_non_space_char();
-        // Allow letters and @ in macro names
-        if (!isalpha(c) && c != '@') break;
-        *cp++ = c;
-      }
-      *cp = '\0';
-      
-      strcpy(macro[NEXTFREEMACRO], name);
-      
-      // Check for inline parameters (#1, #2, etc.) before the body
-      // E.g., \def\ifig#1#2#3{...} has 3 inline parameters
-      while (c == '#') {
-        c = next_non_comment_non_space_char();  // get the digit
-        if (isdigit(c)) {
-          inline_argcount++;
-          c = next_non_comment_non_space_char();  // get next char (might be # or {)
-        }
-      }
-      // Skip any whitespace before checking for [ or {
-      while (isspace(c)) {
-        c = next_non_comment_non_space_char();
-      }
-      
-      // Read arg count - either from [n] or from inline # parameters
-      // Note: [ is only an argument specification if followed by a digit and ]
-      if (c == '[') {
-        // Peek ahead to see if this is really [n] format
-        int next = get_next_char();
-        if (isdigit(next)) {
-          // This is an argument specification [n]
-          // Put both back in reverse order
-          reinsert_char(c);  // '['
-          reinsert_char(next);  // digit
-          args[NEXTFREEMACRO] = learn_argcount(); // reads [digit] and the final ']'
-          // After [n], there might be inline parameters like #2
-          c = get_next_char();
-          while (c == '#') {
-            c = get_next_char();  // get the digit
-            if (isdigit(c)) {
-              inline_argcount++;  // increment for each #n found
-              c = get_next_char();  // get next char
+/* Called when a '}' is encountered; flushes any aftergroup tokens
+ * whose group depth has been exited. */
+static void aftergroup_flush(void) {
+    for (int i = 0; i < g_aftergroup_count; i++) {
+        if (g_aftergroup_depths[i] == g_group_depth) {
+            /* Look up and expand the deferred token into pushback */
+            MacroDef *m = db_find(g_aftergroup_tokens[i]);
+            if (m && m->active) {
+                char dummy[PARAM_COUNT][MAX_MACRO_BODY] = {{0}};
+                expand_to_pushback(m, dummy, 0);
+            } else {
+                out_append_str(g_aftergroup_tokens[i]);
             }
-          }
-          // Skip any whitespace before checking for {
-          while (isspace(c)) {
-            c = get_next_char();
-          }
-          // Put back the char (should be '{') and call learn_body
-          reinsert_char(c);
-          // Note: total arg count is the max of [n] and inline # count
-          if (inline_argcount > args[NEXTFREEMACRO]) {
-            args[NEXTFREEMACRO] = inline_argcount;
-          }
-          learn_body();
-        } else {
-          // Not [n] format - [ is part of the body, put everything back
-          reinsert_char(next);
-          reinsert_char(c);  // the original c (should be '[')
-          args[NEXTFREEMACRO] = inline_argcount;
-          learn_body();
+            /* Mark as flushed */
+            g_aftergroup_tokens[i][0] = '\0';
         }
-      } else {
-        // c is NOT '[' and NOT '#' - so it's the '{' that starts the body
-        // Put it back so learn_body can find it
-        reinsert_char(c);
-        args[NEXTFREEMACRO] = inline_argcount;
-        learn_body();
-      }
-    } else {
-      fprintf(stdout, "\\%s", curcommand);
-      unread_char(c);
     }
-  }
 }
 
-void expand_macro(void) {
-  // READ ARGS IF NEEDED, THEN EXPAND.
-  static char temp_buffer[MAX_MACRO_EXPANSION];
-  char *pp;
-  int *fp;
-  char *ap; // put pointer, fetch pointer, arg pointer
-  int c, param, i, argcount = args[THIS_COMMAND];
-
-  // following text should be args between {}s... (or nothing, if argcount is 0)
-
-  // fprintf(stdout, "%% COMPLEX EXPANSION OF \\%s WITH %d ARGS\n",
-  // macro[THIS_COMMAND], args[THIS_COMMAND]); // add %c? - do tests and check
-  for (i = 0; i < argcount; i++) {
-    // Skip whitespace before argument (handles \macro[1] {arg} with space)
-    do {
-      c = get_next_char();
-    } while (isspace(c));
-    
-    if (c == '{') {
-      // READ PARAM INTO actual[i]
-      char *ap = actual[i];
-      for (;;) {
-        c = get_next_char(); // IS THIS A BUG?  DO I NEED TO HANDLE \} OR
-                             // MULTI-LINE ?  % COMMENTS?
-        if (c == '}')
-          break;
-        *ap++ = c;
-      }
-      *ap = '\0';
-      // fprintf(stdout, "%% Got actual parameter #%d: %s\n", i+1, actual[i]);
-    } else {
-      // Parameter is a single atom (not braced) - just take the next non-space char
-      actual[i][0] = c;
-      actual[i][1] = '\0';
-      // fprintf(stdout, "%% Got actual parameter #%d: %c (single atom)\n", i+1, c);
-    }
-  }
-  // NOW EXPAND THE BODY, SUBSTITUTING ARGS 1..n AS NECESSARY
-  // THIS IS WHERE WE NEED TO BE EXTRA CAREFUL ABOUT PUSHBACK ORDER!!!!
-  // THE EXPANDED BODY MAY CONTAIN MORE TEXT TO BE EXPANDED.
-  fp = body[THIS_COMMAND];
-  pp = temp_buffer;
-  for (;;) {
-    c = *fp++;
-    if (c == '\0')
-      break;
-    if ((c & _PARAMETER_) != 0) {
-      param = (c & 255); // 1..9  - TeX counts from 1 up I think. Pre-processed
-                         // at defn time to 0..n-1
-      // NEED RANGE CHECK, IF INVALID #n GIVEN - BETTER TO CHECK AT DEFN TIME
-      // THOUGH!
-      ap = actual[param];
-      for (;;) {
-        if (*ap == '\0')
-          break;
-        *pp++ = *ap++;
-      }
-    } else
-      *pp++ = c;
-  }
-  *pp = '\0';
-  unread_string(temp_buffer);
-  // there is a pending char (whatever followed the \word) at getptr.
-  // we have to put our expansion *before* getptr
+static int sc_eof(void) {
+    if (g_pushback_pos < g_pushback_len) return 0;
+    return g_sc.p >= g_sc.pe;
 }
 
-void handle_word(char *s) {
-  if ((strcmp(s, "newcommand") == 0) || (strcmp(s, "renewcommand") == 0) || (strcmp(s, "def") == 0) || (strcmp(s, "providecommand") == 0)) {
-    strcpy(curcommand, s);
-    learn_macro();
-  } else if ((THIS_COMMAND = locate_macro_name(s)) < NEXTFREEMACRO) {
-    expand_macro();
-  } else {
-    // IGNORE UNKNOWN
-    fprintf(stdout, "\\%s", s);
-  }
+static int sc_peek(void) {
+    if (g_pushback_pos < g_pushback_len)
+        return (unsigned char)g_pushback[g_pushback_pos];
+    return (g_sc.p >= g_sc.pe) ? EOF : (unsigned char)*g_sc.p;
 }
 
-int main(int argc, char **argv) {
-  char *command;
-  int i, c;
+static int sc_getc(void) {
+    if (g_pushback_pos < g_pushback_len)
+        return (unsigned char)g_pushback[g_pushback_pos++];
+    return (g_sc.p >= g_sc.pe) ? EOF : (unsigned char)*g_sc.p++;
+}
 
-  for (i = 0; i < MAXCOMMANDS; i++)
-    macro[i][0] = '\0';
+/* Skip a TeX comment: from % to end of line (consuming the newline) */
+static void sc_skip_comment(void) {
+    while (!sc_eof() && *g_sc.p != '\n')
+        g_sc.p++;
+    if (!sc_eof() && *g_sc.p == '\n')
+        g_sc.p++;
+}
 
-  // Parse arguments (skip flags)
-  for (i = 1; i < argc; i++) {
-    if (argv[i][0] == '-') {
-      // Skip flags
-      continue;
+/* Skip whitespace and comments */
+static void sc_skip_ws_and_comments(void) {
+    while (!sc_eof()) {
+        if (*g_sc.p == '%') {
+            sc_skip_comment();
+        } else if (*g_sc.p == ' ' || *g_sc.p == '\t' || *g_sc.p == '\r' || *g_sc.p == '\n') {
+            g_sc.p++;
+        } else {
+            break;
+        }
     }
-  }
+}
 
-  for (;;) {
-    c = get_next_char();
-    if (c == EOF)
-      break;
-    if (in_comment) {
-      fputc(c, stdout);
-      if (c == '\n') {
-        in_comment = FALSE;
-      }
-    } else if (c == '\\') {
-      c = get_next_char();
-      // Handle TeX words - include @ which is valid in LaTeX internal macro names
-      if (isalpha(c) || c == '@') {
-        command = get_command(c);
-        handle_word(command);
-      } else {
-        fprintf(stdout, "\\%c", c);
-      }
-    } else if (c == '%') {
-      fputc(c, stdout);
-      in_comment = TRUE;
+/* ------------------------------------------------------------------ */
+/*  Token / group extraction                                          */
+/* ------------------------------------------------------------------ */
+
+/*
+ * Extract a balanced brace group, including the outer braces.
+ * Returns 1 on success, 0 on failure.
+ * The extracted text goes into 'buf' (with NUL terminator), up to 'bufsize'.
+ * On success, the scanner is positioned after the closing '}'.
+ */
+static int extract_braced_group(char *buf, int bufsize) {
+    sc_skip_ws_and_comments();
+    if (sc_peek() != '{') return 0;
+
+    int depth = 0;
+    int pos = 0;
+
+    while (!sc_eof() && pos < bufsize - 1) {
+        char c = sc_getc();
+        buf[pos++] = c;
+
+        if (c == '{') {
+            depth++;
+        } else if (c == '}') {
+            depth--;
+            if (depth == 0) {
+                buf[pos] = '\0';
+                return 1;
+            }
+        } else if (c == '\\') {
+            /* Backslash — next char is part of a command, not a brace */
+            if (!sc_eof() && pos < bufsize - 1) {
+                buf[pos++] = sc_getc();
+            }
+        } else if (c == '%') {
+            /* Comment — undo the '%' we stored and skip to end of line */
+            pos--;
+            sc_skip_comment();
+        }
+    }
+    buf[pos] = '\0';
+    return 0; /* unbalanced */
+}
+
+/*
+ * Extract an optional argument in [brackets].
+ * Returns 1 if found, 0 otherwise. Scanner left after ']'.
+ */
+static int extract_optional_arg(char *buf, int bufsize) {
+    sc_skip_ws_and_comments();
+    if (sc_peek() != '[') return 0;
+
+    int pos = 0;
+    sc_getc(); /* consume '[' */
+    buf[pos++] = '[';
+
+    while (!sc_eof() && pos < bufsize - 1) {
+        char c = sc_getc();
+        buf[pos++] = c;
+        if (c == ']') {
+            buf[pos] = '\0';
+            return 1;
+        } else if (c == '\\' && !sc_eof() && pos < bufsize - 1) {
+            buf[pos++] = sc_getc();
+        }
+    }
+    buf[pos] = '\0';
+    return 0;
+}
+
+/*
+ * Extract a TeX command name (letters and @) after a backslash.
+ * Assumes the backslash has already been consumed.
+ * Returns the command name in 'buf'.
+ */
+static int extract_cmdname(char *buf, int bufsize) {
+    int pos = 0;
+    sc_skip_ws_and_comments();
+    while (!sc_eof() && pos < bufsize - 1) {
+        char c = sc_peek();
+        if (isalpha((unsigned char)c) || c == '@') {
+            buf[pos++] = sc_getc();
+        } else {
+            break;
+        }
+    }
+    buf[pos] = '\0';
+    return pos > 0;
+}
+
+/*
+ * Extract a single token: either a single character, or \command .
+ * On success, returns 1 and fills 'buf'. On EOF, returns 0.
+ */
+static int extract_single_token(char *buf, int bufsize) {
+    sc_skip_ws_and_comments();
+    if (sc_eof()) return 0;
+
+    int pos = 0;
+    char c = sc_getc();
+
+    if (c == '\\') {
+        buf[pos++] = '\\';
+        /* Check for special single-char escapes like \\, \{, etc. */
+        if (!sc_eof()) {
+            char c2 = sc_peek();
+            if (!isalpha((unsigned char)c2) && c2 != '@') {
+                /* Single non-letter character after backslash */
+                buf[pos++] = sc_getc();
+                buf[pos] = '\0';
+                return 1;
+            }
+        }
+        /* Multi-letter command name */
+        while (!sc_eof() && pos < bufsize - 1) {
+            char c2 = sc_peek();
+            if (isalpha((unsigned char)c2) || c2 == '@') {
+                buf[pos++] = sc_getc();
+            } else {
+                break;
+            }
+        }
+        buf[pos] = '\0';
+        return 1;
+    } else if (c == '{') {
+        /* Return the '{' as a token */
+        buf[0] = '{'; buf[1] = '\0';
+        return 1;
+    } else if (c == '}') {
+        buf[0] = '}'; buf[1] = '\0';
+        return 1;
     } else {
-      fputc(c, stdout);
+        buf[0] = c; buf[1] = '\0';
+        return 1;
     }
-  }
-  
-  exit(0);
-  return (1);
+}
+
+/*
+ * Extract a LaTeX token: \cmd, {group}, or single character.
+ * Skips leading whitespace and comments.
+ * Returns 1 on success, 0 on EOF.
+ */
+static int extract_next_token(char *buf, int bufsize) {
+    sc_skip_ws_and_comments();
+    if (sc_eof()) return 0;
+
+    if (sc_peek() == '\\') {
+        /* \command or single-char like \\ */
+        int pos = 0;
+        buf[pos++] = sc_getc();  /* consume \ */
+        if (!sc_eof()) {
+            char c = sc_peek();
+            if (!isalpha((unsigned char)c) && c != '@') {
+                buf[pos++] = sc_getc();
+            } else {
+                while (!sc_eof() && pos < bufsize - 1) {
+                    char c2 = sc_peek();
+                    if (isalpha((unsigned char)c2) || c2 == '@')
+                        buf[pos++] = sc_getc();
+                    else
+                        break;
+                }
+            }
+        }
+        buf[pos] = '\0';
+        return 1;
+    } else if (sc_peek() == '{') {
+        return extract_braced_group(buf, bufsize);
+    } else {
+        buf[0] = sc_getc();
+        buf[1] = '\0';
+        return 1;
+    }
+}
+
+/*
+ * Extract a macro-use argument: either a single token or a braced group.
+ * This is what gets substituted for #1, #2, etc.
+ */
+static int extract_macro_arg(char *buf, int bufsize) {
+    sc_skip_ws_and_comments();
+    if (sc_eof()) return 0;
+
+    if (sc_peek() == '{') {
+        if (!extract_braced_group(buf, bufsize))
+            return 0;
+        /* Strip outer braces from the argument */
+        int len = (int)strlen(buf);
+        if (len >= 2 && buf[0] == '{' && buf[len-1] == '}') {
+            memmove(buf, buf + 1, len - 2);
+            buf[len - 2] = '\0';
+        }
+        return 1;
+    }
+
+    /* Single token */
+    return extract_single_token(buf, bufsize);
+}
+
+/* ------------------------------------------------------------------ */
+/*  Command parsing                                                   */
+/* ------------------------------------------------------------------ */
+
+/*
+ * newcommand_format:  \newcommand{\name}[n]{body}
+ * renewcommand_format: \renewcommand{\name}[n]{body}
+ * All forms:
+ *   \newcommand{\name}[n]{body}
+ *   \newcommand{\name}{body}
+ */
+static int parse_newcommand(MacroType mtype) {
+    char name_braced[MAX_MACRO_NAME + 4];
+    char opt_buf[32];
+    char body[MAX_MACRO_BODY];
+    char clean_name[MAX_MACRO_NAME];
+    int  num_args = 0;
+
+    sc_skip_ws_and_comments();
+    if (sc_eof()) return 0;
+
+    if (sc_peek() == '{') {
+        /* Form: \newcommand{\name}[n]{body} */
+        if (!extract_braced_group(name_braced, sizeof(name_braced)))
+            return 0;
+
+        int blen = (int)strlen(name_braced);
+        if (blen < 4 || name_braced[0] != '{' || name_braced[blen-1] != '}' || name_braced[1] != '\\')
+            return 0;
+
+        int nl = blen - 2;
+        if (nl >= MAX_MACRO_NAME) nl = MAX_MACRO_NAME - 1;
+        memcpy(clean_name, name_braced + 1, nl);
+        clean_name[nl] = '\0';
+    } else if (sc_peek() == '\\') {
+        /* Form: \newcommand\name[n]{body} (no braces around name) */
+        sc_getc(); /* consume \ */
+        if (!extract_cmdname(clean_name + 1, MAX_MACRO_NAME - 2)) {
+            /* Single-char command */
+            if (!sc_eof()) {
+                clean_name[0] = '\\';
+                clean_name[1] = sc_getc();
+                clean_name[2] = '\0';
+            } else {
+                return 0;
+            }
+        } else {
+            /* Shift: extract_cmdname put name (no \\) in clean_name+1 */
+            memmove(clean_name, clean_name + 1, strlen(clean_name + 1) + 1);
+            /* Prepend backslash */
+            char tmp[MAX_MACRO_NAME];
+            tmp[0] = '\\';
+            safe_strcpy(tmp + 1, clean_name, MAX_MACRO_NAME - 1);
+            safe_strcpy(clean_name, tmp, MAX_MACRO_NAME - 1);
+            clean_name[MAX_MACRO_NAME - 1] = '\0';
+        }
+    } else {
+        return 0;
+    }
+
+    /* Check for optional [n] */
+    if (extract_optional_arg(opt_buf, sizeof(opt_buf))) {
+        /* Parse digits from opt_buf like "[2]" */
+        for (char *p = opt_buf; *p; p++) {
+            if (isdigit((unsigned char)*p)) {
+                num_args = num_args * 10 + (*p - '0');
+            }
+        }
+        if (num_args > 9) num_args = 9;
+    }
+
+    /* Extract {body} */
+    if (!extract_braced_group(body, sizeof(body)))
+        return 0;
+
+    /* Build macro definition */
+    MacroDef m;
+    memset(&m, 0, sizeof(m));
+    safe_strcpy(m.name, clean_name, MAX_MACRO_NAME - 1);
+    m.name[MAX_MACRO_NAME - 1] = '\0';
+    m.num_params = num_args;
+
+    /* body has outer braces — strip them for storage */
+    int body_len = (int)strlen(body);
+    if (body_len >= 2 && body[0] == '{' && body[body_len-1] == '}') {
+        memcpy(m.body, body + 1, body_len - 2);
+        m.body[body_len - 2] = '\0';
+    } else {
+        safe_strcpy(m.body, body, MAX_MACRO_BODY - 1);
+    }
+    m.type = mtype;
+    m.active = 1;
+
+    /* For renewcommand, check that macro exists or create it */
+    if (mtype == MT_RENEWCOMMAND) {
+        MacroDef *existing = db_find(clean_name);
+        if (!existing) {
+            fprintf(stderr, "WARNING: \\renewcommand{%s}: macro not previously defined\n",
+                    clean_name);
+        }
+    } else if (mtype == MT_NEWCOMMAND) {
+        MacroDef *existing = db_find(clean_name);
+        if (existing) {
+            fprintf(stderr, "WARNING: \\newcommand{%s}: macro already defined\n",
+                    clean_name);
+        }
+    } else if (mtype == MT_PROVIDECOMMAND) {
+        /* Only define if not already defined */
+        MacroDef *existing = db_find(clean_name);
+        if (existing) return 1; /* silently skip */
+    }
+
+    db_store(&m);
+    return 1;
+}
+
+/* Forward declaration for edef/xdef body expansion */
+static void process_input(void);
+
+/*
+ * def_format:  \def\name#1#2...{body}
+ * edef_format: \edef\name#1#2...{body}
+ * xdef_format: \xdef\name#1#2...{body}
+ */
+static int parse_def(MacroType mtype) {
+    sc_skip_ws_and_comments();
+    if (sc_eof()) return 0;
+    if (sc_peek() != '\\') return 0;
+    sc_getc(); /* consume backslash */
+
+    /* Extract command name (without backslash) */
+    char cmdname[MAX_MACRO_NAME];
+    if (!extract_cmdname(cmdname, MAX_MACRO_NAME))
+        return 0;
+
+    /* Prepend backslash for storage */
+    char fullname[MAX_MACRO_NAME];
+    fullname[0] = '\\';
+    safe_strcpy(fullname + 1, cmdname, MAX_MACRO_NAME - 2);
+    fullname[MAX_MACRO_NAME - 1] = '\0';
+
+    /* Count and skip parameter designators #1, #2, ..., #9 */
+    int num_params = 0;
+
+    while (!sc_eof()) {
+        sc_skip_ws_and_comments();
+        if (sc_eof()) break;
+
+        if (sc_peek() == '{') break;  /* body starts */
+        if (sc_peek() == '#') {
+            sc_getc(); /* consume # */
+            if (!sc_eof() && sc_peek() >= '1' && sc_peek() <= '9') {
+                int n = sc_getc() - '0';
+                if (n > num_params) num_params = n;
+            } else {
+                /* Not a param marker — something else */
+                break;
+            }
+        } else {
+            break;
+        }
+    }
+
+    /* Extract body */
+    char body[MAX_MACRO_BODY];
+    if (!extract_braced_group(body, sizeof(body)))
+        return 0;
+
+    /* For \edef and \xdef: expand the body at definition time.
+     * We run the body through a simplified expansion pass that
+     * resolves all currently-defined macros. */
+    if (mtype == MT_EDEF || mtype == MT_XDEF) {
+        /* Save scanner state */
+        const char *save_p = g_sc.p, *save_pe = g_sc.pe, *save_start = g_sc.start;
+        int save_pb_pos = g_pushback_pos, save_pb_len = g_pushback_len;
+
+        /* Save output and redirect to a temp buffer */
+        char *save_outbuf = g_outbuf;
+        size_t save_outlen = g_outlen, save_outcap = g_outcap;
+
+        /* Use a separate buffer to avoid overlap with body[] */
+        char expanded[MAX_MACRO_BODY];
+        expanded[0] = '\0';
+
+        /* Strip outer braces for the expansion pass */
+        int blen = (int)strlen(body);
+        const char *expand_input;
+        if (blen >= 2 && body[0] == '{' && body[blen-1] == '}') {
+            body[blen-1] = '\0';
+            expand_input = body + 1;
+        } else {
+            expand_input = body;
+        }
+
+        /* Set up scanner for body expansion */
+        g_sc.p = expand_input;
+        g_sc.pe = expand_input + strlen(expand_input);
+        g_sc.start = expand_input;
+        pushback_clear();
+
+        /* Redirect output to temp buffer */
+        g_outbuf = expanded;
+        g_outlen = 0;
+        g_outcap = sizeof(expanded);
+
+        /* Run the main processing loop on just the body text */
+        process_input();
+        expanded[g_outlen] = '\0';
+
+        /* Copy expanded result back to body */
+        safe_strcpy(body, expanded, MAX_MACRO_BODY - 1);
+        body[MAX_MACRO_BODY - 1] = '\0';
+
+        /* Restore scanner */
+        g_sc.p = save_p; g_sc.pe = save_pe; g_sc.start = save_start;
+        g_pushback_pos = save_pb_pos; g_pushback_len = save_pb_len;
+
+        /* Restore output */
+        g_outbuf = save_outbuf;
+        g_outlen = save_outlen;
+        g_outcap = save_outcap;
+    }
+
+    MacroDef m;
+    memset(&m, 0, sizeof(m));
+    safe_strcpy(m.name, fullname, MAX_MACRO_NAME - 1);
+    m.name[MAX_MACRO_NAME - 1] = '\0';
+    m.num_params = num_params;
+    m.type = mtype;
+
+    int body_len = (int)strlen(body);
+    if (body_len >= 2 && body[0] == '{' && body[body_len-1] == '}') {
+        memcpy(m.body, body + 1, body_len - 2);
+        m.body[body_len - 2] = '\0';
+    } else {
+        safe_strcpy(m.body, body, MAX_MACRO_BODY - 1);
+    }
+    m.active = 1;
+    db_store(&m);
+    return 1;
+}
+
+/*
+ * let_format: \let\namea\nameb  or  \let\namea=\nameb
+ */
+static int parse_let(void) {
+    sc_skip_ws_and_comments();
+    if (sc_eof() || sc_peek() != '\\') return 0;
+    sc_getc(); /* consume backslash */
+
+    /* Extract first command name (without backslash) */
+    char namea[MAX_MACRO_NAME];
+    if (!extract_cmdname(namea, MAX_MACRO_NAME)) {
+        /* Single-char command */
+        if (!sc_eof()) { namea[0] = sc_getc(); namea[1] = '\0'; }
+        else return 0;
+    }
+
+    sc_skip_ws_and_comments();
+    if (sc_eof()) return 0;
+
+    /* Optional = sign */
+    if (sc_peek() == '=') {
+        sc_getc();
+        sc_skip_ws_and_comments();
+    }
+
+    /* Extract second command (target) */
+    if (sc_eof() || sc_peek() != '\\') return 0;
+    sc_getc(); /* consume backslash */
+    char nameb[MAX_MACRO_NAME];
+    if (!extract_cmdname(nameb, MAX_MACRO_NAME)) {
+        if (!sc_eof()) { nameb[0] = sc_getc(); nameb[1] = '\0'; }
+        else return 0;
+    }
+
+    /* Store as a let-entry; prepend backslash */
+    MacroDef m;
+    memset(&m, 0, sizeof(m));
+    int na_len = (int)strlen(namea);
+    if (na_len >= MAX_MACRO_NAME - 2) na_len = MAX_MACRO_NAME - 2;
+    m.name[0] = '\\';
+    memcpy(m.name + 1, namea, na_len);
+    m.name[1 + na_len] = '\0';
+
+    int nb_len = (int)strlen(nameb);
+    if (nb_len >= MAX_MACRO_NAME - 2) nb_len = MAX_MACRO_NAME - 2;
+    m.let_target[0] = '\\';
+    memcpy(m.let_target + 1, nameb, nb_len);
+    m.let_target[1 + nb_len] = '\0';
+    m.type = MT_LET;
+    m.active = 1;
+    db_store(&m);
+    return 1;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Macro expansion                                                   */
+/* ------------------------------------------------------------------ */
+
+/*
+ * Given a macro definition and arguments, produce the expanded text.
+ * Uses g_outbuf append.
+ */
+static void expand_macro(MacroDef *m, char args[PARAM_COUNT][MAX_MACRO_BODY], int nargs_provided) {
+    if (!m) return;
+
+    if (m->type == MT_LET) {
+        /* \let copies: resolve the target macro (max 10 levels) */
+        MacroDef *target = db_find(m->let_target);
+        static int let_depth = 0;
+        if (target && target->active && target != m && let_depth < 10) {
+            let_depth++;
+            expand_macro(target, args, nargs_provided);  /* pass through args */
+            let_depth--;
+        } else {
+            out_append_str(m->let_target);
+        }
+        return;
+    }
+
+    /* Walk through body, substituting #1..#9 with arguments */
+    const char *p = m->body;
+    while (*p) {
+        if (*p == '#') {
+            p++;
+            if (*p >= '1' && *p <= '9') {
+                int n = *p - '0';
+                if (n <= nargs_provided && args[n][0]) {
+                    out_append_str(args[n]);
+                }
+                p++;
+            } else if (*p == '#') {
+                /* ## — output single # */
+                out_append_char('#');
+                p++;
+            } else {
+                out_append_char('#');
+                out_append_char(*p);
+                p++;
+            }
+        } else {
+            out_append_char(*p);
+            p++;
+        }
+    }
+}
+static void expand_to_pushback(MacroDef *m, char args[PARAM_COUNT][MAX_MACRO_BODY], int np) {
+    if (g_expansion_depth >= MAX_EXPANSION_DEPTH) {
+        out_append_str(m->name);  /* circuit breaker */
+        return;
+    }
+    g_expansion_depth++;
+    size_t save_len = g_outlen;
+    expand_macro(m, args, np);
+    int expanded = (int)(g_outlen - save_len);
+    if (expanded > 0 && pushback_text(g_outbuf + save_len, expanded)) {
+        g_outlen = save_len;  /* moved to pushback — roll back output */
+    } else if (expanded > 0) {
+        /* pushback overflow — trip circuit breaker */
+        g_expansion_depth = MAX_EXPANSION_DEPTH;
+    }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Main processing loop                                              */
+/* ------------------------------------------------------------------ */
+
+static void process_input(void) {
+    g_expansion_depth = 0;  /* reset per file */
+    while (!sc_eof()) {
+        /* Check for backslash */
+        if (sc_peek() != '\\') {
+            /* Check for comment */
+            if (sc_peek() == '%') {
+                /* Pass comment through as-is */
+                const char *start = g_sc.p;
+                sc_skip_comment();
+                out_append(start, (int)(g_sc.p - start));
+            } else {
+                char c = sc_getc();
+                /* Track group depth for \aftergroup */
+                if (c == '{') g_group_depth++;
+                else if (c == '}') {
+                    out_append_char(c);
+                    if (g_group_depth > 0) {
+                        g_group_depth--;
+                        aftergroup_flush();
+                    }
+                    continue;
+                }
+                out_append_char(c);
+            }
+            continue;
+        }
+
+        sc_getc(); /* consume \ */
+
+        sc_skip_ws_and_comments();
+
+        /* Now extract the command name */
+        if (sc_eof()) {
+            out_append_char('\\');
+            continue;
+        }
+
+        char cmdname[MAX_MACRO_NAME];
+
+        if (!isalpha((unsigned char)sc_peek()) && sc_peek() != '@') {
+            /* Single-character command like \\, \{, \$, etc. */
+            cmdname[0] = '\\';
+            cmdname[1] = sc_getc();
+            cmdname[2] = '\0';
+        } else {
+            cmdname[0] = '\\';
+            if (!extract_cmdname(cmdname + 1, MAX_MACRO_NAME - 1)) {
+                /* Failed to get cmdname */
+                out_append_char('\\');
+                continue;
+            }
+        }
+
+        /* --- Dispatch on command --- */
+
+        /* 1. \newcommand */
+        if (!strcmp(cmdname, "\\newcommand")) {
+            parse_newcommand(MT_NEWCOMMAND);
+            continue;
+        }
+
+        /* 2. \renewcommand */
+        if (!strcmp(cmdname, "\\renewcommand")) {
+            parse_newcommand(MT_RENEWCOMMAND);
+            continue;
+        }
+
+        /* 2b. \providecommand — like newcommand but no overwrite */
+        if (!strcmp(cmdname, "\\providecommand")) {
+            parse_newcommand(MT_PROVIDECOMMAND);
+            continue;
+        }
+
+        /* 3. \def */
+        if (!strcmp(cmdname, "\\def")) {
+            parse_def(MT_DEF);
+            continue;
+        }
+
+        /* 4. \edef */
+        if (!strcmp(cmdname, "\\edef")) {
+            parse_def(MT_EDEF);
+            continue;
+        }
+
+        /* 5. \xdef */
+        if (!strcmp(cmdname, "\\xdef")) {
+            parse_def(MT_XDEF);
+            continue;
+        }
+
+        /* 5b. \gdef — global def */
+        if (!strcmp(cmdname, "\\gdef")) {
+            parse_def(MT_GDEF);
+            continue;
+        }
+
+        /* 6. \let */
+        if (!strcmp(cmdname, "\\let")) {
+            parse_let();
+            continue;
+        }
+
+        /* 7. \noexpand — suppress expansion of the next token */
+        if (!strcmp(cmdname, "\\noexpand")) {
+            char tok[MAX_MACRO_BODY];
+            if (extract_next_token(tok, sizeof(tok)))
+                out_append_str(tok);
+            continue;
+        }
+
+        /* 8. \expandafter — expand tok2 before tok1.
+         * Uses pushback: inserts tok2's expansion then tok1 back into
+         * the input stream so that definition commands can re-parse. */
+        if (!strcmp(cmdname, "\\expandafter")) {
+            char tok1[MAX_MACRO_BODY];
+            if (!extract_next_token(tok1, sizeof(tok1)))
+                continue;
+
+            /* If tok1 is \expandafter, recurse on the inner chain */
+            if (!strcmp(tok1, "\\expandafter")) {
+                char tok2[MAX_MACRO_BODY], tok3[MAX_MACRO_BODY];
+                if (!extract_next_token(tok2, sizeof(tok2))) {
+                    out_append_str(tok1); continue;
+                }
+                if (!extract_next_token(tok3, sizeof(tok3))) {
+                    out_append_str(tok1); out_append_str(tok2); continue;
+                }
+                /* Expand tok3 */
+                MacroDef *m3 = db_find(tok3);
+                if (m3 && m3->active) {
+                    char dummy[PARAM_COUNT][MAX_MACRO_BODY] = {{0}};
+                    expand_to_pushback(m3, dummy, 0);
+                } else {
+                    pushback_text(tok3, (int)strlen(tok3));
+                }
+                pushback_text(tok2, (int)strlen(tok2));
+                pushback_text(tok1, (int)strlen(tok1));
+                continue;
+            }
+
+            /* Simple case: \expandafter\tok1\tok2 */
+            char tok2[MAX_MACRO_BODY];
+            if (!extract_next_token(tok2, sizeof(tok2))) {
+                out_append_str(tok1); continue;
+            }
+
+            /* Expand tok2 first via pushback capture */
+            MacroDef *m2 = db_find(tok2);
+            if (m2 && m2->active) {
+                char dummy[PARAM_COUNT][MAX_MACRO_BODY] = {{0}};
+                expand_to_pushback(m2, dummy, 0);
+            } else {
+                pushback_text(tok2, (int)strlen(tok2));
+            }
+            pushback_text(tok1, (int)strlen(tok1));
+            continue;
+        }
+
+        /* 9. \aftergroup — defer token until current group ends */
+        if (!strcmp(cmdname, "\\aftergroup")) {
+            char tok[MAX_MACRO_BODY];
+            if (extract_next_token(tok, sizeof(tok)))
+                aftergroup_add(tok);
+            continue;
+        }
+
+        /* --- User-defined macro call --- */
+        MacroDef *m = db_find(cmdname);
+        if (m && m->active) {
+            /* Resolve \let chains to get real param count */
+            MacroDef *resolved = m;
+            int let_chain = 0;
+            while (resolved && resolved->type == MT_LET && let_chain < 10) {
+                resolved = db_find(resolved->let_target);
+                let_chain++;
+            }
+            int np = resolved ? resolved->num_params : m->num_params;
+
+            /* Extract arguments */
+            char args[PARAM_COUNT][MAX_MACRO_BODY];
+            memset(args, 0, sizeof(args));
+
+            for (int i = 1; i <= np && i <= 9; i++) {
+                if (!sc_eof()) {
+                    extract_macro_arg(args[i], MAX_MACRO_BODY);
+                }
+            }
+
+            expand_to_pushback(m, args, np);
+            continue;
+        }
+
+        /* --- Not a recognized command — pass through --- */
+        out_append_str(cmdname);
+    }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Report mode                                                       */
+/* ------------------------------------------------------------------ */
+static int g_report_mode = 0;
+
+static void print_report(const char *filename) {
+    if (!g_report_mode) return;
+    (void)filename; /* used only for section header */
+    printf("\n=== %s ===\n", filename);
+    for (int i = 0; i < g_db.count; i++) {
+        MacroDef *m = &g_db.entries[i];
+        if (!m->active) continue;
+        const char *typestr = "?";
+        switch (m->type) {
+            case MT_NEWCOMMAND:      typestr = "newcommand"; break;
+            case MT_RENEWCOMMAND:    typestr = "renewcommand"; break;
+            case MT_PROVIDECOMMAND:  typestr = "providecommand"; break;
+            case MT_DEF:             typestr = "def"; break;
+            case MT_EDEF:            typestr = "edef"; break;
+            case MT_XDEF:            typestr = "xdef"; break;
+            case MT_GDEF:            typestr = "gdef"; break;
+            case MT_LET:             typestr = "let"; break;
+            default: break;
+        }
+        if (m->type == MT_LET) {
+            printf("  %-18s => %-24s [%s, %d args]\n",
+                   m->name, m->let_target, typestr, m->num_params);
+        } else {
+            /* Print body, replacing newlines for readability */
+            char display_body[MAX_MACRO_BODY];
+            safe_strcpy(display_body, m->body, MAX_MACRO_BODY - 1);
+            display_body[MAX_MACRO_BODY - 1] = '\0';
+            for (char *p = display_body; *p; p++)
+                if (*p == '\n' || *p == '\r') *p = ' ';
+            printf("  %-18s => %s [%s, %d args]\n",
+                   m->name, display_body, typestr, m->num_params);
+        }
+    }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Main                                                              */
+/* ------------------------------------------------------------------ */
+int main(int argc, char *argv[]) {
+    if (argc >= 2 && !strcmp(argv[1], "--report")) {
+        g_report_mode = 1;
+    }
+
+    if (g_report_mode && argc >= 3) {
+        /* Report mode: process each file, print definitions found */
+        for (int fi = 2; fi < argc; fi++) {
+            FILE *fp = fopen(argv[fi], "rb");
+            if (!fp) {
+                fprintf(stderr, "ERROR: cannot open %s\n", argv[fi]);
+                continue;
+            }
+            fseek(fp, 0, SEEK_END);
+            long fsize = ftell(fp);
+            fseek(fp, 0, SEEK_SET);
+            if (fsize <= 0 || fsize > MAX_INPUT_SIZE) {
+                fprintf(stderr, "ERROR: %s too large or empty (%ld bytes)\n",
+                        argv[fi], fsize);
+                fclose(fp);
+                continue;
+            }
+            char *inbuf = (char *)malloc(fsize + 1);
+            if (!inbuf) {
+                fclose(fp);
+                continue;
+            }
+            fread(inbuf, 1, fsize, fp);
+            fclose(fp);
+            inbuf[fsize] = '\0';
+
+            db_init();
+            out_init();
+            g_sc.p = inbuf;
+            g_sc.pe = inbuf + fsize;
+            g_sc.start = inbuf;
+
+            process_input();
+            print_report(argv[fi]);
+
+            free(inbuf);
+            free(g_outbuf);
+        }
+        return 0;
+    }
+
+    /* Default: stdin to stdout expansion mode */
+    /* Read entire stdin */
+    char *inbuf = (char *)malloc(MAX_INPUT_SIZE);
+    if (!inbuf) {
+        fprintf(stderr, "ERROR: out of memory\n");
+        return 1;
+    }
+
+    size_t total = 0;
+    size_t n;
+    while ((n = fread(inbuf + total, 1, MAX_INPUT_SIZE - total - 1, stdin)) > 0) {
+        total += n;
+        if (total >= MAX_INPUT_SIZE - 1) break;
+    }
+    inbuf[total] = '\0';
+
+    db_init();
+    out_init();
+    g_sc.p = inbuf;
+    g_sc.pe = inbuf + total;
+    g_sc.start = inbuf;
+
+    process_input();
+
+    fwrite(g_outbuf, 1, g_outlen, stdout);
+
+    free(g_outbuf);
+    free(inbuf);
+    return 0;
 }
