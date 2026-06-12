@@ -14,7 +14,8 @@ uint32_t seed0 = 0;
          filename, (unsigned long)filepath_id, (unsigned long)token_id, \
          (unsigned long)parent_id, prefix_len + (int)(ts - in), (int)(te - ts), \
          t, (int)(te - ts), &in[ts - in]); \
-  file_create_or_append("sidecar.tok", emit_buf, emit_len);
+  file_create_or_append("sidecar.tok", emit_buf, emit_len);\
+  printf("  %u  ", token_id);
 
 #define EMIT_BLOCK(t,prefix_len,suffix_len) \
   uint32_t token_id = murmur3_seeded_v2(seed0, &in[ts - in], te - ts); \
@@ -27,6 +28,7 @@ uint32_t seed0 = 0;
          (unsigned long)parent_id, prefix_len + (int)(ts - in), (int)(te - ts), \
          t, (int)(te - ts), &in[ts - in]); \
   file_create_or_append("sidecar.tok", emit_buf, emit_len); \
+  printf("\n\n  %u  \n\n", token_id); \
 	if((int)(te-(prefix_len+suffix_len)-ts)>0){ \
   	scanner(&in[ts + prefix_len - in], te - (prefix_len + suffix_len) - ts,filename, filepath_id, token_id, prefix_len, suffix_len); \
   }
@@ -245,8 +247,14 @@ widetext => { EMIT_BLOCK("widetext", 16 , 14 ); };
 wrapfigure => { EMIT_BLOCK("wrapfigure", 18 , 16 ); };
 
 
+  sc_prose           => { printf("%.*s", (int)(te-ts), ts); };
 
-  any                => { };
+  [ \t]+             => { printf(" "); };
+  '\n'               => { printf("\n"); };
+  '\r' '\n'?         => { printf("\n"); };
+
+  any                => { printf("%c", *ts); };
+
 *| ;
 }%%
 
