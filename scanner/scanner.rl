@@ -1,5 +1,7 @@
 #include "globals.h"
 #include "file_mmap.h"
+#include "json_escape.h"
+int g_json_mode = 0;
 int n;
 uint32_t seed0 = 0;
 
@@ -14,7 +16,28 @@ uint32_t seed0 = 0;
          filename, (unsigned long)filepath_id, (unsigned long)token_id, \
          (unsigned long)parent_id, prefix_len + (int)(ts - in), (int)(te - ts), \
          t, (int)(te - ts), &in[ts - in]); \
-  file_create_or_append("sidecar.tok", emit_buf, emit_len);\
+  if (g_json_mode) { \
+    char *js_esc = (char *)malloc((size_t)(te-ts) * 6 + 100); \
+    if (js_esc) { \
+      int js_el = json_escape(js_esc, (size_t)(te-ts) * 6 + 100, &in[ts - in], (int)(te-ts)); \
+      if (js_el < 0) js_el = 0; \
+      char *js_buf = (char *)malloc((size_t)js_el + 512); \
+      if (js_buf) { \
+        int js_bl = snprintf(js_buf, (size_t)js_el + 512, \
+          "{\"filepath\":\"%s\",\"filepath_id\":%lu,\"token_id\":%lu," \
+          "\"parent_id\":%lu,\"offset\":%d,\"length\":%d,\"type\":\"%s\"," \
+          "\"text\":\"%.*s\"}\n", \
+          filename, (unsigned long)filepath_id, (unsigned long)token_id, \
+          (unsigned long)parent_id, prefix_len + (int)(ts - in), (int)(te-ts), \
+          t, js_el, js_esc); \
+        file_create_or_append("sidecar.json", js_buf, js_bl); \
+        free(js_buf); \
+      } \
+      free(js_esc); \
+    } \
+  } else { \
+    file_create_or_append("sidecar.tok", emit_buf, emit_len); \
+  } \
   printf("  %u  ", token_id);
 
 #define EMIT_BLOCK(t,prefix_len,suffix_len) \
@@ -27,7 +50,28 @@ uint32_t seed0 = 0;
          filename, (unsigned long)filepath_id, (unsigned long)token_id, \
          (unsigned long)parent_id, prefix_len + (int)(ts - in), (int)(te - ts), \
          t, (int)(te - ts), &in[ts - in]); \
-  file_create_or_append("sidecar.tok", emit_buf, emit_len); \
+  if (g_json_mode) { \
+    char *js_esc = (char *)malloc((size_t)(te-ts) * 6 + 100); \
+    if (js_esc) { \
+      int js_el = json_escape(js_esc, (size_t)(te-ts) * 6 + 100, &in[ts - in], (int)(te-ts)); \
+      if (js_el < 0) js_el = 0; \
+      char *js_buf = (char *)malloc((size_t)js_el + 512); \
+      if (js_buf) { \
+        int js_bl = snprintf(js_buf, (size_t)js_el + 512, \
+          "{\"filepath\":\"%s\",\"filepath_id\":%lu,\"token_id\":%lu," \
+          "\"parent_id\":%lu,\"offset\":%d,\"length\":%d,\"type\":\"%s\"," \
+          "\"text\":\"%.*s\"}\n", \
+          filename, (unsigned long)filepath_id, (unsigned long)token_id, \
+          (unsigned long)parent_id, prefix_len + (int)(ts - in), (int)(te-ts), \
+          t, js_el, js_esc); \
+        file_create_or_append("sidecar.json", js_buf, js_bl); \
+        free(js_buf); \
+      } \
+      free(js_esc); \
+    } \
+  } else { \
+    file_create_or_append("sidecar.tok", emit_buf, emit_len); \
+  } \
   printf("\n\n  %u  \n\n", token_id); \
 	if((int)(te-(prefix_len+suffix_len)-ts)>0){ \
   	scanner(&in[ts + prefix_len - in], te - (prefix_len + suffix_len) - ts,filename, filepath_id, token_id, prefix_len, suffix_len); \
@@ -35,6 +79,21 @@ uint32_t seed0 = 0;
 %%{
   machine strings;
   include latex "latex.rl";
+
+  ## Extended citation patterns (natbib + biblatex) ##
+  citep      = '\\citep' (braces|brackets braces| braces braces) ;
+  citet      = '\\citet' (braces|brackets braces| braces braces) ;
+  citeauthor = '\\citeauthor' (braces|brackets braces) ;
+  citeyear   = '\\citeyear' (braces|brackets braces) ;
+  citealp    = '\\citealp' (braces|brackets braces| braces braces) ;
+  autocite   = '\\autocite' (braces|brackets braces| braces braces) ;
+  textcite   = '\\textcite' (braces|brackets braces| braces braces) ;
+  parencite  = '\\parencite' (braces|brackets braces| braces braces) ;
+  footcite   = '\\footcite' (braces|brackets braces) ;
+  nocite     = '\\nocite' braces ;
+  math_sub   = '_' (braces | alpha | digit) ;
+  math_sup   = '^' (braces | alpha | digit) ;
+
 
   sc_prose = alpha+ ([\-'] alpha+)*;
 
@@ -46,6 +105,16 @@ main :=|*
   label               => { EMIT("label"); };
   frac               => { EMIT("frac"); };
   cite               => { EMIT("cite"); };
+  citep              => { EMIT("citep"); };
+  citet              => { EMIT("citet"); };
+  citeauthor         => { EMIT("citeauthor"); };
+  citeyear           => { EMIT("citeyear"); };
+  citealp            => { EMIT("citealp"); };
+  autocite           => { EMIT("autocite"); };
+  textcite           => { EMIT("textcite"); };
+  parencite          => { EMIT("parencite"); };
+  footcite           => { EMIT("footcite"); };
+  nocite             => { EMIT("nocite"); };
   ref               => { EMIT("ref"); };
   parens             => { EMIT_BLOCK("parens",1,1); };
   display_math             => { EMIT_BLOCK("display_math",2,2); };
@@ -56,6 +125,8 @@ main :=|*
   usepackage             => { EMIT("usepackage"); };
   title => { EMIT("title"); };
   inline_math        => { EMIT("math"); };
+  math_sub           => { EMIT("math_sub"); };
+  math_sup           => { EMIT("math_sup"); };
   comment            => { EMIT("comment");};
 
 abstract => { EMIT_BLOCK("abstract", 16 , 14 ); };
@@ -108,7 +179,6 @@ description => { EMIT_BLOCK("description", 19 , 17 ); };
 df => { EMIT_BLOCK("df", 10 , 8 ); };
 dfn => { EMIT_BLOCK("dfn", 11 , 9 ); };
 diagram => { EMIT_BLOCK("diagram", 15 , 13 ); };
-document => { EMIT_BLOCK("document", 16 , 14 ); };
 eg => { EMIT_BLOCK("eg", 10 , 8 ); };
 enumerate => { EMIT_BLOCK("enumerate", 17 , 15 ); };
 eqnarray => { EMIT_BLOCK("eqnarray", 16 , 14 ); };

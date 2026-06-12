@@ -19,11 +19,9 @@
 #include <time.h>
 #include <unistd.h>
 
-//#define PATH_MAX 4096              // Standard PATH_MAX, adjust if needed
-#define INITIAL_ARRAY_SIZE 1024 // Initial size for the file path array
-#define ARRAY_RESIZE_FACTOR 2   // Factor to resize the array by
+#define INITIAL_ARRAY_SIZE 1024
+#define ARRAY_RESIZE_FACTOR 2
 
-// Structure to hold the array of matching file paths
 struct MatchingFiles {
   char **filepaths;
   int count;
@@ -31,13 +29,14 @@ struct MatchingFiles {
 };
 
 struct MatchingFiles matching_files;
-regex_t regex; // Compiled regex
+regex_t regex;
 
-// Function called by nftw for each file/directory
+static int g_single_file_mode = 0;
+
 int process_path(const char *filepath, const struct stat *sb, int typeflag,
                  struct FTW *ftwbuf) {
-  if (typeflag == FTW_F) { // Only process regular files
-    if (regexec(&regex, filepath, 0, NULL, 0) == 0) { // Regex match found
+  if (typeflag == FTW_F) {
+    if (regexec(&regex, filepath, 0, NULL, 0) == 0) {
       if (matching_files.count >= matching_files.capacity) {
         matching_files.capacity *= ARRAY_RESIZE_FACTOR;
         matching_files.filepaths = realloc(
@@ -55,10 +54,9 @@ int process_path(const char *filepath, const struct stat *sb, int typeflag,
       matching_files.count++;
     }
   }
-  return 0; // Continue traversal
+  return 0;
 }
 
-// Function to free memory used by the matching files array
 void free_matching_files_array() {
   for (int i = 0; i < matching_files.count; i++) {
     free(matching_files.filepaths[i]);
@@ -69,64 +67,106 @@ void free_matching_files_array() {
   matching_files.capacity = 0;
 }
 
-int main(int argc, char *argv[]) {
-  if (argc != 3) {
-    fprintf(stderr, "Usage: %s <directory> <regex_pattern>\n", argv[0]);
-    return EXIT_FAILURE;
-  }
-
-  char *dir_path = argv[1];
-  char *regex_pattern = argv[2];
-  int regex_comp_result;
-
-  // Compile regex pattern
-  regex_comp_result = regcomp(&regex, regex_pattern, REG_EXTENDED);
-  if (regex_comp_result) {
-    char error_buffer[512];
-    regerror(regex_comp_result, &regex, error_buffer, sizeof(error_buffer));
-    fprintf(stderr, "Regex compilation error: %s\n", error_buffer);
-    return EXIT_FAILURE;
-  }
-
-  // Initialize matching_files structure
-  matching_files.capacity = INITIAL_ARRAY_SIZE;
-  matching_files.count = 0;
-  matching_files.filepaths = malloc(matching_files.capacity * sizeof(char *));
-  if (!matching_files.filepaths) {
-    perror("Memory allocation error");
-    regfree(&regex); // Free regex resources before exiting
-    return EXIT_FAILURE;
-  }
-
-  if (nftw(dir_path, process_path, 20, FTW_PHYS) == -1) {
-    perror("nftw");
-    regfree(&regex);             // Free regex resources before exiting
-    free_matching_files_array(); // Free allocated array memory
-    return EXIT_FAILURE;
-  }
-
-  // process files with scanner
-  for (size_t i = 0; i < matching_files.count; i++) {
-    //printf("%s\n", matching_files.filepaths[i]);
-    int fd;
-    struct stat s;
-    fd = open(matching_files.filepaths[i], O_RDONLY);
+static void scan_file(const char *path) {
+    int fd = open(path, O_RDONLY);
     if (fd < 0) {
-      printf("EXIT FAILURE %s",matching_files.filepaths[i]);
-      return EXIT_FAILURE;
+        printf("EXIT FAILURE %s", path);
+        return;
     }
-	    fstat(fd, &s);
-    /* PROT_READ disallows writing to buff: will segv */
+    struct stat s;
+    fstat(fd, &s);
     char *buff = mmap(NULL, s.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
     if (buff != (void *)-1) {
-        uint32_t filepath_id = murmur3_seeded_v2(0, matching_files.filepaths[i], strlen(matching_files.filepaths[i]));
-        scanner((char *)buff, s.st_size,matching_files.filepaths[i],filepath_id,filepath_id,0,0); //filepath_id is used as parent id on initial scan.
-    close(fd);
+        uint32_t filepath_id = murmur3_seeded_v2(0, path, strlen(path));
+        scanner((char *)buff, s.st_size, (char *)path,
+                filepath_id, filepath_id, 0, 0);
+        close(fd);
     }
-  
-  }
-  free_matching_files_array(); // Clean up array memory
-  regfree(&regex);             // Free regex resources
+}
 
-  return EXIT_SUCCESS;
+static void print_usage(const char *prog) {
+    fprintf(stderr,
+        "Usage:\n"
+        "  %s [--json] <file.tex> <regex>     # Single file, regex match on filename\n"
+        "  %s [--json] <directory> <regex>    # Directory traversal with regex\n"
+        "\nOptions:\n"
+        "  --json   Output JSON Lines to sidecar.json instead of custom format\n"
+        "\nExamples:\n"
+        "  %s paper.tex tex                    # Tokenize single file\n"
+        "  %s --json paper.tex tex             # JSON output\n"
+        "  %s /path/to/texfiles '.*\\\\.tex$'    # Process directory\n",
+        prog, prog, prog, prog, prog);
+}
+
+int main(int argc, char *argv[]) {
+    int arg_idx = 1;
+
+    /* Parse --json flag */
+    if (argc >= 2 && !strcmp(argv[1], "--json")) {
+        g_json_mode = 1;
+        arg_idx++;
+    }
+
+    int remaining = argc - arg_idx;
+
+    if (remaining != 2) {
+        print_usage(argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    char *path_or_dir = argv[arg_idx];
+    char *regex_pattern = argv[arg_idx + 1];
+
+    /* Check if first argument is a regular file (single-file mode) */
+    struct stat path_stat;
+    if (stat(path_or_dir, &path_stat) == 0 && S_ISREG(path_stat.st_mode)) {
+        /* Single file mode: use regex to match the filename (usually just "tex") */
+        regex_t file_regex;
+        int rc = regcomp(&file_regex, regex_pattern, REG_EXTENDED);
+        if (rc) {
+            char errbuf[512];
+            regerror(rc, &file_regex, errbuf, sizeof(errbuf));
+            fprintf(stderr, "Regex compilation error: %s\n", errbuf);
+            return EXIT_FAILURE;
+        }
+        if (regexec(&file_regex, path_or_dir, 0, NULL, 0) == 0) {
+            scan_file(path_or_dir);
+        }
+        regfree(&file_regex);
+        return EXIT_SUCCESS;
+    }
+
+    /* Directory mode */
+    int regex_comp_result = regcomp(&regex, regex_pattern, REG_EXTENDED);
+    if (regex_comp_result) {
+        char error_buffer[512];
+        regerror(regex_comp_result, &regex, error_buffer, sizeof(error_buffer));
+        fprintf(stderr, "Regex compilation error: %s\n", error_buffer);
+        return EXIT_FAILURE;
+    }
+
+    matching_files.capacity = INITIAL_ARRAY_SIZE;
+    matching_files.count = 0;
+    matching_files.filepaths = malloc(matching_files.capacity * sizeof(char *));
+    if (!matching_files.filepaths) {
+        perror("Memory allocation error");
+        regfree(&regex);
+        return EXIT_FAILURE;
+    }
+
+    if (nftw(path_or_dir, process_path, 20, FTW_PHYS) == -1) {
+        perror("nftw");
+        regfree(&regex);
+        free_matching_files_array();
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < matching_files.count; i++) {
+        scan_file(matching_files.filepaths[i]);
+    }
+
+    free_matching_files_array();
+    regfree(&regex);
+
+    return EXIT_SUCCESS;
 }

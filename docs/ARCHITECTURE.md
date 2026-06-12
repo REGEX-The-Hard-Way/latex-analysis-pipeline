@@ -12,33 +12,47 @@ The LaTeX Analysis Pipeline is a high-performance, hierarchical LaTeX tokenizer 
 latex-analysis-pipeline/
 ├── include/                    # Shared libraries and utilities
 │   └── regex_util.h/c          # Common regex utilities (consolidated)
-├── scanner/                    # Main scanner implementation
+├── macro_expander.c               # Standalone LaTeX macro expander
+├── expand_macros.sh           # Shell wrapper for macro expansion
+├── include/                   # Shared libraries
+│   ├── regex_util.c/h         # Regex utilities (sub, split, find, macro_expand)
+│   └── old/                   # Archived original macro_expander.c
+├── scanner/                   # Main scanner implementation
 │   ├── scanner.rl            # Ragel state machine for LaTeX tokenization
 │   ├── sent_split.rl          # Sentence segmentation state machine
-│   ├── latex.rl              # LaTeX environment definitions
+│   ├── latex.rl              # 150+ LaTeX environment definitions
 │   ├── main.c                # File traversal and scanner orchestration
 │   ├── globals.h             # Shared global definitions
-│   ├── Makefile              # Build instructions for scanner
+│   ├── file_mmap.c/h         # Memory-mapped file I/O utilities
+│   ├── murmur3.c             # MurmurHash3 for token/filename hashing
+│   ├── Makefile              # Build instructions
+│   ├── sound1.tex            # Test fixture
 │   └── multi_analyzer/        # Chainable text processing pipeline
-│       ├── src/
-│       │   ├── multi_analyzer.rl  # Ragel chainable analyzer
-│       │   ├── main.c             # CLI entry point
-│       │   ├── multi_analyzer.h   # Public API
-│       │   ├── porter2.c/h        # Porter2 stemmer
-│       │   └── regex_util.h/c     # (symlink to include/)
-│       └── Makefile
-├── sandbox/qa/               # Experimental QA tools (beperpar-based)
-│   ├── benepar_qa.py         # Constituency-parser based extractor
-│   ├── output.json           # Sample output
-│   └── requirements.txt
+│       └── src/
+│           ├── multi_analyzer.rl  # Ragel chainable analyzer
+│           ├── main.c             # CLI entry point
+│           ├── multi_analyzer.h   # Public API
+│           └── porter2.c/h        # Porter2 stemmer
+├── sandbox/                   # Experimental/research features
+│   └── qa/
+│       ├── benepar_qa.py      # NLP variable-definition extractor
+│       ├── output.json        # Sample output
+│       └── requirements.txt   # Python dependencies
+├── tests/                     # Test suite
+│   ├── test_issues.py         # Integration tests
+│   ├── validation_tests.py    # Cross-reference validation
+│   └── benchmark_runner.py    # Performance benchmarks
+├── benchmarks/                # Benchmark results
+├── docs/                      # Documentation
+│   ├── ARCHITECTURE.md        # This file
+│   ├── TOKEN_TYPES.md         # Supported token types
+│   ├── macro_expander.md      # Macro expansion docs
+│   └── DEBUG_NOTES.md         # Development notes
 ├── scripts/
-│   └── install_deps.sh       # Dependency installation
-├── benchmarks/
-│   └── README.md             # Benchmark results
-├── docs/
-│   ├── ARCHITECTURE.md       # This file
-│   └── TOKEN_TYPES.md        # Supported token types
-└── examples/                 # Example inputs/outputs (empty)
+│   └── install_deps.sh        # Dependency installation
+├── examples/                  # Example inputs/outputs
+├── DEAD_CODE_REPORT.md        # Audit of unused/dead code
+└── GOLD_STANDARD_ROADMAP.md   # Path to gold-standard processing
 ```
 
 ### Core Components
@@ -62,12 +76,29 @@ Segments tokenized text into sentences, handling:
 - Initials (e.g., "J.", "K.")
 - Known sentence boundaries
 
-#### 3. Cross-Reference Validation
+#### 3. Cross-Reference Validation (`tests/validation_tests.py`)
 
-The pipeline validates:
+Parses `.tok` output to validate:
 - `\ref{...}` → `\label{...}` resolution
 - `\cite{...}` → bibliography entries
 - Nested structure containment
+
+#### 4. Macro Expander (`macro_expander.c`)
+
+A standalone C program (no Ragel dependency) that handles:
+- `\newcommand`, `\renewcommand` with optional argument counts
+- `\def`, `\edef`, `\xdef` with inline parameter markers
+- `\let` (copy definitions)
+- `\expandafter`, `\aftergroup`, `\noexpand`
+- Reports undefined/redefined macros in `--report` mode
+
+#### 5. Shared Utilities
+
+| File | Purpose |
+|------|---------|
+| `include/regex_util.c/h` | Regex substitution, splitting, finding, and macro expansion |
+| `scanner/file_mmap.c/h` | Memory-mapped file creation and append (zero-copy I/O) |
+| `scanner/murmur3.c` | MurmurHash3 for reproducible token_id and filepath_id generation |
 
 ## Token Types
 
@@ -131,7 +162,8 @@ bash scripts/install_deps.sh
 cd scanner
 make scanner
 make sent_split
-make macro_expander
+# Build macro expander (from project root)
+cd .. && gcc -O2 macro_expander.c -o macro_expander.out && cd scanner
 
 # Build multi_analyzer
 cd multi_analyzer

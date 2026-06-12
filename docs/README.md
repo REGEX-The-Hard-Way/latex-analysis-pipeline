@@ -7,8 +7,11 @@ Welcome to the documentation for the LaTeX Analysis Pipeline.
 - **[Project README](../README.md)** - Overview, installation, and usage
 - **[Architecture Guide](ARCHITECTURE.md)** - Detailed architecture documentation
 - **[Token Types Reference](TOKEN_TYPES.md)** - Complete list of supported token types
-- **[Issues Analysis](ISSUES_ANALYSIS.md)** - GitHub issues analysis and TODO list
-- **[Issues Index](issues/README.md)** - Individual issue tracking
+- **[Macro Expander](macro_expander.md)** - Macro expansion documentation
+- **[Debug Notes](DEBUG_NOTES.md)** - Development debugging notes
+- **[Issues Analysis](ISSUES_ANALYSIS.md)** - Upstream issue tracking and analysis
+- **[Dead Code Report](../DEAD_CODE_REPORT.md)** - Audit of unused and dead code (2026-06-12)
+- **[Gold Standard Roadmap](../GOLD_STANDARD_ROADMAP.md)** - Path to production-grade processing
 
 ## Getting Started
 

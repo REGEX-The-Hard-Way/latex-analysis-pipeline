@@ -13,8 +13,8 @@ cat input.tex | ./macro_expander.out > output.tex
 
 ### Build
 ```bash
-cd scanner
-make expand_macros
+# From project root
+gcc -O2 macro_expander.c -o macro_expander.out
 ```
 
 ## Supported Macros

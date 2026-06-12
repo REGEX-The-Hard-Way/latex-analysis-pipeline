@@ -72,10 +72,3 @@ uint32_t murmur3_seeded_v2(uint32_t seed, const char *data, size_t len)
 	return seed;
 }
 
-/* 
-int main(){
-    uint32_t i = murmur3_seeded_v2(0,"hello",5);
-    printf("%d",i);
-    return 0;
-}
-*/

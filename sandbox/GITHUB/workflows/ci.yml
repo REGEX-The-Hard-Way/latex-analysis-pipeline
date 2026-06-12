@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Ragel
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ragel
+
+      - name: Build macro_expander
+        run: gcc -O2 macro_expander.c -o macro_expander.out
+
+      - name: Build scanner
+        working-directory: scanner
+        run: |
+          make scanner
+          make sent_split
+
+      - name: Build multi_analyzer
+        working-directory: scanner/multi_analyzer
+        run: make all
+
+      - name: Run tests
+        run: python3 -m unittest discover -s tests -p "test_*.py" -v
+
+      - name: Smoke test — macro_expander
+        run: |
+          echo '\newcommand{\foo}{bar}\foo' | ./macro_expander.out | grep -q 'bar'
+          echo "macro_expander smoke test: PASS"
+
+      - name: Smoke test — scanner
+        working-directory: scanner
+        run: |
+          ./scanner.out sound1.tex tex > /tmp/sidecar.tok 2>/dev/null
+          test -s /tmp/sidecar.tok && echo "scanner smoke test: PASS"

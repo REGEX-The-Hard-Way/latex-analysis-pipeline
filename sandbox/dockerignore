@@ -1,0 +1,35 @@
+# Git
+.git/
+.gitignore
+
+# Generated C from Ragel
+scanner/scanner.c
+scanner/sent_split.c
+scanner/multi_analyzer/src/multi_analyzer.c
+
+# Built binaries
+*.out
+*.o
+*.a
+
+# Test artifacts
+sidecar.tok
+sidecar.json
+clean.sent
+*.tmp
+*.log
+
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+
+# Data
+scanner/2003/
+scanner/2003_errors
+*.tar.gz
+
+# IDE
+.idea/
+.vscode/
+*.swp

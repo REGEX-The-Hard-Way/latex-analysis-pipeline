@@ -4,11 +4,11 @@
 
 | Implementation | Files Tested | Crashes/Failures | Status |
 |----------------|--------------|------------------|--------|
-| newcommand.c (original) | 1019 | 189 | Crashes on complex files |
-| newcommand.c (updated) | 1019 | 80 | Still has issues |
+| macro_expander.c (original) | 1019 | 189 | Crashes on complex files |
+| macro_expander.c (updated) | 1019 | 80 | Still has issues |
 | macro_expander.c | 167+ | 100% broken | Missing parameter handling |
 
-## Issues Found in newcommand.c
+## Issues Found in macro_expander.c
 
 ### 1. Double Hash (`##`) Not Handled
 **Problem**: In LaTeX, `##` in a macro body represents a single `#` character.
@@ -118,7 +118,7 @@ And the intcpy function needs to be fixed too since body is now [cmd][pos].
 
 ## Recommendations
 
-1. The updated `newcommand.c` is the best option currently available
+1. The updated `macro_expander.c` is the best option currently available
 2. For production use, consider:
    - Adding support for `@` in macro names
    - Better error handling (skip problematic macros instead of failing)

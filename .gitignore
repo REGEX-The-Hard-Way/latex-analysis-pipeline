@@ -4,15 +4,20 @@ sent_split.c
 scanner/multi_analyzer/src/multi_analyzer.c
 
 # Built binaries
-scanner.out
-sent_split.out
 macro_expander.out
 multi_analyzer.out
-strip_non_ascii.out
-scanner/scanner.c
-scanner/sent_split.c
-scanner/newcommand.out
 scanner/expand_macros.c
+scanner/macro_expander.out
+scanner.out
+scanner/scanner.c
+scanner/scanner_dbg.out
+scanner/scanner.out
+scanner/scanner_tbl.out
+scanner/sent_split.c
+scanner/sent_split.out
+scanner/strip_non_ascii.out
+sent_split.out
+strip_non_ascii.out
 
 # Test and temporary files
 test_regex_util.c
@@ -57,9 +62,6 @@ testing/
 
 # Jupyter
 .ipynb_checkpoints/
-
-# Upstream data (snapshot from other repo)
-issues_list.json
 
 # Upstream data (snapshot from other repo)
 issues_list.json
