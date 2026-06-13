@@ -9,6 +9,8 @@ validator. Handles context-sensitive grammars with arbitrary nesting depth. Proc
 
 Forked from [allofphysicsgraph/latex-in-arxiv](https://github.com/allofphysicsgraph/latex-in-arxiv).
 
+Documentation: [docs/](docs/README.md) | [Architecture](docs/ARCHITECTURE.md) | [Macro Plan](docs/MACRO_EXPANSION_PLAN.md) | [Graph Plan](docs/IGRAPH_INTEGRATION.md) | [Roadmap](docs/GOLD_STANDARD_ROADMAP.md)
+
 ## Quick Start
 
 ```bash
@@ -21,8 +23,7 @@ make scanner
 make sent_split
 
 # Build the macro expander
-cd /path/to/latex-analysis-pipeline
-gcc -O2 macro_expander.c -o macro_expander.out
+gcc -O2 -Iinclude include/macro_expander.c include/regex_util.c -o macro_expander.out -lm
 
 # Build the multi-analyzer pipeline (optional)
 cd scanner/multi_analyzer
@@ -141,8 +142,7 @@ make scanner        # → scanner.out (main tokenizer)
 make sent_split     # → sent_split.out (sentence segmenter)
 
 # Build macro expander (standalone C, no Ragel dependency)
-cd ..
-gcc -O2 macro_expander.c -o macro_expander.out
+gcc -O2 -Iinclude include/macro_expander.c include/regex_util.c -o macro_expander.out -lm
 
 # Build multi-analyzer pipeline (optional)
 cd scanner/multi_analyzer
@@ -258,10 +258,9 @@ Full list of 150+ environment types in `docs/TOKEN_TYPES.md` and defined in
 
 ```
 latex-analysis-pipeline/
-├── macro_expander.c               # Standalone LaTeX macro expander
-├── expand_macros.sh           # Shell wrapper for macro expansion
 ├── include/                   # Shared libraries
-│   ├── regex_util.c/h         # Regex utilities (sub, split, find, macro_expand)
+│   ├── macro_expander.c/h     # Token-at-a-time macro expansion engine
+│   ├── regex_util.c/h         # Regex utilities (sub, split, find)
 │   └── old/                   # Original upstream macro_expander.c (archived)
 ├── scanner/                   # Main scanner implementation
 │   ├── scanner.rl             # Ragel state machine for LaTeX tokenization
@@ -271,6 +270,7 @@ latex-analysis-pipeline/
 │   ├── globals.h              # Shared definitions and prototypes
 │   ├── file_mmap.c/h          # Memory-mapped file I/O utilities
 │   ├── murmur3.c              # MurmurHash3 (token/filename hashing)
+│   ├── json_escape.c/h        # JSON escaping utility
 │   ├── Makefile               # Build instructions
 │   ├── strip_non_ascii.c      # Dataset preprocessing utility
 │   ├── pre-process-dataset.sh # arXiv corpus preparation script
@@ -281,30 +281,40 @@ latex-analysis-pipeline/
 │           ├── multi_analyzer.h    # Public API
 │           ├── main.c              # CLI entry point
 │           └── porter2.c/h         # Porter2 stemmer
+├── python/                    # Python bindings
+│   └── latex_analysis_pipeline/
+│       └── __init__.py        # MacroExpander, LaTeXScanner, SentenceSplitter
 ├── sandbox/                   # Experimental/research features
 │   ├── qa/
 │   │   ├── benepar_qa.py      # NLP variable-definition extractor
 │   │   ├── output.json        # Sample QA output
 │   │   └── requirements.txt   # Python dependencies
-│   ├── statechart.rl          # (Ragel tutorial demo — dead code)
-│   └── macro_statechart.rl    # (Incomplete macro expander — dead code)
+│   └── pyproject.toml         # Python package definition (to be moved to root)
 ├── tests/                     # Test suite
 │   ├── test_issues.py         # Scanner + macro expander integration tests
+│   ├── test_macro_expander.py # Macro expander unit tests (20+)
 │   ├── validation_tests.py    # Cross-reference validation tests
 │   └── benchmark_runner.py    # Timing and accuracy benchmarks
 ├── benchmarks/                # Performance benchmark results and docs
+│   └── README.md              # Benchmark results
 ├── docs/                      # Documentation
+│   ├── README.md              # Documentation index
 │   ├── ARCHITECTURE.md        # Architecture guide
 │   ├── TOKEN_TYPES.md         # Complete token type reference
-│   ├── macro_expander.md      # Macro expander documentation
+│   ├── MACRO_EXPANSION_PLAN.md # Macro expander bug-fix roadmap
+│   ├── IGRAPH_INTEGRATION.md  # Graph analysis integration plan
+│   ├── GOLD_STANDARD_ROADMAP.md # Production-grade processing roadmap
+│   ├── DEAD_CODE_REPORT.md    # Audit of unused and dead code
+│   ├── macro_expander.md      # Macro expander usage docs
 │   ├── DEBUG_NOTES.md         # Development/debugging notes
 │   └── ISSUES_ANALYSIS.md     # Upstream issue tracking analysis
 ├── scripts/
-│   └── install_deps.sh        # Dependency installer
+│   └── install_deps.sh        # Dependency installer (Ragel + igraph)
 ├── examples/
-│   └── README.md              # Example usage walkthrough
-├── DEAD_CODE_REPORT.md        # Audit of unused/dead code
-├── GOLD_STANDARD_ROADMAP.md   # Path to gold-standard LaTeX processing
+│   ├── README.md              # Example usage walkthrough
+│   ├── sidecar.tok            # Sample token output
+│   └── clean.sent             # Sample sentence output
+├── expand_macros.sh           # Shell wrapper for macro expansion
 └── README.md                  # This file
 ```
 
@@ -352,7 +362,7 @@ See `GOLD_STANDARD_ROADMAP.md` for the detailed path to production-grade LaTeX p
 cd scanner && make scanner && make sent_split && cd ..
 
 # Build the macro expander
-gcc -O2 macro_expander.c -o macro_expander.out
+gcc -O2 -Iinclude include/macro_expander.c include/regex_util.c -o macro_expander.out -lm
 
 # Run the test suite
 python -m pytest tests/
@@ -368,11 +378,18 @@ Issues and pull requests welcome. Before opening a PR:
 
 ## Related Documents
 
-- [DEAD_CODE_REPORT.md](DEAD_CODE_REPORT.md) — Audit of unused and dead code
-- [GOLD_STANDARD_ROADMAP.md](GOLD_STANDARD_ROADMAP.md) — Path to production-grade LaTeX processing
-- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — Detailed architecture
-- [docs/TOKEN_TYPES.md](docs/TOKEN_TYPES.md) — Complete token type reference
-- [docs/DEBUG_NOTES.md](docs/DEBUG_NOTES.md) — Development debugging notes
+| Document | Description |
+|----------|-------------|
+| [docs/README.md](docs/README.md) | Documentation index |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Detailed architecture guide |
+| [docs/TOKEN_TYPES.md](docs/TOKEN_TYPES.md) | Complete token type reference |
+| [docs/MACRO_EXPANSION_PLAN.md](docs/MACRO_EXPANSION_PLAN.md) | Macro expander bug-fix and feature roadmap |
+| [docs/IGRAPH_INTEGRATION.md](docs/IGRAPH_INTEGRATION.md) | Graph-based cross-document analysis plan |
+| [docs/GOLD_STANDARD_ROADMAP.md](docs/GOLD_STANDARD_ROADMAP.md) | Path to production-grade LaTeX processing |
+| [docs/DEAD_CODE_REPORT.md](docs/DEAD_CODE_REPORT.md) | Audit of unused and dead code |
+| [docs/macro_expander.md](docs/macro_expander.md) | Macro expander usage documentation |
+| [docs/DEBUG_NOTES.md](docs/DEBUG_NOTES.md) | Development debugging notes |
+| [docs/ISSUES_ANALYSIS.md](docs/ISSUES_ANALYSIS.md) | Upstream issue tracking analysis |
 
 ## License
 

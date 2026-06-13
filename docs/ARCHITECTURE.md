@@ -10,29 +10,31 @@ The LaTeX Analysis Pipeline is a high-performance, hierarchical LaTeX tokenizer 
 
 ```
 latex-analysis-pipeline/
-├── include/                    # Shared libraries and utilities
-│   └── regex_util.h/c          # Common regex utilities (consolidated)
-├── macro_expander.c               # Standalone LaTeX macro expander
+├── include/                    # Shared libraries
+│   ├── macro_expander.c/h     # Token-at-a-time macro expansion engine
+│   ├── regex_util.c/h         # Regex utilities (sub, split, find)
+│   └── old/                   # Archived original upstream macro_expander.c
 ├── expand_macros.sh           # Shell wrapper for macro expansion
-├── include/                   # Shared libraries
-│   ├── regex_util.c/h         # Regex utilities (sub, split, find, macro_expand)
-│   └── old/                   # Archived original macro_expander.c
 ├── scanner/                   # Main scanner implementation
-│   ├── scanner.rl            # Ragel state machine for LaTeX tokenization
+│   ├── scanner.rl             # Ragel state machine for LaTeX tokenization
+│   ├── latex.rl               # 150+ LaTeX environment definitions
 │   ├── sent_split.rl          # Sentence segmentation state machine
-│   ├── latex.rl              # 150+ LaTeX environment definitions
-│   ├── main.c                # File traversal and scanner orchestration
-│   ├── globals.h             # Shared global definitions
-│   ├── file_mmap.c/h         # Memory-mapped file I/O utilities
-│   ├── murmur3.c             # MurmurHash3 for token/filename hashing
-│   ├── Makefile              # Build instructions
-│   ├── sound1.tex            # Test fixture
+│   ├── main.c                 # File traversal and scanner orchestration
+│   ├── globals.h              # Shared global definitions
+│   ├── file_mmap.c/h          # Memory-mapped file I/O utilities
+│   ├── murmur3.c              # MurmurHash3 for token/filename hashing
+│   ├── json_escape.c/h        # JSON escaping utility
+│   ├── Makefile               # Build instructions
+│   ├── sound1.tex             # Test fixture
 │   └── multi_analyzer/        # Chainable text processing pipeline
 │       └── src/
 │           ├── multi_analyzer.rl  # Ragel chainable analyzer
 │           ├── main.c             # CLI entry point
 │           ├── multi_analyzer.h   # Public API
 │           └── porter2.c/h        # Porter2 stemmer
+├── python/                    # Python bindings
+│   └── latex_analysis_pipeline/
+│       └── __init__.py        # MacroExpander, LaTeXScanner, SentenceSplitter
 ├── sandbox/                   # Experimental/research features
 │   └── qa/
 │       ├── benepar_qa.py      # NLP variable-definition extractor
@@ -40,19 +42,27 @@ latex-analysis-pipeline/
 │       └── requirements.txt   # Python dependencies
 ├── tests/                     # Test suite
 │   ├── test_issues.py         # Integration tests
+│   ├── test_macro_expander.py # Macro expander unit tests
 │   ├── validation_tests.py    # Cross-reference validation
 │   └── benchmark_runner.py    # Performance benchmarks
 ├── benchmarks/                # Benchmark results
 ├── docs/                      # Documentation
+│   ├── README.md              # Documentation index
 │   ├── ARCHITECTURE.md        # This file
 │   ├── TOKEN_TYPES.md         # Supported token types
+│   ├── MACRO_EXPANSION_PLAN.md # Macro expander bug-fix roadmap
+│   ├── IGRAPH_INTEGRATION.md  # Graph analysis integration plan
+│   ├── GOLD_STANDARD_ROADMAP.md # Production-grade roadmap
+│   ├── DEAD_CODE_REPORT.md    # Audit of unused/dead code
 │   ├── macro_expander.md      # Macro expansion docs
-│   └── DEBUG_NOTES.md         # Development notes
+│   ├── DEBUG_NOTES.md         # Development notes
+│   └── ISSUES_ANALYSIS.md     # Upstream issue tracking analysis
 ├── scripts/
-│   └── install_deps.sh        # Dependency installation
+│   └── install_deps.sh        # Dependency installation (Ragel + igraph)
 ├── examples/                  # Example inputs/outputs
-├── DEAD_CODE_REPORT.md        # Audit of unused/dead code
-└── GOLD_STANDARD_ROADMAP.md   # Path to gold-standard processing
+│   ├── sidecar.tok            # Sample token output
+│   └── clean.sent             # Sample sentence output
+└── README.md                  # Project overview
 ```
 
 ### Core Components
@@ -162,8 +172,8 @@ bash scripts/install_deps.sh
 cd scanner
 make scanner
 make sent_split
-# Build macro expander (from project root)
-cd .. && gcc -O2 macro_expander.c -o macro_expander.out && cd scanner
+# Build macro expander
+gcc -O2 -Iinclude include/macro_expander.c include/regex_util.c -o macro_expander.out -lm
 
 # Build multi_analyzer
 cd multi_analyzer

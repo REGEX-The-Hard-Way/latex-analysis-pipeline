@@ -14,7 +14,7 @@ cat input.tex | ./macro_expander.out > output.tex
 ### Build
 ```bash
 # From project root
-gcc -O2 macro_expander.c -o macro_expander.out
+gcc -O2 -Iinclude include/macro_expander.c include/regex_util.c -o macro_expander.out -lm
 ```
 
 ## Supported Macros
@@ -52,7 +52,7 @@ The implementation uses:
 - **Pass 2**: Expand macros using regex substitution
 
 ### Files
-- `scanner/macro_expander.c` - Main implementation
+- `include/macro_expander.c` - Main implementation
 - `include/regex_util.c` - Regex utilities including `regex_macro_expand()`
 - `include/regex_util.h` - Header file
 
