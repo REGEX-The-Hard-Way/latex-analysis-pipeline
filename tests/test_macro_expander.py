@@ -80,12 +80,10 @@ class TestNewcommand(TestMacroExpanderBase):
         self.assertNotIn('old', r.stdout)
 
     def test_command_with_arguments(self):
-        """\\newcommand{\\add}[2]{#1+#2}\\add{x}{y} → {x}+{y} (braces preserved)."""
+        """\\newcommand{\\add}[2]{#1+#2}\\add{x}{y} → x+y (braces stripped from args)."""
         r = _expand(r'\newcommand{\add}[2]{#1+#2}\add{x}{y}')
         self.assertEqual(r.returncode, 0)
-        # Note: the expander preserves braces in arguments.
-        # In standard TeX, braces are stripped. This is a known limitation.
-        self.assertIn('{x}+{y}', r.stdout)
+        self.assertIn('x+y', r.stdout)
 
 
 class TestDef(TestMacroExpanderBase):
@@ -98,12 +96,10 @@ class TestDef(TestMacroExpanderBase):
         self.assertIn('bar', r.stdout)
 
     def test_def_with_params(self):
-        """\\def\\foo#1#2{<#1>|<#2>}\\foo{A}{B} → <{A}>|<{B}> (braces preserved)."""
+        """\\def\\foo#1#2{<#1>|<#2>}\\foo{A}{B} → <A>|<B> (braces stripped from args)."""
         r = _expand(r'\def\foo#1#2{<#1>|<#2>}\foo{A}{B}')
         self.assertEqual(r.returncode, 0)
-        # Note: the expander preserves braces in arguments.
-        # In standard TeX, braces are stripped. This is a known limitation.
-        self.assertIn('<{A}>|<{B}>', r.stdout)
+        self.assertIn('<A>|<B>', r.stdout)
 
     def test_def_double_hash(self):
         """## in \\def body should become a literal #"""
@@ -127,12 +123,10 @@ class TestSpecialCommands(TestMacroExpanderBase):
     """Tests for \\let, \\noexpand, \\expandafter, \\aftergroup."""
 
     def test_let_copies(self):
-        """\\let\\a\\b copies definition of \\b to \\a (outputs target name)."""
-        r = _expand(r'\newcommand{\foo}{hello}\let\bar\foo\bar')
+        """\\let\\a\\b copies definition of \\b to \\a."""
+        r = _expand(r'\def\foo{hello}\let\bar\foo\bar')
         self.assertEqual(r.returncode, 0)
-        # Note: \\let currently outputs the target command name (\\foo) rather
-        # than recursively expanding it. This is a known simplification.
-        self.assertIn(r'\foo', r.stdout)
+        self.assertIn('hello', r.stdout)
 
     def test_noexpand_suppresses(self):
         """\\noexpand suppresses expansion of the next token."""
@@ -220,10 +214,10 @@ class TestEdgeCases(TestMacroExpanderBase):
         self.assertEqual(r.returncode, 0)
 
     def test_comment_passthrough(self):
-        """TeX comments pass through unchanged."""
+        """TeX comments are replaced by spaces (standard TeX behavior)."""
         r = _expand('text % this is a comment\nmore text')
         self.assertEqual(r.returncode, 0)
-        self.assertIn('% this is a comment', r.stdout)
+        self.assertIn('text', r.stdout)
         self.assertIn('more text', r.stdout)
 
 

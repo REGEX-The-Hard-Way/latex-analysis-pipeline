@@ -74,6 +74,7 @@
 #define NODE_POOL_SIZE      1048576
 #define INPUT_STACK_SIZE    4096
 #define PARAM_STACK_SIZE    256
+#define MAX_EXPANSION_DEPTH 10000
 
 typedef struct token_node {
     int32_t            info;
@@ -118,6 +119,8 @@ struct macro_expander {
     int           scanner_status;
     token_node_t *def_ref;
 
+    int           expansion_depth;
+
     char         *out_buf;
     size_t        out_len;
     size_t        out_cap;
@@ -138,7 +141,7 @@ static token_node_t *new_node(macro_expander_t *me) {
         n = &me->node_pool[me->node_pool_free++];
     } else {
         fprintf(stderr, "macro_expander: node pool exhausted (%d nodes)\n", NODE_POOL_SIZE);
-        exit(1);
+        return NULL;
     }
     n->info = 0;
     n->link = NULL;
@@ -152,6 +155,7 @@ static void free_node(macro_expander_t *me, token_node_t *n) {
 
 static token_node_t *new_token_list(macro_expander_t *me) {
     token_node_t *head = new_node(me);
+    if (!head) return NULL;
     head->info = 1;
     head->link = NULL;
     return head;
@@ -172,6 +176,7 @@ static void token_list_unref(macro_expander_t *me, token_node_t *head) {
 
 static token_node_t *token_list_append(macro_expander_t *me, token_node_t *tail, int32_t tok) {
     token_node_t *n = new_node(me);
+    if (!n) return tail;
     n->info = tok;
     tail->link = n;
     return n;
@@ -205,6 +210,10 @@ static int eq_define(macro_expander_t *me, const char *name, int cmd, intptr_t c
         int idx = (h + probe) & HASH_MASK;
         if (!me->eqtb[idx].name) {
             me->eqtb[idx].name = strdup(name);
+            if (!me->eqtb[idx].name) {
+                fprintf(stderr, "macro_expander: out of memory (eq_define)\n");
+                return -1;
+            }
             me->eqtb[idx].cmd = cmd;
             me->eqtb[idx].chr = chr;
             me->eqtb_count++;
@@ -212,7 +221,7 @@ static int eq_define(macro_expander_t *me, const char *name, int cmd, intptr_t c
         }
     }
     fprintf(stderr, "macro_expander: hash table full\n");
-    exit(1);
+    return -1;
 }
 
 static void input_push_string(macro_expander_t *me, const char *str) {
@@ -272,6 +281,7 @@ static void catcode_defaults(macro_expander_t *me) {
     me->cat_code['\t'] = CMD_SPACER;
     for (int c = 'a'; c <= 'z'; c++) me->cat_code[c] = CMD_LETTER;
     for (int c = 'A'; c <= 'Z'; c++) me->cat_code[c] = CMD_LETTER;
+    me->cat_code['@'] = CMD_LETTER;
     me->cat_code[0] = CMD_IGNORE;
 }
 
@@ -306,6 +316,7 @@ static int32_t scan_control_sequence(macro_expander_t *me, input_frame_t *f) {
 
     int cs = eq_lookup(me, csname);
     if (cs < 0) cs = eq_define(me, csname, CMD_UNDEFINED_CS, 0);
+    if (cs < 0) return SPACE_TOKEN;
     return CS_TOKEN_FLAG + cs;
 }
 
@@ -417,16 +428,28 @@ static void get_token(macro_expander_t *me) {
 
 static void get_x_token(macro_expander_t *me) {
     get_next(me);
-    while (IS_EXPANDABLE(me->cur_cmd)) { expand(me); get_next(me); }
+    while (IS_EXPANDABLE(me->cur_cmd)) {
+        if (++me->expansion_depth > MAX_EXPANSION_DEPTH) {
+            fprintf(stderr, "macro_expander: expansion depth exceeded (%d)\n", MAX_EXPANSION_DEPTH);
+            me->cur_cmd = CMD_RELAX; me->cur_chr = 0;
+            me->cur_tok = 0;
+            return;
+        }
+        expand(me);
+        get_next(me);
+    }
+    me->expansion_depth = 0;
     me->cur_tok = (!me->cur_cs) ? TOKEN(me->cur_cmd, me->cur_chr) : (CS_TOKEN_FLAG + me->cur_cs);
 }
 
 static token_node_t *scan_toks(macro_expander_t *me, int macro_def, int xpand) {
+    (void)xpand;
     token_node_t *tail;
     int unbalance;
 
     me->scanner_status = 2;
     me->def_ref = new_token_list(me);
+    if (!me->def_ref) { me->scanner_status = 0; return NULL; }
     tail = me->def_ref;
 
     if (macro_def) {
@@ -488,7 +511,12 @@ static void out_append(macro_expander_t *me, const char *s, size_t len) {
     if (me->out_len + len + 1 > me->out_cap) {
         me->out_cap = (me->out_len + len + 1) * 2;
         if (me->out_cap < 1024) me->out_cap = 1024;
-        me->out_buf = realloc(me->out_buf, me->out_cap);
+        char *newbuf = realloc(me->out_buf, me->out_cap);
+        if (!newbuf) {
+            fprintf(stderr, "macro_expander: out of memory (out buffer)\n");
+            return;
+        }
+        me->out_buf = newbuf;
     }
     memcpy(me->out_buf + me->out_len, s, len);
     me->out_len += len;
@@ -553,6 +581,7 @@ static void macro_call(macro_expander_t *me) {
         while (pat && scanning) {
             if (TOKEN_CMD(pat->info) == CMD_MATCH) {
                 token_node_t *arg_list = new_token_list(me);
+                if (!arg_list) { scanning = 0; break; }
                 token_node_t *arg_tail = arg_list;
                 int brace_depth = 0;
                 get_token(me);
@@ -581,6 +610,11 @@ static void macro_call(macro_expander_t *me) {
     if (r) r = r->link;
 
     token_node_t *substituted = new_token_list(me);
+    if (!substituted) {
+        for (int i = 0; i < nparams && i < 10; i++)
+            token_list_unref(me, pstack_buf[i]);
+        return;
+    }
     token_node_t *sub_tail = substituted;
     while (r) {
         if (TOKEN_CMD(r->info) == CMD_OUT_PARAM) {
@@ -613,8 +647,14 @@ static void do_define(macro_expander_t *me, int is_edef, int is_global) {
     me->scanner_status = 2;
     scan_toks(me, 1, is_edef);
     me->scanner_status = 0;
-    me->eqtb[target_cs].cmd = CMD_CALL;
-    me->eqtb[target_cs].chr = (intptr_t)me->def_ref;
+    if (me->def_ref) {
+        if (me->eqtb[target_cs].cmd >= CMD_CALL &&
+            me->eqtb[target_cs].cmd <= CMD_LONG_OUTER_CALL) {
+            token_list_unref(me, (token_node_t *)me->eqtb[target_cs].chr);
+        }
+        me->eqtb[target_cs].cmd = CMD_CALL;
+        me->eqtb[target_cs].chr = (intptr_t)me->def_ref;
+    }
 }
 
 static void do_newcommand(macro_expander_t *me) {
@@ -653,8 +693,14 @@ static void do_newcommand(macro_expander_t *me) {
     me->scanner_status = 2;
     scan_toks(me, 1, 0);
     me->scanner_status = 0;
-    me->eqtb[target_cs].cmd = CMD_CALL;
-    me->eqtb[target_cs].chr = (intptr_t)me->def_ref;
+    if (me->def_ref) {
+        if (me->eqtb[target_cs].cmd >= CMD_CALL &&
+            me->eqtb[target_cs].cmd <= CMD_LONG_OUTER_CALL) {
+            token_list_unref(me, (token_node_t *)me->eqtb[target_cs].chr);
+        }
+        me->eqtb[target_cs].cmd = CMD_CALL;
+        me->eqtb[target_cs].chr = (intptr_t)me->def_ref;
+    }
 }
 
 static void do_let(macro_expander_t *me) {
@@ -667,6 +713,10 @@ static void do_let(macro_expander_t *me) {
         get_token(me);
 
     if (me->cur_cs) {
+        if (me->eqtb[target_cs].cmd >= CMD_CALL &&
+            me->eqtb[target_cs].cmd <= CMD_LONG_OUTER_CALL) {
+            token_list_unref(me, (token_node_t *)me->eqtb[target_cs].chr);
+        }
         me->eqtb[target_cs].cmd = me->eqtb[me->cur_cs].cmd;
         me->eqtb[target_cs].chr = me->eqtb[me->cur_cs].chr;
         if (me->eqtb[target_cs].cmd == CMD_CALL ||
@@ -677,7 +727,12 @@ static void do_let(macro_expander_t *me) {
             if (tl) tl->info++;
         }
     } else {
+        if (me->eqtb[target_cs].cmd >= CMD_CALL &&
+            me->eqtb[target_cs].cmd <= CMD_LONG_OUTER_CALL) {
+            token_list_unref(me, (token_node_t *)me->eqtb[target_cs].chr);
+        }
         token_node_t *single = new_token_list(me);
+        if (!single) return;
         token_list_append(me, single, me->cur_tok);
         me->eqtb[target_cs].cmd = CMD_CALL;
         me->eqtb[target_cs].chr = (intptr_t)single;
@@ -701,20 +756,24 @@ static void expand(macro_expander_t *me) {
         if (IS_EXPANDABLE(me->cur_cmd)) expand(me);
         else {
             token_node_t *node = new_node(me);
-            node->info = me->cur_tok;
-            if (me->input_ptr > 0 &&
-                me->input_stack[me->input_ptr - 1].state == INPUT_TOKEN_LIST) {
-                node->link = me->input_stack[me->input_ptr - 1].tok_loc;
-                me->input_stack[me->input_ptr - 1].tok_loc = node;
+            if (node) {
+                node->info = me->cur_tok;
+                if (me->input_ptr > 0 &&
+                    me->input_stack[me->input_ptr - 1].state == INPUT_TOKEN_LIST) {
+                    node->link = me->input_stack[me->input_ptr - 1].tok_loc;
+                    me->input_stack[me->input_ptr - 1].tok_loc = node;
+                }
             }
         }
         {
             token_node_t *node = new_node(me);
-            node->info = t;
-            if (me->input_ptr > 0 &&
-                me->input_stack[me->input_ptr - 1].state == INPUT_TOKEN_LIST) {
-                node->link = me->input_stack[me->input_ptr - 1].tok_loc;
-                me->input_stack[me->input_ptr - 1].tok_loc = node;
+            if (node) {
+                node->info = t;
+                if (me->input_ptr > 0 &&
+                    me->input_stack[me->input_ptr - 1].state == INPUT_TOKEN_LIST) {
+                    node->link = me->input_stack[me->input_ptr - 1].tok_loc;
+                    me->input_stack[me->input_ptr - 1].tok_loc = node;
+                }
             }
         }
         return;
@@ -747,18 +806,23 @@ static void expand(macro_expander_t *me) {
         namebuf[namelen] = '\0';
         int cs = eq_lookup(me, namebuf);
         if (cs < 0) cs = eq_define(me, namebuf, CMD_RELAX, 0);
-        {
+        if (cs >= 0) {
             token_node_t *list = new_token_list(me);
-            token_node_t *tail = list;
-            tail = token_list_append(me, tail, CS_TOKEN_FLAG + cs);
-            input_push_token_list(me, list);
-            token_list_unref(me, list);
+            if (list) {
+                token_list_append(me, list, CS_TOKEN_FLAG + cs);
+                input_push_token_list(me, list);
+                token_list_unref(me, list);
+            }
         }
         return;
     }
 
     if (me->cur_cmd >= CMD_CALL && me->cur_cmd <= CMD_LONG_OUTER_CALL) {
         macro_call(me);
+        return;
+    }
+    if (me->cur_cmd == CMD_UNDEFINED_CS) {
+        print_token(me, CS_TOKEN_FLAG + me->cur_cs);
         return;
     }
     me->cur_cmd = CMD_RELAX;
@@ -812,10 +876,14 @@ void macro_expander_destroy(macro_expander_t *me) {
         if (me->input_stack[i].state == INPUT_TOKEN_LIST &&
             me->input_stack[i].tok_head) {
             token_list_unref(me, me->input_stack[i].tok_head);
+        } else if (me->input_stack[i].state == INPUT_FILE &&
+                   me->input_stack[i].buffer) {
+            free((void *)me->input_stack[i].buffer);
+            me->input_stack[i].buffer = NULL;
         }
     }
-    for (int i = 0; i < me->param_ptr; i++)
-        token_list_unref(me, me->param_stack[i]);
+    for (int pi = 0; pi < me->param_ptr; pi++)
+        token_list_unref(me, me->param_stack[pi]);
     free(me->out_buf);
     free(me);
 }
@@ -841,6 +909,10 @@ void macro_expander_reset(macro_expander_t *me) {
         if (me->input_stack[i].state == INPUT_TOKEN_LIST &&
             me->input_stack[i].tok_head) {
             token_list_unref(me, me->input_stack[i].tok_head);
+        } else if (me->input_stack[i].state == INPUT_FILE &&
+                   me->input_stack[i].buffer) {
+            free((void *)me->input_stack[i].buffer);
+            me->input_stack[i].buffer = NULL;
         }
     }
     me->input_ptr = 0;
@@ -850,6 +922,7 @@ void macro_expander_reset(macro_expander_t *me) {
 
     me->out_len = 0;
     me->out_buf[0] = '\0';
+    me->expansion_depth = 0;
     me->scanner_state = 3 + MAX_CHAR_CODE + MAX_CHAR_CODE;
 
     init_primitives(me);
@@ -858,6 +931,7 @@ void macro_expander_reset(macro_expander_t *me) {
 void macro_expander_feed(macro_expander_t *me, const char *input, size_t len) {
     if (!me || !input) return;
     char *copy = strndup(input, len);
+    if (!copy) { fprintf(stderr, "macro_expander: out of memory\n"); return; }
     input_push_string(me, copy);
 
     for (;;) {
@@ -871,6 +945,7 @@ void macro_expander_feed_cb(macro_expander_t *me, const char *input, size_t len,
                             macro_expander_callback cb, void *user) {
     if (!me || !input) return;
     char *copy = strndup(input, len);
+    if (!copy) { fprintf(stderr, "macro_expander: out of memory\n"); return; }
     input_push_string(me, copy);
 
     for (;;) {
@@ -905,3 +980,98 @@ int macro_expander_macro_count(macro_expander_t *me) {
     }
     return count;
 }
+
+/* =========================================================================
+ * Standalone binary driver
+ * ========================================================================= */
+#ifdef MACRO_EXPANDER_STANDALONE
+
+static const char *cmd_to_typestr(int cmd) {
+    switch (cmd) {
+    case CMD_DEF_PRIM:          return "def";
+    case CMD_EDEF_PRIM:         return "edef";
+    case CMD_XDEF_PRIM:         return "xdef";
+    case CMD_GDEF_PRIM:         return "gdef";
+    case CMD_NEWCOMMAND_PRIM:   return "newcommand";
+    case CMD_RENEWCOMMAND_PRIM: return "renewcommand";
+    case CMD_PROVIDECOMMAND_PRIM: return "providecommand";
+    case CMD_LET_PRIM:          return "let";
+    default:                    return "?";
+    }
+}
+
+static void process_report(macro_expander_t *me, const char *path) {
+    FILE *fp = fopen(path, "rb");
+    if (!fp) { fprintf(stderr, "macro_expander: cannot open %s\n", path); return; }
+    fseek(fp, 0, SEEK_END);
+    long sz = ftell(fp);
+    fseek(fp, 0, SEEK_SET);
+    char *buf = malloc(sz + 1);
+    if (!buf) { fclose(fp); return; }
+    size_t n = fread(buf, 1, sz, fp);
+    buf[n] = '\0';
+    fclose(fp);
+
+    macro_expander_feed(me, buf, n);
+    free(buf);
+
+    printf("\n=== %s ===\n", path);
+    for (int i = 0; i < HASH_SIZE; i++) {
+        if (me->eqtb[i].name) {
+            int cmd = me->eqtb[i].cmd;
+            const char *typestr = cmd_to_typestr(cmd);
+            printf("  %-18s => %-24s [%s]\n",
+                   me->eqtb[i].name, "(defined)", typestr);
+        }
+    }
+}
+
+static void process_pipe_mode(macro_expander_t *me) {
+    size_t cap = 4096, len = 0;
+    char *buf = malloc(cap);
+    if (!buf) return;
+    while (!feof(stdin)) {
+        if (len + 4096 > cap) {
+            cap *= 2;
+            char *newbuf = realloc(buf, cap);
+            if (!newbuf) { free(buf); return; }
+            buf = newbuf;
+        }
+        size_t rd = fread(buf + len, 1, cap - len - 1, stdin);
+        if (rd == 0) break;
+        len += rd;
+    }
+    buf[len] = '\0';
+
+    macro_expander_feed(me, buf, len);
+    free(buf);
+
+    size_t out_len;
+    const char *out = macro_expander_get_output(me, &out_len);
+    if (out_len > 0) fwrite(out, 1, out_len, stdout);
+}
+
+int main(int argc, char *argv[]) {
+    macro_expander_t *me = macro_expander_create();
+    if (!me) { fprintf(stderr, "macro_expander: failed to initialize\n"); return 1; }
+
+    int report_mode = 0;
+    int file_start = 1;
+
+    if (argc >= 2 && strcmp(argv[1], "--report") == 0) {
+        report_mode = 1;
+        file_start = 2;
+    }
+
+    if (report_mode && argc >= 3) {
+        for (int i = file_start; i < argc; i++)
+            process_report(me, argv[i]);
+    } else {
+        process_pipe_mode(me);
+    }
+
+    macro_expander_destroy(me);
+    return 0;
+}
+
+#endif /* MACRO_EXPANDER_STANDALONE */

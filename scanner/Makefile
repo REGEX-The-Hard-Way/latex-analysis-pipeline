@@ -17,6 +17,9 @@ macro_expander:
 
 build_macros: macro_expander
 
+cypher_repl:
+	$(MAKE) -C cypher all
+
 get_sample_data:
 	wget https://www.cs.cornell.edu/projects/kddcup/download/hep-th-2003.tar.gz --no-check-certificate
 	tar -xf hep-th-2003.tar.gz
