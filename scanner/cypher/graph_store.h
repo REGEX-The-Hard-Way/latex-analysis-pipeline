@@ -28,7 +28,7 @@ typedef struct {
     uint32_t edge_count;         /* out-degree */
     uint64_t label_mask;         /* bitmap of label indices (up to 64 labels) */
     uint32_t props_off;          /* offset into property table (row index) */
-    uint32_t _pad;
+    uint32_t prop_count;         /* number of properties on this node */
 } gs_node_t;
 
 /* ---------- edge CSR (12 bytes) ---------- */
@@ -89,6 +89,13 @@ typedef struct {
     gs_lidx_t       *edge_idx;      /* edge_type_hash → {offset, count} (unused) */
     kvec_t(uint32_t) edge_nodes;    /* (unused) */
 
+    /* trigram text index (Phase 5) */
+    gs_lidx_t       *text_idx;      /* trigram_hash → {offset, count} */
+    kvec_t(uint32_t) text_nodes;    /* contiguous node lists */
+
+    /* filepath interning: filepath_id → filepath string */
+    void          *fp_table;      /* fpt_t* : filepath_id (uint32) → char* */
+
     /* scratch buffer for queries */
     uint64_t    *bitmap;
     uint32_t     bitmap_words;
@@ -110,6 +117,8 @@ void     gs_add_prop_str(graph_store_t *gs, uint32_t node,
                           const char *key, const char *val);
 void     gs_add_prop_num(graph_store_t *gs, uint32_t node,
                            const char *key, double val);
+void     gs_add_prop_int(graph_store_t *gs, uint32_t node,
+                          const char *key, uint32_t val);
 void     gs_set_prop_str(graph_store_t *gs, uint32_t node,
                           const char *key, const char *val);
 void     gs_set_prop_num(graph_store_t *gs, uint32_t node,
@@ -117,6 +126,7 @@ void     gs_set_prop_num(graph_store_t *gs, uint32_t node,
 uint32_t gs_add_edge(graph_store_t *gs, uint32_t src, uint32_t dst,
                      const char *type);
 void     gs_build_indexes(graph_store_t *gs);
+void     gs_build_text_index(graph_store_t *gs);
 
 /* ---------- queries ---------- */
 
@@ -128,6 +138,8 @@ uint32_t gs_label_nodes(graph_store_t *gs, const char *label,
                          uint32_t *out, uint32_t max_out);
 uint32_t gs_prop_key_nodes(graph_store_t *gs, const char *key,
                             uint32_t *out, uint32_t max_out);
+uint32_t gs_text_search(graph_store_t *gs, const char *prop_key,
+                         const char *search_str, uint32_t *out, uint32_t max_out);
 
 /* Bitmap operations on collected sets */
 void gs_collect_begin(graph_store_t *gs);
@@ -141,7 +153,12 @@ uint32_t gs_collect_drain(graph_store_t *gs, uint32_t *out, uint32_t max_out);
 /* ---------- property access ---------- */
 const char *gs_prop_str(graph_store_t *gs, uint32_t node, const char *key);
 double      gs_prop_num(graph_store_t *gs, uint32_t node, const char *key);
+uint32_t    gs_prop_int(graph_store_t *gs, uint32_t node, const char *key);
 const char *gs_label_name(graph_store_t *gs, uint32_t idx);
+
+/* filepath interning */
+void        gs_fp_put(graph_store_t *gs, uint32_t filepath_id, const char *path);
+const char *gs_fp_get(graph_store_t *gs, uint32_t filepath_id);
 
 /* ---------- edge traversal ---------- */
 uint32_t gs_edge_count(graph_store_t *gs, uint32_t node);

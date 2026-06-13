@@ -7,9 +7,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include "cypher_parser.h"
 #include "graph_store.h"
 #include "graph_exec.h"
+#include "graph_jit.h"
 #include "khashl.h"
 #include "kvec.h"
 
@@ -547,8 +552,13 @@ cypher_result_t *cypher_execute(cypher_graph_t *g, cypher_ast_t *ast, const char
         if (!return_cl && cur->type == AST_RETURN) return_cl = cur;
     }
 
-    /* Phase 4: execute query via FSM */
-    cypher_result_t *result = cypher_fsm_exec(g, match_cl, return_cl);
+    /* Phase 3+4: try JIT first, fall back to FSM interpreter */
+    cypher_result_t *result = NULL;
+    if (g_jit_enabled && match_cl && return_cl) {
+        result = cypher_jit_exec(g, match_cl, return_cl);
+    }
+    if (!result)
+        result = cypher_fsm_exec(g, match_cl, return_cl);
     return result;
 }
 
@@ -590,8 +600,16 @@ static int json_extract_int(const char *json, const char *key, int *out) {
 
 int cypher_graph_load_sidecar(cypher_graph_t *g, const char *filename) {
     graph_store_t *gs = g->gs;
-    FILE *fp = fopen(filename, "rb");
-    if (!fp) return -1;
+
+    int fd = open(filename, O_RDONLY);
+    if (fd < 0) return -1;
+
+    struct stat st;
+    if (fstat(fd, &st) < 0) { close(fd); return -1; }
+
+    char *data = mmap(NULL, (size_t)st.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
+    close(fd);
+    if (data == MAP_FAILED) return -1;
 
     smap_t *sm = smap_init();
     kvec_t(uint32_t) ep;
@@ -599,12 +617,29 @@ int cypher_graph_load_sidecar(cypher_graph_t *g, const char *filename) {
     kv_init(ep);
     kv_init(ec);
 
-    char line[16384];
     int lineno = 0;
+    char *p = data;
+    char *end = data + st.st_size;
 
-    while (fgets(line, sizeof(line), fp)) {
+    while (p < end) {
+        /* find start of line */
+        while (p < end && *p != '{') p++;
+        if (p >= end) break;
+
+        /* find end of line */
+        char *line_start = p;
+        char *eol = p;
+        while (eol < end && *eol != '\n') eol++;
+        ptrdiff_t line_len = eol - line_start;
+        p = eol + 1;
         lineno++;
-        if (!line[0] || line[0] != '{') continue;
+
+        if (line_len <= 2 || line_len > 16384) continue;
+
+        /* copy line to stack buffer for null-terminated parsing */
+        char line[16384];
+        memcpy(line, line_start, (size_t)line_len);
+        line[line_len] = '\0';
 
         uint32_t token_id = 0, parent_id = 0, filepath_id = 0;
         int offset = 0, length = 0;
@@ -634,7 +669,7 @@ int cypher_graph_load_sidecar(cypher_graph_t *g, const char *filename) {
         gs_add_prop_num(gs, nid, "offset", (double)offset);
         gs_add_prop_num(gs, nid, "length", (double)length);
         if (text[0]) gs_add_prop_str(gs, nid, "text", text);
-        if (filepath[0]) gs_add_prop_str(gs, nid, "filepath", filepath);
+        if (filepath[0]) gs_fp_put(gs, filepath_id, filepath);
 
         int absent;
         khint_t slot = smap_put(sm, (uint32_t)token_id, &absent);
@@ -645,7 +680,8 @@ int cypher_graph_load_sidecar(cypher_graph_t *g, const char *filename) {
             kv_push(uint32_t, ec, nid);
         }
     }
-    fclose(fp);
+
+    munmap(data, (size_t)st.st_size);
 
     for (size_t i = 0; i < kv_size(ep); i++) {
         khint_t slot = smap_get(sm, kv_A(ep, i));

@@ -10,13 +10,95 @@
 #include <string.h>
 #include <ctype.h>
 #include <unistd.h>
+#include <readline/readline.h>
+#include <readline/history.h>
 #include "cypher_parser.h"
 #include "graph_store.h"
+#include "graph_jit.h"
+#include "graph_scan.h"
 
 static void execute_query(cypher_graph_t *g, const char *query);
 static void print_table(cypher_result_t *r);
+static void run_dot_command(cypher_graph_t *g, const char *line);
+static cypher_graph_t *g_repl = NULL;
+
+/* Ctrl-R handler: trigger .hist (fzf history browser) */
+static int ctrl_r_handler(int count, int key) {
+    (void)count; (void)key;
+    rl_clear_message();
+    /* save readline's terminal state before launching fzf */
+    rl_deprep_terminal();
+    printf("\n");
+    run_dot_command(g_repl, ".hist");
+    /* restore readline's terminal state */
+    rl_prep_terminal(0);
+    rl_on_new_line();
+    rl_redisplay();
+    return 0;
+}
 
 static char g_histfile[1024] = "";
+static char g_scan_file[1024] = "";
+
+static int run_scan_query(const char *query) {
+    /* parse query to extract label + optional CONTAINS */
+    static cypher_token_t tokens[MAX_TOKENS];
+    int n = cypher_lex(query, (int)strlen(query), tokens, MAX_TOKENS);
+    if (n == 0) return 0;
+
+    const char *error = NULL;
+    cypher_ast_t *ast = cypher_parse(tokens, n, &error);
+    if (!ast) return 0;
+
+    const char *label = NULL;
+    const char *contains = NULL;
+    int limit = 200;
+
+    /* find MATCH label */
+    cypher_ast_t *match_cl = NULL;
+    for (cypher_ast_t *c = ast; c; c = c->next)
+        if (c->type == AST_MATCH) { match_cl = c; break; }
+
+    if (match_cl && match_cl->bin.l && match_cl->bin.l->type == AST_PATTERN) {
+        cypher_ast_t *fn = match_cl->bin.l->list.items[0];
+        if (fn && fn->type == AST_NODE_PAT) {
+            for (cypher_ast_t *p = fn->node.props; p; p = p->next)
+                if (p->type == AST_LABEL) { label = p->str; break; }
+        }
+        /* check WHERE for CONTAINS */
+        if (match_cl->bin.r) {
+            cypher_ast_t *w = match_cl->bin.r;
+            if (w->type == AST_BINARY
+                && (w->bin.op == TOK_CONTAINS || w->bin.op == TOK_STARTS
+                    || w->bin.op == TOK_ENDS)
+                && w->bin.r && w->bin.r->type == AST_STRING)
+                contains = w->bin.r->str;
+        }
+    }
+
+    /* find LIMIT */
+    cypher_ast_t *ret_cl = NULL;
+    for (cypher_ast_t *c = ast; c; c = c->next)
+        if (c->type == AST_RETURN) { ret_cl = c; break; }
+    if (ret_cl) {
+        for (cypher_ast_t *n = ret_cl->next; n; n = n->next)
+            if (n->type == AST_LIMIT) limit = n->ival;
+    }
+
+    if (!label) { cypher_ast_free(ast); return 0; }
+
+    cypher_result_t *result = cypher_result_new();
+    cypher_result_add_col(result, "text");
+
+    int rows = cypher_scan_sidecar(g_scan_file, label, contains, limit, result);
+    cypher_ast_free(ast);
+
+    if (rows < 0) { cypher_result_free(result); return -1; }
+
+    print_table(result);
+    cypher_result_free(result);
+    return rows;
+}
 
 static void save_history(const char *query) {
     if (!g_histfile[0]) {
@@ -201,8 +283,20 @@ static void execute_query(cypher_graph_t *g, const char *query) {
 
 int main(int argc, char *argv[]) {
     cypher_graph_t *g = cypher_graph_new();
+    cypher_jit_init();
 
     int sidecar_loaded = 0;
+
+    /* check for --scan flag (mmap + Ragel direct query, no graph store) */
+    for (int ai = 1; ai < argc; ai++) {
+        if (!strcmp(argv[ai], "--scan") && ai + 1 < argc) {
+            strncpy(g_scan_file, argv[ai + 1], sizeof(g_scan_file) - 1);
+            for (int sj = ai; sj + 2 < argc; sj++)
+                argv[sj] = argv[sj + 2];
+            argc -= 2;
+            ai--;
+        }
+    }
 
     /* check for --sidecar flag */
     for (int ai = 1; ai < argc; ai++) {
@@ -270,34 +364,49 @@ int main(int argc, char *argv[]) {
             len += rd;
         }
         buf[len] = '\0';
-        execute_query(g, buf);
-        save_history(buf);
+        if (g_scan_file[0])
+            run_scan_query(buf);
+        else {
+            execute_query(g, buf);
+            save_history(buf);
+        }
         free(buf);
     } else {
         /* Interactive REPL */
+        g_repl = g;
+        rl_initialize();
+        rl_bind_keyseq("\\C-r", ctrl_r_handler);
+        if (!g_histfile[0]) {
+            const char *home = getenv("HOME");
+            if (!home) home = "/tmp";
+            snprintf(g_histfile, sizeof(g_histfile), "%s/.cypher_history", home);
+        }
+        read_history(g_histfile);
+        stifle_history(1000);
+
         printf("Cypher Query REPL (openCypher subset)\n");
         printf("Type .help for commands. Type 'exit' to quit.\n\n");
 
-        char  line[4096];
         char  query[65536] = "";
         int   prompt = 1;
 
         while (1) {
-            if (prompt) { printf("cypher> "); fflush(stdout); }
-            if (!fgets(line, sizeof(line), stdin)) break;
+            char *line = prompt ? readline("cypher> ") : readline("");
+            if (!line) { printf("\n"); break; }
 
             /* trim trailing whitespace */
             int ll = (int)strlen(line);
             while (ll > 0 && isspace((unsigned char)line[ll-1])) line[--ll] = '\0';
 
-            if (is_exit_command(line))
-                break;
+            if (is_exit_command(line)) { free(line); break; }
 
             /* dot-commands */
             if (is_dot_command(line)) {
+                add_history(line);
                 run_dot_command(g, line);
                 prompt = 1;
                 query[0] = '\0';
+                free(line);
                 continue;
             }
 
@@ -312,14 +421,21 @@ int main(int argc, char *argv[]) {
             else if (!strcasecmp(line, "return") || !strncasecmp(line, "return ", 7)) exec = 1;
 
             if (exec) {
-                execute_query(g, query);
-                save_history(query);
+                add_history(query);
+                if (g_scan_file[0])
+                    run_scan_query(query);
+                else {
+                    execute_query(g, query);
+                    save_history(query);
+                }
                 query[0] = '\0';
                 prompt = 1;
             } else {
                 prompt = 0;
             }
+            free(line);
         }
+        write_history(g_histfile);
         printf("bye\n");
     }
 

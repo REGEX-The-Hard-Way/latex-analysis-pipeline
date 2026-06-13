@@ -60,9 +60,50 @@ static cypher_ast_t *parse_atom(void) {
         return a;
     }
     if (cur() == TOK_NULL) {
-        cypher_ast_t *e = parse_expression();
+        advance();
+        return new_ast(AST_NULL);
+    }
+    if (cur() == TOK_LBRACKET) {
+        advance();
+        cypher_ast_t *lst = new_ast(AST_LIST);
+        cypher_ast_t *items[64]; int ni = 0;
+        while (cur() != TOK_RBRACKET && cur() != TOK_EOF) {
+            cypher_ast_t *e = parse_expression();
+            if (e) items[ni++] = e;
+            match(TOK_COMMA);
+        }
+        expect(TOK_RBRACKET);
+        lst->list.n = ni;
+        lst->list.items = malloc(sizeof(cypher_ast_t *) * (size_t)(ni + 1));
+        for (int i = 0; i < ni; i++) lst->list.items[i] = items[i];
+        return lst;
+    }
+    if ((cur() == TOK_IDENT || cur() == TOK_COUNT || cur() == TOK_EXISTS)
+        && peek(1) == TOK_LPAREN) {
+        cypher_ast_t *fc = new_ast(AST_FUNCALL);
+        fc->call.func = new_ast(AST_IDENT);
+        strcpy(fc->call.func->str, toks[ti].str);
+        advance(); advance(); /* consume ident and '(' */
+        cypher_ast_t *args[64]; int na = 0;
+        if (cur() != TOK_RPAREN && cur() != TOK_EOF) {
+            do {
+                if (match(TOK_COMMA)) continue;
+                if (match(TOK_STAR)) {
+                    cypher_ast_t *star = new_ast(AST_IDENT);
+                    strcpy(star->str, "*");
+                    args[na++] = star;
+                    continue;
+                }
+                if (match(TOK_DISTINCT)) continue;
+                cypher_ast_t *e = parse_expression();
+                if (e) args[na++] = e;
+            } while (cur() == TOK_COMMA);
+        }
         expect(TOK_RPAREN);
-        return e;
+        fc->call.args = malloc(sizeof(cypher_ast_t *) * (size_t)(na + 1));
+        fc->call.n = na;
+        for (int i = 0; i < na; i++) fc->call.args[i] = args[i];
+        return fc;
     }
     return NULL;
 }
@@ -90,6 +131,7 @@ static cypher_ast_t *parse_comparison(void) {
         op == TOK_LE || op == TOK_GE || op == TOK_IN || op == TOK_CONTAINS ||
         op == TOK_STARTS || op == TOK_ENDS) {
         advance();
+        if (op == TOK_STARTS || op == TOK_ENDS) match(TOK_WITH);
         cypher_ast_t *r = parse_atom();
         if (r) r = parse_postfix(r);
         cypher_ast_t *b = new_ast(AST_BINARY);
@@ -591,6 +633,15 @@ void cypher_ast_free(cypher_ast_t *a) {
         break;
     case AST_ORDER_ITEM:
         cypher_ast_free(a->bin.l);
+        break;
+    case AST_LIST:
+        for (int i = 0; i < a->list.n; i++) cypher_ast_free(a->list.items[i]);
+        free(a->list.items);
+        break;
+    case AST_FUNCALL:
+        cypher_ast_free(a->call.func);
+        for (int i = 0; i < a->call.n; i++) cypher_ast_free(a->call.args[i]);
+        free(a->call.args);
         break;
     default: break;
     }

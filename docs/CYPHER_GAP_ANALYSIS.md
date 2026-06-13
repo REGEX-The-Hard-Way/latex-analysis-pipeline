@@ -67,7 +67,7 @@ We implement an openCypher subset targeting analytical queries over a LaTeX toke
 | `[*1..3]` variable-length paths | ❌ | Range literals not supported |
 | `[*]` any-length paths | ❌ | |
 | Pattern comma-separated | ❌ | `MATCH (a), (b)` |
-| `(a)-[:R]->(b)-[:S]->(c)` multi-hop | ❌ | Only single-hop relationships. `oC_PatternElementChain` not iterated |
+| `(a)-[:R]->(b)-[:S]->(c)` multi-hop | ✅ | Stack-based traversal in FSM |
 | Pattern with variable assignment: `p = (a)-->(b)` | ❌ | |
 
 ## 5. Expressions
@@ -82,10 +82,10 @@ We implement an openCypher subset targeting analytical queries over a LaTeX toke
 | `<>` (not equal) | ✅ | |
 | `<`, `>`, `<=`, `>=` | ✅ | Numeric only |
 | `IS NULL` / `IS NOT NULL` | ❌ | Token exists (`TOK_IS`, `TOK_NULL`), partial parse |
-| `IN` (list membership) | ❌ | Token exists, not parsed |
-| `STARTS WITH` | ❌ | Token exists (`TOK_STARTS`), not parsed |
-| `ENDS WITH` | ❌ | Token exists (`TOK_ENDS`), not parsed |
-| `CONTAINS` | ❌ | Token exists (`TOK_CONTAINS`), not parsed |
+| `IN` (list membership) | ✅ | `WHERE n.key IN ['a', 'b']` |
+| `STARTS WITH` | ✅ | `WHERE n.key STARTS WITH 'prefix'` |
+| `ENDS WITH` | ✅ | `WHERE n.key ENDS WITH 'suffix'` |
+| `CONTAINS` | ✅ | `WHERE n.key CONTAINS 'substr'` (trigram index when built) |
 | `+`, `-`, `*`, `/`, `%`, `^` (arithmetic) | ❌ | Tokens exist, not in expression grammar |
 | `[]` list indexing | ❌ | |
 | `[a..b]` list slicing | ❌ | |
@@ -101,7 +101,7 @@ We implement an openCypher subset targeting analytical queries over a LaTeX toke
 | Boolean (`true`, `false`) | ⚠️ | Tokenized, not usable in expressions |
 | `NULL` | ⚠️ | Tokenized, `IS NULL` partially parsed |
 | Map literal: `{key: val}` | ✅ | In CREATE/SET context |
-| List literal: `[1, 2, 3]` | ❌ | |
+| List literal: `[1, 2, 3]` | ✅ | Parsed + executed (IN operator) |
 | Parameters: `$param` | ❌ | Token exists, not parsed |
 
 ## 7. RETURN / WITH Projections
@@ -116,7 +116,7 @@ We implement an openCypher subset targeting analytical queries over a LaTeX toke
 | `SKIP n` | ✅ | |
 | `LIMIT n` | ✅ | |
 | `WITH` | ⚠️ | Parsed. Does not actually pipe intermediate results to next clause |
-| Aggregation: `COUNT(*)` | ❌ | Token exists |
+| `COUNT(*)` | ✅ | Single aggregate row |
 | Aggregation: `COUNT(expr)`, SUM, AVG, MIN, MAX | ❌ | Not implemented |
 
 ## 8. Functions
