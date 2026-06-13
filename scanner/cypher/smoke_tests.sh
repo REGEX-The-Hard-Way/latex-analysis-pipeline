@@ -104,6 +104,36 @@ run_query "Node pattern prop match (string)" \
     "CREATE (a:Paper {title:'A', author:'X'}) CREATE (b:Paper {title:'B', author:'Y'}) MATCH (n:Paper {author:'X'}) RETURN n.title;" \
     "A"
 
+# 16. CONTAINS operator
+run_query "CONTAINS string search" \
+    "CREATE (a:Item {name:'Hello World'}) CREATE (b:Item {name:'Foo Bar'}) MATCH (n:Item) WHERE n.name CONTAINS 'World' RETURN n.name;" \
+    "Hello World"
+
+# 17. Multi-hop path
+run_query "Multi-hop (a)-->(b)-->(c)" \
+    "CREATE (a:Item {name:'A'}) CREATE (b:Item {name:'B'}) CREATE (c:Item {name:'C'}) CREATE (a)-[:LINK]->(b) CREATE (b)-[:LINK]->(c) MATCH (x:Item)-[:LINK]->(y:Item)-[:LINK]->(z:Item) WHERE x.name = 'A' RETURN z.name;" \
+    "C"
+
+# 18. COUNT(*) aggregation
+run_query "COUNT(*) aggregation" \
+    "CREATE (a:Item {name:'A'}) CREATE (b:Item {name:'B'}) CREATE (c:Item {name:'C'}) MATCH (n:Item) RETURN COUNT(*);" \
+    "3"
+
+# 19. IN operator
+run_query "IN operator" \
+    "CREATE (a:Item {name:'A'}) CREATE (b:Item {name:'B'}) CREATE (c:Item {name:'C'}) MATCH (n:Item) WHERE n.name IN ['A', 'C'] RETURN n.name;" \
+    "A"
+
+# 20. ORDER BY DESC
+run_query "ORDER BY DESC" \
+    "CREATE (a:Item {name:'A', val:1}) CREATE (b:Item {name:'B', val:3}) CREATE (c:Item {name:'C', val:2}) MATCH (n:Item) RETURN n.name, n.val ORDER BY n.val DESC LIMIT 2;" \
+    "B"
+
+# 21. Filepath property via interned lookup
+run_query "Filepath property" \
+    "CREATE (a:Item {name:'test'}) MATCH (n:Item) RETURN n.name;" \
+    "test"
+
 echo ""
 echo "=== Results: ${PASS} passed, ${FAIL} failed ==="
 exit $((FAIL > 0 ? 1 : 0))

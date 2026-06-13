@@ -94,12 +94,26 @@ Parsed, basic pipelining support. Pipes intermediate results to subsequent claus
 
 ### Modes
 ```
-./cypher_repl.out                              interactive REPL
+./cypher_repl.out                              interactive REPL (readline)
 ./cypher_repl.out --sidecar sidecar.json       load sidecar, then interactive
+./cypher_repl.out --scan sidecar.json          mmap direct query, no import
 ./cypher_repl.out -i --sidecar sidecar.json    force interactive (even piped)
-echo "MATCH ... RETURN ..." | ./cypher_repl.out --sidecar sidecar.json   pipe mode
+echo "MATCH ... RETURN ..." | ./cypher_repl.out --scan sidecar.json   pipe mode
 ./cypher_repl.out file.cypher                   batch mode (execute file)
 ```
+
+### Readline Navigation
+| Key | Action |
+|-----|--------|
+| Up / Down | Navigate command history |
+| Left / Right | Move cursor within line |
+| Ctrl-A / Ctrl-E | Jump to start/end of line |
+| Ctrl-W | Delete word backward |
+| Ctrl-U | Delete to start of line |
+| Ctrl-R | Open fzf history browser (same as `.hist`) |
+| Tab | (future: autocomplete) |
+
+History auto-loaded from `~/.cypher_history` on startup, saved on exit (1000-line cap).
 
 ### Dot Commands
 ```

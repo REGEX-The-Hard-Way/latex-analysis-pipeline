@@ -2,7 +2,7 @@ CC       = gcc
 CFLAGS   = -O2 -I. -Ivendor/klib
 RAGEL    = ragel
 SRCS     = cypher_repl.c cypher_parser.c cypher_graph.c graph_store.c graph_exec.c graph_jit.c graph_scan.c cypher_lexer.c
-HDRS     = cypher_parser.h graph_store.h graph_exec.h graph_jit.h
+HDRS     = cypher_parser.h graph_store.h graph_exec.h graph_jit.h graph_scan.h
 TARGET   = cypher_repl.out
 LDLIBS   = -lm -ldl -lreadline
 

@@ -83,9 +83,9 @@ We implement an openCypher subset targeting analytical queries over a LaTeX toke
 | `<`, `>`, `<=`, `>=` | ✅ | Numeric only |
 | `IS NULL` / `IS NOT NULL` | ❌ | Token exists (`TOK_IS`, `TOK_NULL`), partial parse |
 | `IN` (list membership) | ✅ | `WHERE n.key IN ['a', 'b']` |
-| `STARTS WITH` | ✅ | `WHERE n.key STARTS WITH 'prefix'` |
-| `ENDS WITH` | ✅ | `WHERE n.key ENDS WITH 'suffix'` |
-| `CONTAINS` | ✅ | `WHERE n.key CONTAINS 'substr'` (trigram index when built) |
+| `STARTS WITH` | ✅ | `WHERE n.key STARTS WITH 'prefix'` (trigram index when built) |
+| `ENDS WITH` | ✅ | `WHERE n.key ENDS WITH 'suffix'` (trigram index when built) |
+| `CONTAINS` | ✅ | `WHERE n.key CONTAINS 'substr'` (trigram or --scan strstr) |
 | `+`, `-`, `*`, `/`, `%`, `^` (arithmetic) | ❌ | Tokens exist, not in expression grammar |
 | `[]` list indexing | ❌ | |
 | `[a..b]` list slicing | ❌ | |
