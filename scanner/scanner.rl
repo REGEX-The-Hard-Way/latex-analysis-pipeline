@@ -1,7 +1,8 @@
 #include "globals.h"
-#include "file_mmap.h"
 #include "json_escape.h"
 int g_json_mode = 0;
+FILE *g_out_tok = NULL;
+FILE *g_out_json = NULL;
 int n;
 uint32_t seed0 = 0;
 
@@ -30,13 +31,13 @@ uint32_t seed0 = 0;
           filename, (unsigned long)filepath_id, (unsigned long)token_id, \
           (unsigned long)parent_id, prefix_len + (int)(ts - in), (int)(te-ts), \
           t, js_el, js_esc); \
-        file_create_or_append("sidecar.json", js_buf, js_bl); \
+        fwrite(js_buf, 1, js_bl, g_out_json); \
         free(js_buf); \
       } \
       free(js_esc); \
     } \
   } else { \
-    file_create_or_append("sidecar.tok", emit_buf, emit_len); \
+    fwrite(emit_buf, 1, emit_len, g_out_tok); \
   } \
   printf("  %u  ", token_id);
 
@@ -64,13 +65,13 @@ uint32_t seed0 = 0;
           filename, (unsigned long)filepath_id, (unsigned long)token_id, \
           (unsigned long)parent_id, prefix_len + (int)(ts - in), (int)(te-ts), \
           t, js_el, js_esc); \
-        file_create_or_append("sidecar.json", js_buf, js_bl); \
+        fwrite(js_buf, 1, js_bl, g_out_json); \
         free(js_buf); \
       } \
       free(js_esc); \
     } \
   } else { \
-    file_create_or_append("sidecar.tok", emit_buf, emit_len); \
+    fwrite(emit_buf, 1, emit_len, g_out_tok); \
   } \
   printf("\n\n  %u  \n\n", token_id); \
 	if((int)(te-(prefix_len+suffix_len)-ts)>0){ \

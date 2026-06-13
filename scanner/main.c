@@ -84,6 +84,16 @@ static void scan_file(const char *path) {
     }
 }
 
+static void open_output_files(void) {
+    g_out_tok = fopen("sidecar.tok", "w");
+    g_out_json = fopen("sidecar.json", "w");
+}
+
+static void close_output_files(void) {
+    if (g_out_tok) { fclose(g_out_tok); g_out_tok = NULL; }
+    if (g_out_json) { fclose(g_out_json); g_out_json = NULL; }
+}
+
 static void print_usage(const char *prog) {
     fprintf(stderr,
         "Usage:\n"
@@ -130,7 +140,9 @@ int main(int argc, char *argv[]) {
             return EXIT_FAILURE;
         }
         if (regexec(&file_regex, path_or_dir, 0, NULL, 0) == 0) {
+            open_output_files();
             scan_file(path_or_dir);
+            close_output_files();
         }
         regfree(&file_regex);
         return EXIT_SUCCESS;
@@ -161,9 +173,11 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
 
+    open_output_files();
     for (size_t i = 0; i < matching_files.count; i++) {
         scan_file(matching_files.filepaths[i]);
     }
+    close_output_files();
 
     free_matching_files_array();
     regfree(&regex);
