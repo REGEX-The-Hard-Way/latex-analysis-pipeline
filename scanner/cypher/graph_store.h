@@ -15,6 +15,8 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include "khashl.h"
+#include "kvec.h"
 
 #define GS_MAX_LABELS      64     /* max distinct labels total */
 #define GS_MAX_PROPS_PER   8      /* max properties per node */
@@ -48,23 +50,9 @@ typedef struct {
     uint32_t hash;
 } gs_label_t;
 
-/* ---------- hash index (open addressing, Robin Hood) ---------- */
-typedef struct {
-    uint32_t key;
-    uint32_t value;              /* first entry in values array */
-} gs_hash_entry_t;
-
-typedef struct {
-    gs_hash_entry_t *entries;
-    uint32_t         capacity;
-    uint32_t         size;
-    uint32_t         mask;
-    uint32_t        *node_lists;  /* contiguous array of node indices */
-    uint32_t         list_cap;
-    uint32_t         list_used;
-    uint32_t        *list_starts; /* for each entry, start in node_lists */
-    uint32_t        *list_counts; /* for each entry, count of nodes */
-} gs_hash_index_t;
+/* ---------- hash index (klib khashl-based) ---------- */
+typedef struct { uint32_t off; uint32_t cnt; } gs_node_range_t;
+KHASHL_MAP_INIT(static, gs_lidx_t, gs_lidx, uint32_t, gs_node_range_t, kh_hash_dummy, kh_eq_generic)
 
 /* ---------- graph store ---------- */
 typedef struct {
@@ -94,9 +82,12 @@ typedef struct {
     size_t       val_cap;
 
     /* hash indexes */
-    gs_hash_index_t label_idx;     /* label_hash → node list */
-    gs_hash_index_t prop_idx;      /* (label_hash ^ key_hash ^ val_hash) → node list */
-    gs_hash_index_t edge_idx;      /* edge_type_hash → edge list */
+    gs_lidx_t       *label_idx;     /* label_hash → {offset, count} */
+    kvec_t(uint32_t) label_nodes;   /* contiguous node lists */
+    gs_lidx_t       *prop_idx;      /* prop_key_hash → {offset, count} */
+    kvec_t(uint32_t) prop_nodes;    /* contiguous node lists */
+    gs_lidx_t       *edge_idx;      /* edge_type_hash → {offset, count} (unused) */
+    kvec_t(uint32_t) edge_nodes;    /* (unused) */
 
     /* scratch buffer for queries */
     uint64_t    *bitmap;
@@ -135,6 +126,8 @@ uint32_t gs_label_count(graph_store_t *gs, const char *label);
 /* Fill `out` with node IDs matching label (returns count) */
 uint32_t gs_label_nodes(graph_store_t *gs, const char *label,
                          uint32_t *out, uint32_t max_out);
+uint32_t gs_prop_key_nodes(graph_store_t *gs, const char *key,
+                            uint32_t *out, uint32_t max_out);
 
 /* Bitmap operations on collected sets */
 void gs_collect_begin(graph_store_t *gs);

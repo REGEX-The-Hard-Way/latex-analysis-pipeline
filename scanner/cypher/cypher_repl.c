@@ -324,5 +324,6 @@ int main(int argc, char *argv[]) {
     }
 
     cypher_graph_free(g);
+    fflush(stdout);
     return 0;
 }

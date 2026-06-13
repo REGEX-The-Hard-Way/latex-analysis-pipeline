@@ -375,10 +375,12 @@ static cypher_ast_t *parse_set(void) {
     cypher_ast_t *items[64]; int n = 0;
     do {
         if (match(TOK_COMMA)) continue;
-        cypher_ast_t *l = parse_expression();
+        cypher_ast_t *l = parse_atom();
+        if (!l) break;
         l = parse_postfix(l);
-        if (!match(TOK_EQ)) break;
+        if (!match(TOK_EQ)) { cypher_ast_free(l); break; }
         cypher_ast_t *r = parse_expression();
+        if (!r) { cypher_ast_free(l); break; }
         cypher_ast_t *b = new_ast(AST_BINARY);
         b->bin.op = TOK_EQ; b->bin.l = l; b->bin.r = r;
         items[n++] = b;

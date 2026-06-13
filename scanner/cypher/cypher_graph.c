@@ -9,6 +9,9 @@
 #include <string.h>
 #include "cypher_parser.h"
 #include "graph_store.h"
+#include "graph_exec.h"
+#include "khashl.h"
+#include "kvec.h"
 
 struct cypher_graph {
     graph_store_t *gs;
@@ -344,17 +347,30 @@ static void result_limit_skip(cypher_result_t *r, cypher_ast_t *clauses) {
         if (n->type == AST_LIMIT) limit_val = n->ival;
         else if (n->type == AST_SKIP) skip_val = n->ival;
     }
-    if (skip_val >= r->nrows) { r->nrows = 0; return; }
     if (skip_val > 0) {
-        int dst = 0;
-        for (int i = skip_val; i < r->nrows; i++) {
-            if (dst != i && r->rows[i]) {
-                r->rows[dst] = r->rows[i];
+        /* free skipped rows */
+        for (int i = 0; i < skip_val && i < r->nrows; i++) {
+            if (r->rows[i]) {
+                for (int c = 0; c < r->ncols; c++) free(r->rows[i][c]);
+                free(r->rows[i]);
                 r->rows[i] = NULL;
             }
+        }
+        int dst = 0;
+        for (int i = skip_val; i < r->nrows; i++) {
+            r->rows[dst] = r->rows[i];
+            r->rows[i] = NULL;
             dst++;
         }
         r->nrows = dst;
+    }
+    /* free rows beyond limit */
+    for (int i = limit_val; i < r->nrows; i++) {
+        if (r->rows[i]) {
+            for (int c = 0; c < r->ncols; c++) free(r->rows[i][c]);
+            free(r->rows[i]);
+            r->rows[i] = NULL;
+        }
     }
     if (limit_val < r->nrows) r->nrows = limit_val;
 }
@@ -531,77 +547,14 @@ cypher_result_t *cypher_execute(cypher_graph_t *g, cypher_ast_t *ast, const char
         if (!return_cl && cur->type == AST_RETURN) return_cl = cur;
     }
 
-    cypher_result_t *result = cypher_result_new();
-    if (!return_cl) return result;
-
-    for (int i = 0; i < return_cl->list.n; i++) {
-        cypher_ast_t *col = return_cl->list.items[i];
-        const char *name = "expr";
-        if (col->col.as) name = col->col.as->str;
-        else if (col->col.name->type == AST_IDENT) name = col->col.name->str;
-        else if (col->col.name->type == AST_PROP && col->col.name->prop.n)
-            name = col->col.name->prop.n->str;
-        cypher_result_add_col(result, name);
-    }
-
-    exec_match_return(g, match_cl, return_cl, result);
-
+    /* Phase 4: execute query via FSM */
+    cypher_result_t *result = cypher_fsm_exec(g, match_cl, return_cl);
     return result;
 }
 
 /* ---- sidecar.json bulk import ---- */
 
-#define SIDECAR_MAP_CAP 8192
-
-typedef struct {
-    uint32_t token_id;
-    uint32_t node_id;
-} sidecar_map_t;
-
-static sidecar_map_t *sidecar_map = NULL;
-static uint32_t sidecar_map_cap = 0;
-static uint32_t sidecar_map_count = 0;
-
-static void sidecar_map_init(void) {
-    sidecar_map_cap = SIDECAR_MAP_CAP;
-    sidecar_map = calloc(sidecar_map_cap, sizeof(sidecar_map_t));
-    for (uint32_t i = 0; i < sidecar_map_cap; i++)
-        sidecar_map[i].token_id = 0xFFFFFFFF;
-}
-
-static void sidecar_map_put(uint32_t tid, uint32_t nid) {
-    if (sidecar_map_count * 2 >= sidecar_map_cap) {
-        uint32_t old_cap = sidecar_map_cap;
-        sidecar_map_cap *= 2;
-        sidecar_map = realloc(sidecar_map, sidecar_map_cap * sizeof(sidecar_map_t));
-        for (uint32_t i = old_cap; i < sidecar_map_cap; i++)
-            sidecar_map[i].token_id = 0xFFFFFFFF;
-    }
-    uint32_t idx = tid % sidecar_map_cap;
-    while (sidecar_map[idx].token_id != 0xFFFFFFFF)
-        idx = (idx + 1) % sidecar_map_cap;
-    sidecar_map[idx].token_id = tid;
-    sidecar_map[idx].node_id = nid;
-    sidecar_map_count++;
-}
-
-static uint32_t sidecar_map_get(uint32_t tid) {
-    if (!sidecar_map) return 0xFFFFFFFF;
-    uint32_t idx = tid % sidecar_map_cap;
-    while (sidecar_map[idx].token_id != 0xFFFFFFFF) {
-        if (sidecar_map[idx].token_id == tid)
-            return sidecar_map[idx].node_id;
-        idx = (idx + 1) % sidecar_map_cap;
-    }
-    return 0xFFFFFFFF;
-}
-
-static void sidecar_map_free(void) {
-    free(sidecar_map);
-    sidecar_map = NULL;
-    sidecar_map_cap = 0;
-    sidecar_map_count = 0;
-}
+KHASHL_MAP_INIT(static, smap_t, smap, uint32_t, uint32_t, kh_hash_dummy, kh_eq_generic)
 
 static int json_extract_str(const char *json, const char *key, char *out, int max) {
     char pat[128];
@@ -640,13 +593,11 @@ int cypher_graph_load_sidecar(cypher_graph_t *g, const char *filename) {
     FILE *fp = fopen(filename, "rb");
     if (!fp) return -1;
 
-    sidecar_map_init();
-
-    /* array of (parent_token_id, child_node_id) for edges */
-    uint32_t *edge_parents = malloc(65536 * sizeof(uint32_t));
-    uint32_t *edge_children = malloc(65536 * sizeof(uint32_t));
-    uint32_t  edge_cap = 65536;
-    uint32_t  edge_count = 0;
+    smap_t *sm = smap_init();
+    kvec_t(uint32_t) ep;
+    kvec_t(uint32_t) ec;
+    kv_init(ep);
+    kv_init(ec);
 
     char line[16384];
     int lineno = 0;
@@ -674,7 +625,6 @@ int cypher_graph_load_sidecar(cypher_graph_t *g, const char *filename) {
 
         uint32_t nid = gs_add_node(gs);
 
-        /* label: Token and the specific token type */
         gs_set_label(gs, nid, "Token");
         if (type[0]) gs_set_label(gs, nid, type);
 
@@ -686,36 +636,32 @@ int cypher_graph_load_sidecar(cypher_graph_t *g, const char *filename) {
         if (text[0]) gs_add_prop_str(gs, nid, "text", text);
         if (filepath[0]) gs_add_prop_str(gs, nid, "filepath", filepath);
 
-        sidecar_map_put((uint32_t)token_id, nid);
+        int absent;
+        khint_t slot = smap_put(sm, (uint32_t)token_id, &absent);
+        kh_val(sm, slot) = nid;
 
-        /* track parent-child edges */
         if (parent_id != filepath_id) {
-            if (edge_count >= edge_cap) {
-                edge_cap *= 2;
-                edge_parents = realloc(edge_parents, edge_cap * sizeof(uint32_t));
-                edge_children = realloc(edge_children, edge_cap * sizeof(uint32_t));
-            }
-            edge_parents[edge_count] = (uint32_t)parent_id;
-            edge_children[edge_count] = nid;
-            edge_count++;
+            kv_push(uint32_t, ep, (uint32_t)parent_id);
+            kv_push(uint32_t, ec, nid);
         }
     }
     fclose(fp);
 
-    /* build edges */
-    for (uint32_t i = 0; i < edge_count; i++) {
-        uint32_t pnid = sidecar_map_get(edge_parents[i]);
-        if (pnid != 0xFFFFFFFF)
-            gs_add_edge(gs, pnid, edge_children[i], "PARENT_OF");
+    for (size_t i = 0; i < kv_size(ep); i++) {
+        khint_t slot = smap_get(sm, kv_A(ep, i));
+        if (slot != kh_end(sm)) {
+            uint32_t pnid = kh_val(sm, slot);
+            gs_add_edge(gs, pnid, kv_A(ec, i), "PARENT_OF");
+        }
     }
 
-    free(edge_parents);
-    free(edge_children);
-    sidecar_map_free();
+    kv_destroy(ep);
+    kv_destroy(ec);
+    smap_destroy(sm);
 
     gs_build_indexes(gs);
 
-    printf("Loaded %d nodes, %u edges from %s\n",
-           lineno, edge_count, filename);
+    printf("Loaded %d nodes, %zu edges from %s\n",
+           lineno, kv_size(ep), filename);
     return 0;
 }
