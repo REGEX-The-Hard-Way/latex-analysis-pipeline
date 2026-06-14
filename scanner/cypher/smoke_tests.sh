@@ -190,6 +190,51 @@ if [ -f ../sidecar-small.json ]; then
         "row"
 fi
 
+# 32-36: Math context awareness (requires make ctx_sidecar first)
+echo ""
+echo "--- Math context tests ---"
+CTX_FILE="/tmp/context_test/sidecar.json"
+if [ -f "$CTX_FILE" ]; then
+    run_query_ctx() {
+        local desc="$1"
+        local query="$2"
+        local expected="$3"
+        local out
+        out=$(echo "$query" | "$REPL" --sidecar "$CTX_FILE" 2>/dev/null) || true
+        if echo "$out" | grep -qF "$expected"; then
+            echo -e "${GREEN}PASS${NC} $desc"
+            PASS=$((PASS + 1))
+        else
+            echo -e "${RED}FAIL${NC} $desc"
+            echo "  expected to contain: $expected"
+            echo "  got: $(echo "$out" | head -5)"
+            FAIL=$((FAIL + 1))
+        fi
+    }
+
+    run_query_ctx "math_var count — prose x excluded" \
+        "MATCH (m:math_var) RETURN COUNT(*) as cnt;" \
+        "| 4"
+
+    run_query_ctx "display_math has math_var children" \
+        "MATCH (dm:display_math)-[:PARENT_OF]->(mv:math_var) RETURN mv LIMIT 1;" \
+        "row"
+
+    run_query_ctx "inline math block has children" \
+        "MATCH (m:math)-[:PARENT_OF]->(c) RETURN COUNT(*) as cnt;" \
+        "| 3"
+
+    run_query_ctx "greek inside display_2_math" \
+        "MATCH (dm:display_2_math)-[:PARENT_OF]->(g:math_greek) RETURN g LIMIT 1;" \
+        "row"
+
+    run_query_ctx "math_op inside inline math" \
+        "MATCH (m:math)-[:PARENT_OF]->(op:math_op) RETURN op LIMIT 1;" \
+        "row"
+else
+    echo "  (skipped — run 'make ctx_sidecar' first)"
+fi
+
 echo ""
 echo "=== Results: ${PASS} passed, ${FAIL} failed ==="
 exit $((FAIL > 0 ? 1 : 0))

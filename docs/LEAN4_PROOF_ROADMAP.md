@@ -188,6 +188,9 @@ extractor produce *candidate* equivalences; only Lean4's kernel provides proof.
 | 1a | Add math tokens to latex.rl | 2-3 hours | ✅ Done |
 | 1b | EMIT_BLOCK for frac, sqrt | 30 min | ✅ Done (frac) |
 | 1c | EMIT_BLOCK for sum, prod, lim, int | 1 hour | ✅ Done |
+| 1d | Context-aware math tokens (g_in_math) | 1 hour | ✅ Done |
+| 1e | Inline math as EMIT_BLOCK | 30 min | ✅ Done |
+| 1f | Vocab classifier (13,439 words) | 1 hour | ✅ Done |
 | 2 | Regenerate sidecar with math AST | scan time | pending |
 | 3 | Tree fingerprint with new tokens | 1 hour | pending |
 | 4 | Benepar variable type extraction | 2-3 hours | pending |

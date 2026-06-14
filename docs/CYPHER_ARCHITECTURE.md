@@ -127,7 +127,13 @@ into the Ragel pattern (e.g., `'"type":"math"'`) for zero-comparison-overhead ma
 ### Math Token AST (`scanner.rl` + `latex.rl`)
 
 The scanner emits 8 typed math tokens inside display/inline math.
-EMIT_BLOCK recursively scans inner content for structural constructs:
+EMIT_BLOCK recursively scans inner content for structural constructs.
+
+**Context tracking**: A global `g_in_math` counter is incremented by `EMIT_BLOCK`
+before recursing and decremented after. All math token patterns (`math_var`,
+`math_op`, `math_rel`, `math_fn`, `math_greek`, `math_num`, `math_sub`,
+`math_sup`) are guarded by `if (g_in_math)`. This prevents spurious `math_var`
+matches on standalone letters in prose.
 
 | Token | Examples | Children via EMIT_BLOCK |
 |-------|----------|------------------------|
@@ -144,6 +150,13 @@ EMIT_BLOCK recursively scans inner content for structural constructs:
 | `prod` | `\prod_{i=1}^{n}` | math_sub, math_sup |
 | `lim` | `\lim_{x\to 0}` | math_sub |
 | `int` | `\int_{0}^{\infty}` | math_sub, math_sup |
+| `display_math` | `\[...\]` | all math tokens (parent block) |
+| `display_2_math` | `$$...$$` | all math tokens (parent block) |
+| `math` (inline) | `$...$` | all math tokens (parent block) |
+
+Inline math (`$...$`) was changed from a leaf `EMIT("math")` to
+`EMIT_BLOCK("math", 1, 1)` — stripping delimiters and recursing so
+`g_in_math` activates for `$a+b$` content.
 
 ## Build System
 
@@ -151,7 +164,7 @@ EMIT_BLOCK recursively scans inner content for structural constructs:
 make              # optimized build (-O2)
 make debug        # debug build (-O0 -g)
 make asan         # AddressSanitizer build
-make test         # run smoke tests (26 queries)
+make test         # run smoke tests (36 queries)
 make valgrind     # valgrind memcheck on 4 query types
 make bench        # build and run benchmark
 make tools        # build data manipulation tools

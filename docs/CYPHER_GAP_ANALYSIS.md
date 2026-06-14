@@ -150,9 +150,13 @@ We implement an openCypher subset targeting analytical queries over a LaTeX toke
 | `math_fn` (functions) | ✅ | `\sin`, `\cos`, `\log`, `\ln`, `\exp` |
 | `math_greek` (Greek) | ✅ | `\alpha`–`\omega`, 24 letters |
 | `math_num` (numbers) | ✅ | Digit sequences |
-| `math_var` (variables) | ✅ | Single letters |
+| `math_var` (variables) | ✅ | Single letters, context-guarded by `g_in_math` |
+| `math_sub` / `math_sup` | ✅ | Subscripts/superscripts, context-guarded |
+| `display_math` / `display_2_math` | ✅ | `\[...\]` / `$$...$$` blocks with recursive children |
+| `math` (inline) | ✅ | `$...$` as EMIT_BLOCK with recursive children |
 | `frac` → children (EMIT_BLOCK) | ✅ | Numerator/denominator as `braces` children |
 | `sum`/`prod`/`lim`/`int` → children | ✅ | Limits as `math_sub`/`math_sup` children |
+| Context-aware token emission | ✅ | `g_in_math` counter: math tokens only fire inside math blocks |
 | Expression tree (CAS-style) | ❌ | Flat tokens. Operator precedence needs post-processing |
 | Full expression grammar | ❌ | No `Expr → Term + Term` grammar |
 

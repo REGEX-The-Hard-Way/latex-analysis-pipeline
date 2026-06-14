@@ -28,9 +28,16 @@ debug: clean all
 asan: CFLAGS = -O2 -g -fsanitize=address -I. -Ivendor/klib
 asan: clean all
 
-# run smoke tests (26 queries)
-test: $(TARGET)
+# run smoke tests (26 core + 5 sidecar + 5 context = 36)
+test: $(TARGET) ctx_sidecar
 	@bash smoke_tests.sh
+
+# generate context-awareness test sidecar
+ctx_sidecar:
+	@printf 'prose x prose\n\\[ x^2 = y \\]\n$$\n\\alpha \\beta\n$$\n$$a + b$$\n' > /tmp/context_test.tex; \
+	mkdir -p /tmp/context_test; \
+	cd /tmp/context_test && ../../scanner.out --json /tmp/context_test.tex tex 2>/dev/null; \
+	[ -f /tmp/context_test/sidecar.json ] || { echo "FAILED to generate context test sidecar"; exit 1; }
 
 # valgrind memcheck on smoke tests
 valgrind: debug
