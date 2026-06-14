@@ -5,9 +5,10 @@ FILE *g_out_tok = NULL;
 FILE *g_out_json = NULL;
 int n;
 uint32_t seed0 = 0;
+static int g_in_math = 0;
 
 
-#define EMIT(t) \
+#define EMIT(t) do { \
   uint32_t token_id = murmur3_seeded_v2(seed0, &in[ts - in], te - ts); \
   char emit_buf[(int)(te-ts)+250]; \
   memset(emit_buf,'\0',(int)(te-ts)+250); \
@@ -39,9 +40,10 @@ uint32_t seed0 = 0;
   } else { \
     fwrite(emit_buf, 1, emit_len, g_out_tok); \
   } \
-  printf("  %u  ", token_id);
+  printf("  %u  ", token_id); \
+} while(0)
 
-#define EMIT_BLOCK(t,prefix_len,suffix_len) \
+#define EMIT_BLOCK(t,prefix_len,suffix_len) do { \
   uint32_t token_id = murmur3_seeded_v2(seed0, &in[ts - in], te - ts); \
   char emit_buf[(int)(te-ts)+250]; \
   memset(emit_buf,'\0',(int)(te-ts)+250); \
@@ -74,9 +76,12 @@ uint32_t seed0 = 0;
     fwrite(emit_buf, 1, emit_len, g_out_tok); \
   } \
   printf("\n\n  %u  \n\n", token_id); \
-	if((int)(te-(prefix_len+suffix_len)-ts)>0){ \
-  	scanner(&in[ts + prefix_len - in], te - (prefix_len + suffix_len) - ts,filename, filepath_id, token_id, prefix_len, suffix_len); \
-  }
+  g_in_math++; \
+  if((int)(te-(prefix_len+suffix_len)-ts)>0){ \
+    scanner(&in[ts + prefix_len - in], te - (prefix_len + suffix_len) - ts,filename, filepath_id, token_id, prefix_len, suffix_len); \
+  } \
+  g_in_math--; \
+} while(0)
 %%{
   machine strings;
   include latex "latex.rl";
@@ -157,19 +162,19 @@ main :=|*
   affiliation 		=> { EMIT("affiliation"); };
   usepackage             => { EMIT("usepackage"); };
   title => { EMIT("title"); };
-  inline_math        => { EMIT("math"); };
-  math_sub           => { EMIT("math_sub"); };
-  math_sup           => { EMIT("math_sup"); };
+  inline_math        => { EMIT_BLOCK("math",1,1); };
+  math_sub           => { if (g_in_math) EMIT("math_sub"); };
+  math_sup           => { if (g_in_math) EMIT("math_sup"); };
   sum                => { EMIT_BLOCK("sum",4,0); };
   prod               => { EMIT_BLOCK("prod",5,0); };
   lim                => { EMIT_BLOCK("lim",4,0); };
   int                => { EMIT_BLOCK("int",4,0); };
-  math_op             => { EMIT("math_op"); };
-  math_rel            => { EMIT("math_rel"); };
-  math_fn             => { EMIT("math_fn"); };
-  math_greek          => { EMIT("math_greek"); };
-  math_num            => { EMIT("math_num"); };
-  math_var            => { EMIT("math_var"); };
+  math_op             => { if (g_in_math) EMIT("math_op"); };
+  math_rel            => { if (g_in_math) EMIT("math_rel"); };
+  math_fn             => { if (g_in_math) EMIT("math_fn"); };
+  math_greek          => { if (g_in_math) EMIT("math_greek"); };
+  math_num            => { if (g_in_math) EMIT("math_num"); };
+  math_var            => { if (g_in_math) EMIT("math_var"); };
   comment            => { EMIT("comment");};
 
 abstract => { EMIT_BLOCK("abstract", 16 , 14 ); };

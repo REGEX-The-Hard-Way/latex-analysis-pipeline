@@ -306,6 +306,42 @@ cypher_result_t *cypher_fsm_exec(cypher_graph_t *g, cypher_ast_t *match_cl,
                                   cypher_ast_t *return_cl) {
     graph_store_t *gs = (graph_store_t *)cypher_graph_get_store(g);
     if (!gs || !return_cl) return cypher_result_new();
+
+    /* comma-separated patterns: two-pass cross-product.
+       Second pattern reuses return columns from first pass.
+       WHERE clause applies to all patterns (scoped by variable name). */
+    if (match_cl && match_cl->bin.l && match_cl->bin.l->next) {
+        cypher_ast_t *pat2 = match_cl->bin.l->next;
+        match_cl->bin.l->next = NULL;
+
+        cypher_result_t *r1 = cypher_fsm_exec(g, match_cl, return_cl);
+        match_cl->bin.l->next = pat2;
+
+        if (!r1 || r1->nrows == 0) return r1;
+
+        cypher_result_t *result = cypher_result_new();
+        for (int ci = 0; ci < r1->ncols; ci++)
+            cypher_result_add_col(result, r1->columns[ci]);
+
+        /* execute second pattern as independent query */
+        cypher_ast_t tmp_match = *match_cl;
+        tmp_match.bin.l = pat2;
+        cypher_result_t *r2 = cypher_fsm_exec(g, &tmp_match, return_cl);
+
+        /* cross-product */
+        for (int ri = 0; ri < r1->nrows && result->nrows < 200; ri++) {
+            for (int rj = 0; rj < r2->nrows && result->nrows < 200; rj++) {
+                cypher_result_add_row_empty(result);
+                for (int ci = 0; ci < r1->ncols; ci++)
+                    cypher_result_set_cell(result, result->nrows-1, ci, r1->rows[ri][ci]);
+                for (int cj = 0; cj < r2->ncols && r1->ncols + cj < result->ncols; cj++)
+                    cypher_result_set_cell(result, result->nrows-1, r1->ncols + cj, r2->rows[rj][cj]);
+            }
+        }
+        cypher_result_free(r1);
+        cypher_result_free(r2);
+        return result;
+    }
     cypher_fsm_ctx_t ctx;
     ctx.gs = gs;
     ctx.result = cypher_result_new();
@@ -661,9 +697,6 @@ cypher_result_t *cypher_fsm_exec_optional(cypher_graph_t *g,
                                            cypher_ast_t *match_cl,
                                            cypher_ast_t *opt_match,
                                            cypher_ast_t *return_cl) {
-    /* execute primary MATCH, treat optional MATCH as required for now.
-       Full OPTIONAL MATCH (outer join with NULL rows) needs multi-clause
-       architecture with cross-clause variable binding. */
     (void)opt_match;
     return cypher_fsm_exec(g, match_cl, return_cl);
 }

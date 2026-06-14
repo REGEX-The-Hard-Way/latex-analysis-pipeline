@@ -335,7 +335,23 @@ static cypher_ast_t *parse_match(void) {
     if (!opt) opt = match(TOK_OPTIONAL);
 
     cypher_ast_t *p = parse_pattern();
-    if (!p) return NULL;
+    if (!p) { if (opt) return NULL; else return NULL; }
+
+    /* handle comma-separated patterns: store as linked list */
+    cypher_ast_t *ptail = p;
+    while (match(TOK_COMMA)) {
+        cypher_ast_t *next = parse_pattern();
+        if (!next) break;
+        if (ptail->next) {
+            /* find tail of next chain */
+            cypher_ast_t *nt = ptail->next;
+            while (nt->next) nt = nt->next;
+            nt->next = next;
+        } else {
+            ptail->next = next;
+        }
+        ptail = next;
+    }
 
     cypher_ast_t *w = NULL;
     if (match(TOK_WHERE)) w = parse_expression();

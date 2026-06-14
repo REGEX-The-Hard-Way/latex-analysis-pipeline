@@ -560,12 +560,23 @@ cypher_result_t *cypher_execute(cypher_graph_t *g, cypher_ast_t *ast, const char
 
     gs_build_indexes(gs);
 
-    cypher_ast_t *match_cl = NULL, *return_cl = NULL, *opt_match = NULL;
+    cypher_ast_t *match_cl = NULL, *return_cl = NULL, *opt_match = NULL, *with_cl = NULL;
     for (cypher_ast_t *cur = ast; cur; cur = cur->next) {
         if (!match_cl && cur->type == AST_MATCH) match_cl = cur;
         else if (match_cl && !opt_match && cur->type == AST_MATCH && cur->bin.op == 1)
             opt_match = cur;
+        if (!with_cl && cur->type == AST_WITH) with_cl = cur;
         if (!return_cl && cur->type == AST_RETURN) return_cl = cur;
+    }
+
+    /* WITH pipelining: forward column names through aliases */
+    if (with_cl && return_cl) {
+        for (int i = 0; i < with_cl->list.n && i < return_cl->list.n; i++) {
+            cypher_ast_t *wc = with_cl->list.items[i];
+            cypher_ast_t *rc = return_cl->list.items[i];
+            if (wc->col.as && !rc->col.as)
+                rc->col.as = wc->col.as;
+        }
     }
 
     /* Phase 3+4: try JIT first, fall back to FSM interpreter */

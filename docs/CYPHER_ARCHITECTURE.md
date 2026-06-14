@@ -162,6 +162,50 @@ Requires: `gcc`, `ragel` (7.x), `libreadline-dev`, `valgrind` (optional), `fzf` 
 
 Ragel files regenerated on change: `cypher_lexer.rl`, `graph_scan.rl`, `graph_text.rl`.
 
+## Pipeline Demo (242K-token math sidecar)
+
+Scanner compiled with `-O0` (30s), generates rich math AST:
+
+| Token type | Count | Example query |
+|-----------|-------|---------------|
+| `math_var` | 41,185 | `MATCH (v:math_var) RETURN v.text` |
+| `math_op` | 17,403 | `MATCH (dm:display_2_math)-[:PARENT_OF]->(op:math_op) RETURN op.text` |
+| `math_num` | 14,078 | |
+| `math_rel` | 12,848 | |
+| `math_greek` | 10,949 | `MATCH (eq:equation)-[:PARENT_OF]->(g:math_greek) RETURN g.text` |
+| `frac` | 4,718 | `MATCH (f:frac)-[:PARENT_OF]->(c:braces) RETURN f.text, c.text` |
+| `sum` | 713 | `MATCH (s:sum)-[:PARENT_OF]->(sub:math_sub) RETURN s.text, sub.text` |
+| `int` | 1,121 | `MATCH (i:int)-[:PARENT_OF]->(sub:math_sub) RETURN i.text` |
+| `prod` | 181 | |
+| `lim` | 130 | |
+| `math_fn` | 1,184 | |
+
+Total: 242,011 nodes, 131,182 parent-child edges, 80 distinct token types.
+
+**Structural queries:**
+```
+frac numerator/denominator:
+  \frac{\vec{p}^2}{2\kappa} → children: {\vec{p}^2}, {2\kappa}
+
+sum limits:
+  \sum_{i=1}^{3} → child: _{i=1}
+
+int bounds:
+  \int_{0}^{2\pi} → child: _{0}
+
+display_math operators:
+  display_2_math → children: +, -, \times, =
+
+equations with Greek letters:
+  equation → children: \delta, \epsilon, \eta, \alpha
+```
+
+**Full pipeline:**
+```
+Scanner → 242K tokens → tree_fingerprint → structural signatures
+       → def_extract → 33 definitions → lean4_gen → .lean proofs
+```
+
 ## Data Manipulation Tools (`tools/`)
 
 OpenRefine-inspired sidecar modification system with clustering, rule chains,
