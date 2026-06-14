@@ -1,4 +1,29 @@
 scanner/sidecar.tok
+zoekt
+xetex
+tools/tree_fingerprint
+gmp-6.3.0/
+include/a.out
+libtexpand/
+memgraph/
+openrefine-3.10.0/
+ragel/
+scanner/cypher/cypher_repl.out
+scanner/cypher/cypher_repl_O0.out
+scanner/cypher/cypher_repl_asan.out
+scanner/cypher/cypher_repl_dbg.out
+scanner/sidecar-small.json
+scanner/sidecar.json
+scanner/t.json
+scanner/test_set/
+scripts/igraph/
+tools/cluster_graph
+tools/sidecar_mod
+tools/spectral_cluster
+scanner/sidecar.tok
+scanner/sound1.tex
+tools/expr_tree
+tools/lean4_gen
 
 # Generated Ragel files
 scanner.c
