@@ -330,9 +330,9 @@ static cypher_ast_t *parse_pattern(void) {
 }
 
 static cypher_ast_t *parse_match(void) {
+    int opt = match(TOK_OPTIONAL);
     if (!match(TOK_MATCH)) return NULL;
-    int opt = 0;
-    if (match(TOK_OPTIONAL)) opt = 1;
+    if (!opt) opt = match(TOK_OPTIONAL);
 
     cypher_ast_t *p = parse_pattern();
     if (!p) return NULL;
@@ -588,6 +588,7 @@ static cypher_ast_t *parse_with(void) {
 static cypher_ast_t *parse_clause(void) {
     switch (cur()) {
     case TOK_MATCH:  return parse_match();
+    case TOK_OPTIONAL: return parse_match();
     case TOK_RETURN: return parse_return();
     case TOK_CREATE: return parse_create();
     case TOK_SET:    return parse_set();

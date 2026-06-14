@@ -159,6 +159,37 @@ run_query "Error recovery" \
     "GARBAGE CLAUSE; CREATE (a:Item {name:'X'}) MATCH (n:Item) RETURN n.name;" \
     "X"
 
+# 27-31: Sidecar integration tests (only if sidecar-small.json exists)
+if [ -f ../sidecar-small.json ]; then
+    echo ""
+    echo "--- Sidecar integration tests ---"
+
+    # 27. Parent-child: display math children exist
+    run_query "display_math has children" \
+        "MATCH (dm:display_2_math)-[:PARENT_OF]->(c:Token) RETURN c LIMIT 1;" \
+        "row"
+
+    # 28. math_sub tokens exist
+    run_query "math_sub tokens exist" \
+        "MATCH (m:math_sub) RETURN m LIMIT 1;" \
+        "row"
+
+    # 29. math_sup tokens exist
+    run_query "math_sup tokens exist" \
+        "MATCH (m:math_sup) RETURN m LIMIT 1;" \
+        "row"
+
+    # 30. frac tokens exist
+    run_query "frac tokens exist" \
+        "MATCH (f:frac) RETURN f LIMIT 1;" \
+        "row"
+
+    # 31. braces tokens are children of frac
+    run_query "braces child of display_math" \
+        "MATCH (dm:display_2_math)-[:PARENT_OF]->(b:braces) RETURN b LIMIT 1;" \
+        "row"
+fi
+
 echo ""
 echo "=== Results: ${PASS} passed, ${FAIL} failed ==="
 exit $((FAIL > 0 ? 1 : 0))

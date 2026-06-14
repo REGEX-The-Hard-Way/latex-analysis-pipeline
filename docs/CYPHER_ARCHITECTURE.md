@@ -124,6 +124,27 @@ Eliminates per-line `strstr` calls and 16KB stack buffer copies. 34MB file scann
 in ~70ms (including mmap+process startup). The JIT path inlines the label name
 into the Ragel pattern (e.g., `'"type":"math"'`) for zero-comparison-overhead matching.
 
+### Math Token AST (`scanner.rl` + `latex.rl`)
+
+The scanner emits 8 typed math tokens inside display/inline math.
+EMIT_BLOCK recursively scans inner content for structural constructs:
+
+| Token | Examples | Children via EMIT_BLOCK |
+|-------|----------|------------------------|
+| `math_op` | `+`, `-`, `\times`, `\cdot`, `\pm`, `\div` | — |
+| `math_rel` | `=`, `\lt`, `\gt`, `\leq`, `\equiv`, `\approx` | — |
+| `math_fn` | `\sin`, `\cos`, `\log`, `\ln`, `\exp` | — |
+| `math_greek` | `\alpha`–`\omega` (24 letters) | — |
+| `math_num` | digit sequences | — |
+| `math_var` | single letters | — |
+| `math_sub` | `_{i=1}`, `_{xyz}` | — |
+| `math_sup` | `^{n}`, `^{\infty}` | — |
+| `frac` | `\frac{a}{b}` | braces ×2 (num, den) |
+| `sum` | `\sum_{i=1}^{n}` | math_sub, math_sup |
+| `prod` | `\prod_{i=1}^{n}` | math_sub, math_sup |
+| `lim` | `\lim_{x\to 0}` | math_sub |
+| `int` | `\int_{0}^{\infty}` | math_sub, math_sup |
+
 ## Build System
 
 ```

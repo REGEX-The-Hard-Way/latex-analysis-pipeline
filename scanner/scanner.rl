@@ -95,6 +95,38 @@ uint32_t seed0 = 0;
   math_sub   = '_' (braces | alpha | digit) ;
   math_sup   = '^' (braces | alpha | digit) ;
 
+  # Math binary operators
+  math_op    = '+' | '-' | '\\times' | '\\cdot' | '\\pm' | '\\mp'
+             | '\\div' | '\\ast' | '\\star' | '\\circ' | '\\bullet'
+             | '\\oplus' | '\\otimes' | '\\odot'
+             | '\\cap' | '\\cup' | '\\setminus'
+             | '\\wedge' | '\\vee' | '\\land' | '\\lor' ;
+
+  # Math relations
+  math_rel   = '=' | '\\lt' | '\\gt' | '\\leq' | '\\geq' | '\\le' | '\\ge'
+             | '\\equiv' | '\\approx' | '\\sim' | '\\propto'
+             | '\\simeq' | '\\cong' | '\\neq' | '\\ne' | '<' | '>'
+             | '\\ll' | '\\gg' | '\\perp' | '\\parallel' ;
+
+  # Math functions
+  math_fn    = '\\sin' | '\\cos' | '\\tan' | '\\log' | '\\ln' | '\\exp'
+             | '\\lim' | '\\sum' | '\\prod' | '\\int' | '\\oint'
+             | '\\max' | '\\min' | '\\sup' | '\\inf' | '\\det'
+             | '\\gcd' | '\\lcm';
+
+  # Greek letters (lowercase)
+  math_greek = '\\alpha' | '\\beta' | '\\gamma' | '\\delta' | '\\epsilon'
+             | '\\zeta' | '\\eta' | '\\theta' | '\\iota' | '\\kappa'
+             | '\\lambda' | '\\mu' | '\\nu' | '\\xi' | '\\pi'
+             | '\\rho' | '\\sigma' | '\\tau' | '\\upsilon' | '\\phi'
+             | '\\chi' | '\\psi' | '\\omega' ;
+
+  # Math numbers
+  math_num   = digit+ ;
+
+  # Math variables (single letters)
+  math_var   = alpha ;
+
 
   sc_prose = alpha+ ([\-'] alpha+)*;
 
@@ -104,7 +136,7 @@ main :=|*
   end_doc => { EMIT("end_doc"); };
   bibitem => { EMIT("bibitem"); };
   label               => { EMIT("label"); };
-  frac               => { EMIT("frac"); };
+  frac               => { EMIT_BLOCK("frac",5,0); };
   cite               => { EMIT("cite"); };
   citep              => { EMIT("citep"); };
   citet              => { EMIT("citet"); };
@@ -128,6 +160,16 @@ main :=|*
   inline_math        => { EMIT("math"); };
   math_sub           => { EMIT("math_sub"); };
   math_sup           => { EMIT("math_sup"); };
+  sum                => { EMIT_BLOCK("sum",4,0); };
+  prod               => { EMIT_BLOCK("prod",5,0); };
+  lim                => { EMIT_BLOCK("lim",4,0); };
+  int                => { EMIT_BLOCK("int",4,0); };
+  math_op             => { EMIT("math_op"); };
+  math_rel            => { EMIT("math_rel"); };
+  math_fn             => { EMIT("math_fn"); };
+  math_greek          => { EMIT("math_greek"); };
+  math_num            => { EMIT("math_num"); };
+  math_var            => { EMIT("math_var"); };
   comment            => { EMIT("comment");};
 
 abstract => { EMIT_BLOCK("abstract", 16 , 14 ); };

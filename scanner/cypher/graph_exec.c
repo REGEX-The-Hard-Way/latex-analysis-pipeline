@@ -434,6 +434,7 @@ state_filter:
         hop_nids[0] = nid;
         goto state_expand;
     }
+    if (optional) goto state_emit_null;
     goto state_emit;
 
 state_expand:

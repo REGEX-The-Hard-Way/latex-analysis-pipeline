@@ -12,7 +12,7 @@ MOD=./sidecar_mod
 CLUSTER=./cluster_find
 
 # Build
-gcc -O2 -o "$MOD" sidecar_mod.c 2>/dev/null && pass "build sidecar_mod" || fail "build sidecar_mod"
+gcc -O2 -o "$MOD" sidecar_mod.c json_scan.o -I. 2>/dev/null && pass "build sidecar_mod" || fail "build sidecar_mod"
 gcc -O2 -o "$CLUSTER" cluster_find.c 2>/dev/null && pass "build cluster_find" || fail "build cluster_find"
 
 # Test data
@@ -38,12 +38,21 @@ grep -q '"original":"\\\\author{K. Trachenko}"' /tmp/tools_undo.log && pass "und
 [ $(wc -l < /tmp/tools_undo.log) -ge 5 ] && pass "undo log: >=5 entries ($(wc -l < /tmp/tools_undo.log))" || fail "undo log: too few entries"
 
 # Test 3: Fingerprint clustering finds duplicates (2 identical labels)
-# Note: cluster_find currently works on full sidecar; small test JSON may
-# not trigger clusters due to json_get_str edge cases with escaping.
-echo "SKIP: cluster_find fingerprint (known json_get_str limitation)" && pass "cluster_find: fingerprint (SKIP)"
+$CLUSTER /tmp/tools_test.json label > /tmp/tools_clusters.json 2>/dev/null
+if [ -s /tmp/tools_clusters.json ]; then
+    grep -q '"count":2' /tmp/tools_clusters.json && pass "cluster_find: duplicate label cluster" || fail "cluster_find: no count=2"
+    grep -q '"fingerprint"' /tmp/tools_clusters.json && pass "cluster_find: algorithm=fingerprint" || fail "cluster_find: no fingerprint"
+else
+    fail "cluster_find: no output"
+fi
 
 # Test 4: Levenshtein clustering
-echo "SKIP: cluster_find levenshtein (same limitation)" && pass "cluster_find: levenshtein (SKIP)"
+$CLUSTER /tmp/tools_test.json label --levenshtein 2 > /tmp/tools_lev.json 2>/dev/null
+if [ -s /tmp/tools_lev.json ]; then
+    grep -q '"levenshtein"' /tmp/tools_lev.json && pass "cluster_find: algorithm=levenshtein" || fail "cluster_find: no levenshtein"
+else
+    fail "cluster_find: no levenshtein output"
+fi
 
 # Test 5: JSON validity of output
 python3 -c "import json; [json.loads(l) for l in open('/tmp/tools_out.json')]" 2>/dev/null && pass "output is valid JSON" || fail "output is valid JSON"

@@ -141,6 +141,21 @@ We implement an openCypher subset targeting analytical queries over a LaTeX toke
 | Comments: `// line`, `/* block */` | ✅ | Lexer skips |
 | Semicolon query separator | ✅ | Consumed in parser |
 
+## 10. Math AST (Scanner)
+
+| Construct | Status | Notes |
+|-----------|--------|-------|
+| `math_op` (binary operators) | ✅ | `+`, `-`, `\times`, `\cdot`, `\pm`, `\div` |
+| `math_rel` (relations) | ✅ | `=`, `\lt`, `\gt`, `\leq`, `\equiv`, `\approx` |
+| `math_fn` (functions) | ✅ | `\sin`, `\cos`, `\log`, `\ln`, `\exp` |
+| `math_greek` (Greek) | ✅ | `\alpha`–`\omega`, 24 letters |
+| `math_num` (numbers) | ✅ | Digit sequences |
+| `math_var` (variables) | ✅ | Single letters |
+| `frac` → children (EMIT_BLOCK) | ✅ | Numerator/denominator as `braces` children |
+| `sum`/`prod`/`lim`/`int` → children | ✅ | Limits as `math_sub`/`math_sup` children |
+| Expression tree (CAS-style) | ❌ | Flat tokens. Operator precedence needs post-processing |
+| Full expression grammar | ❌ | No `Expr → Term + Term` grammar |
+
 ---
 
 ## Summary Statistics
@@ -156,9 +171,10 @@ We implement an openCypher subset targeting analytical queries over a LaTeX toke
 | Projections | 8 | 1 | 1 |
 | Functions | 0 | 0 | 6 |
 | Other | 3 | 0 | 7 |
+| Math AST (scanner) | 8 | 0 | 2 |
 | **Core Cypher** | **39** | **6** | **31** |
 | Data manipulation (tools/) | 2 | 0 | 5 |
-| **Total** | **41** | **6** | **36** |
+| **Total** | **49** | **6** | **38** |
 
 ## Priority Recommendations
 

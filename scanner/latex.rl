@@ -837,34 +837,17 @@ inline_math =  "$" (any-"$"){1,80} "$" ;
 underscore = '_';
 caret = '^';
 
-sum_underscore ='\\sum' underscore (braces caret braces| alpha caret braces | alpha | '0' | '1' | ' '| '\\' );
+sum_limits = '\\sum' (underscore braces caret braces | caret braces underscore braces | underscore braces | caret braces) ;
+sum = '\\sum' (underscore braces caret braces | caret braces underscore braces | underscore braces | caret braces | '') ;
 
-sum_caret = '\\sum' caret (braces |'\\infty'|'n'|'N'|'\\'|'m'|'T'|'K'|'3'|'M'|'k'|'d'|'2'|'L'|'4'|'t'|'p'|'r'|'J'|'*'|'s'|'l');
+prod_limits = '\\prod' (underscore braces caret braces | caret braces underscore braces | underscore braces | caret braces) ;
+prod = '\\prod' (underscore braces caret braces | caret braces underscore braces | underscore braces | caret braces | '') ;
 
-sum_limits = '\\sum\\limits' (underscore braces caret (braces|alpha) | caret (braces |alpha) underscore braces);
-sum = sum_limits | sum_caret|sum_underscore;
+lim_limits = '\\lim' (underscore braces caret braces | underscore braces | '') ;
+lim = '\\lim' (underscore braces caret braces | underscore braces | '') ;
 
-
-prod_underscore ='\\prod' underscore (braces caret braces| alpha caret braces | alpha | '0' | '1' | ' '| '\\' );
-
-prod_caret = '\\prod' caret (braces |'\\infty'|'n'|'N'|'\\'|'m'|'T'|'K'|'3'|'M'|'k'|'d'|'2'|'L'|'4'|'t'|'p'|'r'|'J'|'*'|'s'|'l');
-
-prod_limits = '\\prod\\limits' (underscore braces caret (braces|alpha) | caret (braces |alpha) underscore braces);
-prod = prod_limits | prod_caret|prod_underscore;
-
-
-lim_underscore ='\\lim' underscore (braces caret braces| alpha caret braces | alpha | '0' | '1' | ' '| '\\' |braces);
-
-lim_caret = '\\lim' caret (braces |'\\infty'|'n'|'N'|'\\'|'m'|'T'|'K'|'3'|'M'|'k'|'d'|'2'|'L'|'4'|'t'|'p'|'r'|'J'|'*'|'s'|'l');
-
-lim_limits = '\\lim\\limits' (underscore braces caret (braces|alpha) | caret (braces |alpha) underscore braces);
-lim = lim_limits | lim_caret|lim_underscore;
-
-
-int_underscore = '\\int' underscore (alpha caret braces | digit caret braces|digit caret alpha|braces caret braces);
-
-int_space = '\\int' [ ]+;
-int = (int_underscore | int_space ) (([ ]+ 'd') alpha [ ])?;
+int_limits = '\\int' (underscore braces caret braces | underscore braces | '') ;
+int = '\\int' (underscore braces caret braces | underscore braces | '') ;
 
 
 URL='\\'('anchor'|'anchorfoot'|'anchorparen'|'arxiv'|'arxivprefix'|'bibitem'|'biburl'|'blueurl'|'burl'|'cite'|'citealt'|'code'|'doi'|'doilink'|'doiurl'|'emph'|'eprint'|'footnote'|'footnotetext'|'furl'|'gitbook'|'githubicon'|'gitlab'|'homepage'|'href'|'hrefgrad'|'hreflink'|'hyperlink'|'hyperref'|'isalink'|'it'|'myhref'|'myurl'|'neturl'|'newurl'|'niceurl'|'nolinkurl'|'orcidlink'|'ref'|'regexp'|'rm'|'setfloatlink'|'small'|'sphinxhref'|'str'|'swurl'|'textbf'|'textit'|'textsl'|'texttt'|'tiny'|'tt'|'underline'|'urladdr'|'urlalt'|'urlfont'|'urlwofont'|'urlx'|'usenixhref')[  ]* '{' ('http'|'https') '://' (any-'}')* '}' ;
