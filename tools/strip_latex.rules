@@ -1,0 +1,10 @@
+{"step":1,"name":"strip author prefix","match_type":"author","prop":"text","transform":"regex","pattern":"\\\\author\\{(.*)\\}","replace":"$1"}
+{"step":2,"name":"strip section prefix","match_type":"section","prop":"text","transform":"regex","pattern":"\\\\section\\{(.*)\\}","replace":"$1"}
+{"step":3,"name":"strip label prefix","match_type":"label","prop":"text","transform":"regex","pattern":"\\\\label\\{(.*)\\}","replace":"$1"}
+{"step":4,"name":"strip cite prefix","match_type":"cite","prop":"text","transform":"regex","pattern":"\\\\cite\\{(.*)\\}","replace":"$1"}
+{"step":5,"name":"strip ref prefix","match_type":"ref","prop":"text","transform":"regex","pattern":"\\\\ref\\{(.*)\\}","replace":"$1"}
+{"step":6,"name":"strip title prefix","match_type":"title","prop":"text","transform":"regex","pattern":"\\\\title\\{(.*)\\}","replace":"$1"}
+{"step":7,"name":"strip math delimiters","match_type":"math","prop":"text","transform":"regex","pattern":"^\\$(.*)\\$$","replace":"$1"}
+{"step":8,"name":"strip display math","match_type":"display_2_math","prop":"text","transform":"regex","pattern":"^\\$\\$(.*)\\$\\$\\s*$","replace":"$1"}
+{"step":9,"name":"strip begin_doc","match_type":"begin_doc","prop":"text","transform":"regex","pattern":"\\\\begin\\{(.*)\\}","replace":"$1"}
+{"step":10,"name":"strip end_doc","match_type":"end_doc","prop":"text","transform":"regex","pattern":"\\\\end\\{(.*)\\}","replace":"$1"}
