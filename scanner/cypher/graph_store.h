@@ -159,6 +159,8 @@ const char *gs_label_name(graph_store_t *gs, uint32_t idx);
 /* filepath interning */
 void        gs_fp_put(graph_store_t *gs, uint32_t filepath_id, const char *path);
 const char *gs_fp_get(graph_store_t *gs, uint32_t filepath_id);
+int         gs_extract_trigrams(const char *str, int len,
+                                 uint32_t *out, int max_out);
 
 /* ---------- edge traversal ---------- */
 uint32_t gs_edge_count(graph_store_t *gs, uint32_t node);

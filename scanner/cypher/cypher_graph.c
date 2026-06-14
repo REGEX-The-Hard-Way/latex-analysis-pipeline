@@ -236,7 +236,21 @@ static void apply_set(cypher_graph_t *g, cypher_ast_t *set) {
     graph_store_t *gs = g->gs;
     for (int i = 0; i < set->list.n; i++) {
         cypher_ast_t *assign = set->list.items[i];
-        if (assign->type != AST_BINARY || assign->bin.op != TOK_EQ) continue;
+        if (assign->type != AST_BINARY) continue;
+
+        /* SET n:Label — label assignment */
+        if (assign->bin.op == TOK_COLON && assign->bin.l
+            && assign->bin.l->type == AST_IDENT) {
+            const char *vname = assign->bin.l->str;
+            uint32_t nid = (uint32_t)var_get(g, vname);
+            if (nid == 0xFFFFFFFF) continue;
+            for (cypher_ast_t *lab = assign->bin.r; lab; lab = lab->next)
+                if (lab->type == AST_LABEL) gs_set_label(gs, nid, lab->str);
+            continue;
+        }
+
+        /* SET n.key = value — property assignment */
+        if (assign->bin.op != TOK_EQ) continue;
         cypher_ast_t *lhs = assign->bin.l;
         cypher_ast_t *rhs = assign->bin.r;
         if (!lhs || !rhs) continue;
@@ -546,19 +560,25 @@ cypher_result_t *cypher_execute(cypher_graph_t *g, cypher_ast_t *ast, const char
 
     gs_build_indexes(gs);
 
-    cypher_ast_t *match_cl = NULL, *return_cl = NULL;
+    cypher_ast_t *match_cl = NULL, *return_cl = NULL, *opt_match = NULL;
     for (cypher_ast_t *cur = ast; cur; cur = cur->next) {
         if (!match_cl && cur->type == AST_MATCH) match_cl = cur;
+        else if (match_cl && !opt_match && cur->type == AST_MATCH && cur->bin.op == 1)
+            opt_match = cur;
         if (!return_cl && cur->type == AST_RETURN) return_cl = cur;
     }
 
     /* Phase 3+4: try JIT first, fall back to FSM interpreter */
     cypher_result_t *result = NULL;
-    if (g_jit_enabled && match_cl && return_cl) {
+    if (g_jit_enabled && match_cl && return_cl && !opt_match) {
         result = cypher_jit_exec(g, match_cl, return_cl);
     }
-    if (!result)
-        result = cypher_fsm_exec(g, match_cl, return_cl);
+    if (!result) {
+        if (opt_match)
+            result = cypher_fsm_exec_optional(g, match_cl, opt_match, return_cl);
+        else
+            result = cypher_fsm_exec(g, match_cl, return_cl);
+    }
     return result;
 }
 

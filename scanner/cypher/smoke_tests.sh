@@ -134,6 +134,31 @@ run_query "Filepath property" \
     "CREATE (a:Item {name:'test'}) MATCH (n:Item) RETURN n.name;" \
     "test"
 
+# 22. Arithmetic + in WHERE
+run_query "Arithmetic +" \
+    "CREATE (a:Item {val:10}) CREATE (b:Item {val:5}) MATCH (n:Item) WHERE n.val + 5 > 12 RETURN n.val;" \
+    "10"
+
+# 23. Arithmetic * in WHERE
+run_query "Arithmetic *" \
+    "CREATE (a:Item {val:3}) CREATE (b:Item {val:2}) MATCH (n:Item) WHERE n.val * 2 = 6 RETURN n.val;" \
+    "3"
+
+# 24. IS NOT NULL
+run_query "IS NOT NULL" \
+    "CREATE (a:Item {name:'A'}) CREATE (b:Item {name:''}) MATCH (n:Item) WHERE n.name IS NOT NULL RETURN n.name;" \
+    "A"
+
+# 25. SET label assignment
+run_query "SET label" \
+    "CREATE (a:Item {name:'A'}) CREATE (b:Item {name:'B'}) SET a:Featured MATCH (n:Featured) RETURN n.name;" \
+    "A"
+
+# 26. Error recovery (garbage before valid query)
+run_query "Error recovery" \
+    "GARBAGE CLAUSE; CREATE (a:Item {name:'X'}) MATCH (n:Item) RETURN n.name;" \
+    "X"
+
 echo ""
 echo "=== Results: ${PASS} passed, ${FAIL} failed ==="
 exit $((FAIL > 0 ? 1 : 0))

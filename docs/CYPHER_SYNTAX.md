@@ -133,30 +133,45 @@ Queries are saved to `~/.cypher_history`. Use `.history` to browse with fzf:
 ## Query Examples
 
 ```cypher
--- count labels
-MATCH (l:label) RETURN l.text;
+-- label lookup
+MATCH (l:label) RETURN l.text LIMIT 5;
 
--- find sections mentioning "Introduction"  
-MATCH (s:section) WHERE s.text = '\section{Introduction}' RETURN s.text;
+-- text search
+MATCH (s:section) WHERE s.text CONTAINS 'Introduction' RETURN s.text;
 
--- cite references from a specific paper
-MATCH (c:cite) WHERE c.text LIKE '%ashcroft%' RETURN c.text;
+-- arithmetic filter
+MATCH (n:Item) WHERE n.val + 5 > 10 RETURN n.val;
 
--- sub-expressions within equation environments
-MATCH (eq:equation)-[:PARENT_OF]->(sub:math_sub) RETURN sub.text;
+-- list membership
+MATCH (n:Item) WHERE n.name IN ['A', 'C'] RETURN n.name;
 
--- most common math expressions (sorted)
-MATCH (m:math) RETURN m.text ORDER BY m.text LIMIT 10;
+-- null check
+MATCH (n:Item) WHERE n.name IS NOT NULL RETURN n.name;
 
--- find labels and their source files
+-- multi-hop traversal
+MATCH (x:Item)-[:LINK]->(y:Item)-[:LINK]->(z:Item) RETURN x.name, z.name;
+
+-- aggregation
+MATCH (n:Item) RETURN COUNT(*);
+
+-- add label to existing node
+CREATE (a:Item {name:'A'}) SET a:Featured;
+
+-- sort with pagination
+MATCH (l:label) RETURN l.text ORDER BY l.text LIMIT 10;
+
+-- filepath (interned lookup)
 MATCH (l:label) RETURN l.filepath, l.text;
 ```
 
 ## Limitations
 
 - **No subqueries or EXISTS** — parsed but not executed
-- **No aggregation (COUNT, SUM, AVG)** — return raw rows
+- **No SUM, AVG, MIN, MAX** — COUNT(*) supported, other aggregations not yet
 - **No UNION** — one MATCH/RETURN per query
+- **No MERGE execution** — parsed but not executed
+- **OPTIONAL MATCH** — parsing + stub, full outer-join pending
+- **WITH pipelining** — parsing + stub, variable binding across clauses pending
 - **No MERGE** — parsed but not executed  
 - **Property overwrite** — SET appends; first match wins on read
 - **Full scans are slow** — always use label filters with `MATCH (n:Label)`

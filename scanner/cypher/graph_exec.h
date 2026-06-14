@@ -27,6 +27,10 @@ typedef struct {
 int cypher_fsm_init(void);
 cypher_result_t *cypher_fsm_exec(cypher_graph_t *g, cypher_ast_t *match_cl,
                                   cypher_ast_t *return_cl);
+cypher_result_t *cypher_fsm_exec_optional(cypher_graph_t *g,
+                                           cypher_ast_t *match_cl,
+                                           cypher_ast_t *opt_match,
+                                           cypher_ast_t *return_cl);
 void cypher_fsm_cleanup(void);
 
 #endif /* GRAPH_EXEC_H */

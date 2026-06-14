@@ -1,8 +1,8 @@
 CC       = gcc
 CFLAGS   = -O2 -I. -Ivendor/klib
 RAGEL    = ragel
-SRCS     = cypher_repl.c cypher_parser.c cypher_graph.c graph_store.c graph_exec.c graph_jit.c graph_scan.c cypher_lexer.c
-HDRS     = cypher_parser.h graph_store.h graph_exec.h graph_jit.h graph_scan.h
+SRCS     = cypher_repl.c cypher_parser.c cypher_graph.c graph_store.c graph_exec.c graph_jit.c graph_scan.c graph_text.c cypher_lexer.c
+HDRS     = cypher_parser.h graph_store.h graph_exec.h graph_jit.h
 TARGET   = cypher_repl.out
 LDLIBS   = -lm -ldl -lreadline
 
@@ -10,6 +10,12 @@ all: $(TARGET)
 
 cypher_lexer.c: cypher_lexer.rl
 	$(RAGEL) -m -G2 cypher_lexer.rl
+
+graph_scan.c: graph_scan.rl
+	$(RAGEL) -m -G2 graph_scan.rl
+
+graph_text.c: graph_text.rl
+	$(RAGEL) -m -G2 graph_text.rl
 
 $(TARGET): $(SRCS) $(HDRS)
 	$(CC) $(CFLAGS) $(SRCS) -o $@ $(LDLIBS)
@@ -22,7 +28,7 @@ debug: clean all
 asan: CFLAGS = -O2 -g -fsanitize=address -I. -Ivendor/klib
 asan: clean all
 
-# run smoke tests (15 queries)
+# run smoke tests (26 queries)
 test: $(TARGET)
 	@bash smoke_tests.sh
 
@@ -51,6 +57,10 @@ bench: bench_exec.out
 	./bench_exec.out ../sidecar-small.json
 
 clean:
-	rm -f $(TARGET) cypher_lexer.c *.o bench_exec.out
+	rm -f $(TARGET) cypher_lexer.c graph_scan.c graph_text.c *.o bench_exec.out
 
-.PHONY: all debug asan test valgrind bench clean
+# build data manipulation tools
+tools:
+	$(MAKE) -C ../../tools all
+
+.PHONY: all debug asan test valgrind bench tools clean

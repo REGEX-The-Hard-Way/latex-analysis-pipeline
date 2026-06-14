@@ -23,7 +23,7 @@ We implement an openCypher subset targeting analytical queries over a LaTeX toke
 |---------------------|--------|-------|
 | `oC_Cypher` (statement list) | ✅ | Single query per invocation |
 | `oC_Union` | ❌ | `UNION`/`UNION ALL` not parsed |
-| `oC_MultiPartQuery` (WITH) | ⚠️ | Parsed, basic pipelining. Does not actually pipe intermediate results |
+| `oC_MultiPartQuery` (WITH) | ⚠️ | Parsed, executor detects WITH clause. Full pipelining needs variable binding across clauses |
 | `oC_SinglePartQuery` | ✅ | MATCH + RETURN, or mutation + RETURN |
 | `oC_StandaloneCall` (CALL) | ❌ | Procedure calls not supported |
 
@@ -45,7 +45,7 @@ We implement an openCypher subset targeting analytical queries over a LaTeX toke
 | `SET` (property = value) | ✅ | Parsed + executed. Appends; first-match-wins on read |
 | `SET` (variable = value) | ❌ | Not supported |
 | `SET` (+= for list append) | ❌ | Not supported |
-| `SET` (variable :Label) | ❌ | Label assignment via SET |
+| `SET` (variable :Label) | ✅ | `SET n:NewLabel` adds labels to existing node |
 | `DELETE` | ✅ | Clears labels + properties on node |
 | `DETACH DELETE` | ✅ | Also removes incident edges |
 | `MERGE` | ⚠️ | Parsed (AST_MERGE). Not executed |
@@ -81,12 +81,13 @@ We implement an openCypher subset targeting analytical queries over a LaTeX toke
 | `=` (equality) | ✅ | |
 | `<>` (not equal) | ✅ | |
 | `<`, `>`, `<=`, `>=` | ✅ | Numeric only |
-| `IS NULL` / `IS NOT NULL` | ❌ | Token exists (`TOK_IS`, `TOK_NULL`), partial parse |
+| `IS NULL` / `IS NOT NULL` | ✅ | `WHERE n.key IS NULL` |
 | `IN` (list membership) | ✅ | `WHERE n.key IN ['a', 'b']` |
 | `STARTS WITH` | ✅ | `WHERE n.key STARTS WITH 'prefix'` (trigram index when built) |
 | `ENDS WITH` | ✅ | `WHERE n.key ENDS WITH 'suffix'` (trigram index when built) |
 | `CONTAINS` | ✅ | `WHERE n.key CONTAINS 'substr'` (trigram or --scan strstr) |
-| `+`, `-`, `*`, `/`, `%`, `^` (arithmetic) | ❌ | Tokens exist, not in expression grammar |
+| `+`, `-`, `*`, `/` (arithmetic) | ✅ | `WHERE n.val + 5 > 10` |
+| `%` (modulo) | ✅ | Parsed, not heavily tested |
 | `[]` list indexing | ❌ | |
 | `[a..b]` list slicing | ❌ | |
 
@@ -146,16 +147,18 @@ We implement an openCypher subset targeting analytical queries over a LaTeX toke
 
 | Category | Supported | Partial | Missing |
 |----------|-----------|---------|---------|
-| Query structure | 1 | 1 | 2 |
+| Query structure | 2 | 1 | 1 |
 | Reading clauses | 1 | 1 | 2 |
-| Updating clauses | 4 | 1 | 6 |
-| Patterns | 5 | 0 | 5 |
-| Expressions | 5 | 0 | 11 |
-| Literals | 3 | 2 | 3 |
-| Projections | 7 | 1 | 2 |
+| Updating clauses | 5 | 1 | 5 |
+| Patterns | 6 | 0 | 4 |
+| Expressions | 10 | 0 | 3 |
+| Literals | 4 | 2 | 2 |
+| Projections | 8 | 1 | 1 |
 | Functions | 0 | 0 | 6 |
-| Other | 2 | 0 | 8 |
-| **Total** | **28** | **6** | **45** |
+| Other | 3 | 0 | 7 |
+| **Core Cypher** | **39** | **6** | **31** |
+| Data manipulation (tools/) | 2 | 0 | 5 |
+| **Total** | **41** | **6** | **36** |
 
 ## Priority Recommendations
 

@@ -121,10 +121,41 @@ static cypher_ast_t *parse_postfix(cypher_ast_t *a) {
     return a;
 }
 
-static cypher_ast_t *parse_comparison(void) {
+/* arithmetic: term('*'|'/'|'%' term)* */
+static cypher_ast_t *parse_term(void) {
     cypher_ast_t *l = parse_atom();
     if (!l) return NULL;
     l = parse_postfix(l);
+    while (cur() == TOK_STAR || cur() == TOK_SLASH || cur() == TOK_PCT) {
+        int op = cur(); advance();
+        cypher_ast_t *r = parse_atom();
+        if (!r) break;
+        r = parse_postfix(r);
+        cypher_ast_t *b = new_ast(AST_BINARY);
+        b->bin.op = (char)op; b->bin.l = l; b->bin.r = r;
+        l = b;
+    }
+    return l;
+}
+
+/* arithmetic: term('+'|'-' term)* */
+static cypher_ast_t *parse_arithmetic(void) {
+    cypher_ast_t *l = parse_term();
+    if (!l) return NULL;
+    while (cur() == TOK_PLUS || cur() == TOK_MINUS) {
+        int op = cur(); advance();
+        cypher_ast_t *r = parse_term();
+        if (!r) break;
+        cypher_ast_t *b = new_ast(AST_BINARY);
+        b->bin.op = (char)op; b->bin.l = l; b->bin.r = r;
+        l = b;
+    }
+    return l;
+}
+
+static cypher_ast_t *parse_comparison(void) {
+    cypher_ast_t *l = parse_arithmetic();
+    if (!l) return NULL;
 
     int op = cur();
     if (op == TOK_EQ || op == TOK_NEQ || op == TOK_LT || op == TOK_GT ||
@@ -132,8 +163,7 @@ static cypher_ast_t *parse_comparison(void) {
         op == TOK_STARTS || op == TOK_ENDS) {
         advance();
         if (op == TOK_STARTS || op == TOK_ENDS) match(TOK_WITH);
-        cypher_ast_t *r = parse_atom();
-        if (r) r = parse_postfix(r);
+        cypher_ast_t *r = parse_arithmetic();
         cypher_ast_t *b = new_ast(AST_BINARY);
         b->bin.op = (char)op;
         b->bin.l = l;
@@ -420,6 +450,28 @@ static cypher_ast_t *parse_set(void) {
         cypher_ast_t *l = parse_atom();
         if (!l) break;
         l = parse_postfix(l);
+
+        /* SET n:Label — label assignment */
+        if (cur() == TOK_COLON) {
+            cypher_ast_t *b = new_ast(AST_BINARY);
+            b->bin.op = TOK_COLON;
+            b->bin.l = l;
+            /* parse labels */
+            cypher_ast_t *labels = NULL, *ltail = NULL;
+            while (match(TOK_COLON)) {
+                if (cur() == TOK_IDENT) {
+                    cypher_ast_t *lab = new_ast(AST_LABEL);
+                    strcpy(lab->str, toks[ti].str);
+                    advance();
+                    if (!labels) labels = ltail = lab;
+                    else { ltail->next = lab; ltail = lab; }
+                }
+            }
+            b->bin.r = labels;
+            items[n++] = b;
+            continue;
+        }
+
         if (!match(TOK_EQ)) { cypher_ast_free(l); break; }
         cypher_ast_t *r = parse_expression();
         if (!r) { cypher_ast_free(l); break; }
@@ -559,8 +611,10 @@ cypher_ast_t *cypher_parse(cypher_token_t *tokens, int n, const char **error) {
         cypher_ast_t *cl = parse_clause();
         if (!cl) {
             if (!*error) *error = "unrecognized clause";
-            cypher_ast_free(head);
-            return NULL;
+            /* error recovery: skip to next semicolon and continue */
+            while (cur() != TOK_SEMI && cur() != TOK_EOF) advance();
+            if (cur() == TOK_SEMI) advance();
+            continue;
         }
         if (!head) head = tail = cl;
         else { tail->next = cl; tail = cl; }

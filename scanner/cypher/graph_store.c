@@ -356,10 +356,12 @@ void gs_build_text_index(graph_store_t *gs) {
             char *str = vbuf + 1;
             int len = (int)strlen(str);
             if (len < 3) continue;
-            for (int pos = 0; pos <= len - 3; pos++) {
-                uint32_t tg = ((unsigned char)str[pos] << 16)
-                            | ((unsigned char)str[pos+1] << 8)
-                            |  (unsigned char)str[pos+2];
+
+            /* Ragel-based trigram extraction — single pass over string */
+            uint32_t tgs[4096];
+            int nt = gs_extract_trigrams(str, len, tgs, 4096);
+            for (int ti = 0; ti < nt; ti++) {
+                uint32_t tg = tgs[ti];
                 int dup = 0;
                 for (int si = 0; si < nseen; si++)
                     if (seen[si] == tg) { dup = 1; break; }

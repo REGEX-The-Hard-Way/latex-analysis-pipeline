@@ -58,6 +58,30 @@ static int fsm_match_props(cypher_fsm_ctx_t *ctx, uint32_t nid,
     return 1;
 }
 
+static double fsm_eval_value(cypher_fsm_ctx_t *ctx, uint32_t nid,
+                              cypher_ast_t *e) {
+    graph_store_t *gs = ctx->gs;
+    if (!e) return 0.0;
+    if (e->type == AST_INTEGER) return (double)e->ival;
+    if (e->type == AST_FLOAT)   return e->fval;
+    if (e->type == AST_PROP) {
+        double v = gs_prop_num(gs, nid, e->prop.n->str);
+        if (v == 0.0) v = (double)gs_prop_int(gs, nid, e->prop.n->str);
+        return v;
+    }
+    if (e->type == AST_BINARY) {
+        int op = e->bin.op;
+        double lv = fsm_eval_value(ctx, nid, e->bin.l);
+        double rv = fsm_eval_value(ctx, nid, e->bin.r);
+        if (op == TOK_PLUS)  return lv + rv;
+        if (op == TOK_MINUS) return lv - rv;
+        if (op == TOK_STAR)  return lv * rv;
+        if (op == TOK_SLASH) return rv != 0.0 ? lv / rv : 0.0;
+        if (op == TOK_PCT)   return (long)lv % (long)rv;
+    }
+    return 0.0;
+}
+
 static int fsm_eval_where(cypher_fsm_ctx_t *ctx, uint32_t nid,
                            cypher_ast_t *e) {
     graph_store_t *gs = ctx->gs;
@@ -73,20 +97,50 @@ static int fsm_eval_where(cypher_fsm_ctx_t *ctx, uint32_t nid,
         if (e->bin.l && e->bin.r && (op == TOK_EQ || op == TOK_NEQ
             || op == TOK_LT || op == TOK_GT || op == TOK_LE || op == TOK_GE)) {
             if (e->bin.l->type == AST_PROP) {
+                /* IS NULL / IS NOT NULL */
+                if (e->bin.r->type == AST_NULL) {
+                    const char *v = gs_prop_str(gs, nid, e->bin.l->prop.n->str);
+                    double dv = gs_prop_num(gs, nid, e->bin.l->prop.n->str);
+                    int is_null = (!v && dv == 0.0);
+                    if (op == TOK_EQ) return is_null;
+                    if (op == TOK_NEQ) return !is_null;
+                    return 1;
+                }
                 if (e->bin.r->type == AST_STRING) {
                     const char *v = gs_prop_str(gs, nid, e->bin.l->prop.n->str);
                     if (op == TOK_EQ) return v && !strcmp(v, e->bin.r->str);
                     if (op == TOK_NEQ) return !v || !!strcmp(v, e->bin.r->str);
                     return 1;
                 }
-                double lv = 0, rv = 0;
-                if (e->bin.r->type == AST_INTEGER) {
-                    lv = gs_prop_num(gs, nid, e->bin.l->prop.n->str);
-                    rv = (double)e->bin.r->ival;
-                } else if (e->bin.r->type == AST_FLOAT) {
-                    lv = gs_prop_num(gs, nid, e->bin.l->prop.n->str);
-                    rv = e->bin.r->fval;
-                } else { return 1; }
+                if (e->bin.r->type == AST_INTEGER || e->bin.r->type == AST_FLOAT) {
+                    double lv = gs_prop_num(gs, nid, e->bin.l->prop.n->str);
+                    if (lv == 0.0) lv = (double)gs_prop_int(gs, nid, e->bin.l->prop.n->str);
+                    double rv = e->bin.r->type == AST_INTEGER ? (double)e->bin.r->ival : e->bin.r->fval;
+                    if (op == TOK_EQ) return lv == rv;
+                    if (op == TOK_NEQ) return lv != rv;
+                    if (op == TOK_LT) return lv < rv;
+                    if (op == TOK_GT) return lv > rv;
+                    if (op == TOK_LE) return lv <= rv;
+                    if (op == TOK_GE) return lv >= rv;
+                }
+                /* arithmetic on right side: e.g. n.val > n.other + 5 */
+                if (e->bin.r->type == AST_PROP || e->bin.r->type == AST_BINARY) {
+                    double lv = gs_prop_num(gs, nid, e->bin.l->prop.n->str);
+                    if (lv == 0.0) lv = (double)gs_prop_int(gs, nid, e->bin.l->prop.n->str);
+                    double rv = fsm_eval_value(ctx, nid, e->bin.r);
+                    if (op == TOK_EQ) return lv == rv;
+                    if (op == TOK_NEQ) return lv != rv;
+                    if (op == TOK_LT) return lv < rv;
+                    if (op == TOK_GT) return lv > rv;
+                    if (op == TOK_LE) return lv <= rv;
+                    if (op == TOK_GE) return lv >= rv;
+                }
+            }
+            /* both sides are arithmetic expressions */
+            if ((e->bin.l->type == AST_BINARY || e->bin.r->type == AST_BINARY)
+                && e->bin.l->type != AST_PROP) {
+                double lv = fsm_eval_value(ctx, nid, e->bin.l);
+                double rv = fsm_eval_value(ctx, nid, e->bin.r);
                 if (op == TOK_EQ) return lv == rv;
                 if (op == TOK_NEQ) return lv != rv;
                 if (op == TOK_LT) return lv < rv;
@@ -139,13 +193,31 @@ static void fsm_emit_cell(cypher_fsm_ctx_t *ctx, int row, int col,
     graph_store_t *gs = ctx->gs;
     char buf[512]; buf[0] = 0;
     if (expr->type == AST_IDENT) {
-        const char *lab = NULL;
-        for (uint32_t li = 0; li < gs->label_count; li++)
-            if (gs->nodes[nid].label_mask & (1ULL << li)) { lab = gs->labels[li].name; break; }
-        const char *pv = gs_prop_str(gs, nid, expr->str);
-        if (pv) snprintf(buf, sizeof(buf), "%s", pv);
-        else if (lab && lab[0]) snprintf(buf, sizeof(buf), "(:%s)", lab);
-        else snprintf(buf, sizeof(buf), "(node %u)", nid);
+        if (!strcmp(expr->str, "*")) {
+            int off = 0;
+            off += snprintf(buf + off, sizeof(buf) - off, "(");
+            if (gs->nodes[nid].props_off != 0xFFFFFFFF) {
+                int first = 1;
+                for (uint32_t pi = gs->nodes[nid].props_off;
+                     pi < gs->prop_count && pi < gs->nodes[nid].props_off + gs->nodes[nid].prop_count
+                     && off < 480; pi++) {
+                    char *vbuf = gs->val_data + gs->props[pi].val_off;
+                    if (vbuf[0] != 0) continue;
+                    if (!first) off += snprintf(buf + off, sizeof(buf) - off, ", ");
+                    first = 0;
+                    if (off < 480) off += snprintf(buf + off, sizeof(buf) - off, "%s", vbuf + 1);
+                }
+            }
+            if (off < 500) snprintf(buf + off, sizeof(buf) - off, ")");
+        } else {
+            const char *lab = NULL;
+            for (uint32_t li = 0; li < gs->label_count; li++)
+                if (gs->nodes[nid].label_mask & (1ULL << li)) { lab = gs->labels[li].name; break; }
+            const char *pv = gs_prop_str(gs, nid, expr->str);
+            if (pv) snprintf(buf, sizeof(buf), "%s", pv);
+            else if (lab && lab[0]) snprintf(buf, sizeof(buf), "(:%s)", lab);
+            else snprintf(buf, sizeof(buf), "(node %u)", nid);
+        }
     } else if (expr->type == AST_PROP) {
         const char *pkey = expr->prop.n->str;
         const char *pv = gs_prop_str(gs, nid, pkey);
@@ -582,6 +654,17 @@ state_done:
 int cypher_fsm_init(void) {
     mkdir(FSM_TMPDIR, 0755);
     return 0;
+}
+
+cypher_result_t *cypher_fsm_exec_optional(cypher_graph_t *g,
+                                           cypher_ast_t *match_cl,
+                                           cypher_ast_t *opt_match,
+                                           cypher_ast_t *return_cl) {
+    /* execute primary MATCH, treat optional MATCH as required for now.
+       Full OPTIONAL MATCH (outer join with NULL rows) needs multi-clause
+       architecture with cross-clause variable binding. */
+    (void)opt_match;
+    return cypher_fsm_exec(g, match_cl, return_cl);
 }
 
 void cypher_fsm_cleanup(void) {

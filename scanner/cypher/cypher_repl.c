@@ -15,7 +15,10 @@
 #include "cypher_parser.h"
 #include "graph_store.h"
 #include "graph_jit.h"
-#include "graph_scan.h"
+
+int cypher_scan_sidecar(const char *filename, const char *label,
+                         const char *contains, int limit,
+                         cypher_result_t *result);
 
 static void execute_query(cypher_graph_t *g, const char *query);
 static void print_table(cypher_result_t *r);
