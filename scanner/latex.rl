@@ -801,6 +801,10 @@ right_brace = '}' @{n--; };
 brace_body = any - (left_brace|right_brace);
 braces = '{' @{n=0;} (left_brace|right_brace|brace_body)* :> '}' when{!n};
 
+thanks = '\\thanks' braces ;
+email = '\\email' braces ;
+footnote = '\\footnote' braces ;
+
 left_bracket = '[' @{n++;};
 right_bracket = ']' @{n--; };
 bracket_body = any - (left_bracket|right_bracket);
