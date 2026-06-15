@@ -803,12 +803,13 @@ braces = '{' @{n=0;} (left_brace|right_brace|brace_body)* :> '}' when{!n};
 
 thanks = '\\thanks' braces ;
 email = '\\email' braces ;
-footnote = '\\footnote' braces ;
 
 left_bracket = '[' @{n++;};
 right_bracket = ']' @{n--; };
 bracket_body = any - (left_bracket|right_bracket);
 brackets = ('\\left['|'[') @{n=0;} (left_bracket|right_bracket|bracket_body)* :> ']' when{!n};
+
+footnote = '\\footnote' (brackets braces|braces) ;
 
 left_parens = '(' @{n++;};
 right_parens = ')' @{n--; };
@@ -864,7 +865,8 @@ sqrt = '\\sqrt' braces;
 hspace = '\\hspace' braces;
 e = 'e' caret braces; 
 eta = '\\eta' underscore braces;
-
+address = '\\address' braces ;
+renewcommand = '\\renewcommand' braces braces;
 
 subexpr = (parens | '\\alpha'| '\\argmax'| '\\argmin'| '\\ast'| '\\bbeta'| '\\beta'| '\\bfx'| '\\bigcap'| '\\bigcup'| '\\bigoplus'| '\\bigotimes'| '\\bigwedge'| '\\bSigma'| '\\btheta'| '\\chi'| '\\circ'| '\\cup'| '\\dag'| '\\dagger'| '\\dashint'| '\\del'| '\\delta'| '\\Delta'| '\\dim'| '\\dsum'| '\\ell'| '\\epsilon'| '\\eta'| '\\exp'| '\\gamma'| '\\Gamma'| '\\grad'| '\\iint'| '\\infty'| '\\iota'| '\\kappa'| '\\lambda' '\\Lambda'| '\\liminf'| '\\limits'| '\\limsup'| '\\log'| '\\max'| '\\min'| '\\mu'| '\\nabla'| '\\nolimits'| '\\nu'| '\\oint'| '\\omega'| '\\Omega'| '\\oplus'| '\\oslash'| '\\otimes'| '\\partial'| '\\perp'| '\\phi'| '\\Phi'| '\\pi'| '\\Pi'| '\\prime'| '\\prod'| '\\psi'| '\\Psi'| '\\rangle'| '\\rho'| '\\rvert'| '\\rVert'| '\\sigma'| '\\Sigma'| '\\star'| '\\state'| '\\sup'| '\\tau'| '\\theta'| '\\Theta'| '\\times'| '\\upsilon'| '\\Upsilon'| '\\varepsilon'| '\\varphi'| '\\varpi'| '\\varrho'| '\\varsigma'| '\\vartheta'| '\\vert'| '\\Vert'| '\\vol'| '\\xi'| '\\Xi'| '\\zeta') underscore (braces | alnum |'!'|'*'|'+'|'-');
 
