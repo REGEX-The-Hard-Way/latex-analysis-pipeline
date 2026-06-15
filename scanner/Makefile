@@ -12,8 +12,7 @@ sent_split:
 	$(CC) -DTEST -O2  sent_split.c -o sent_split.out
 
 macro_expander:
-	ragel -m -G2 expand_macros.rl
-	$(CC) -O2 -I../include macro_expander.c ../include/regex_util.c -o macro_expander.out
+	$(CC) -O2 -I../include -DMACRO_EXPANDER_STANDALONE ../include/macro_expander.c ../include/regex_util.c -o macro_expander.out -lm
 
 build_macros: macro_expander
 

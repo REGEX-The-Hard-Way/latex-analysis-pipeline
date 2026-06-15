@@ -62,6 +62,8 @@
 #define CMD_PROVIDECOMMAND_PRIM 206
 #define CMD_LET_PRIM         207
 #define CMD_AFTERGROUP_PRIM  208
+#define CMD_MAKETLETTER_PRIM  209
+#define CMD_MAKETOTHER_PRIM   210
 
 #define IS_EXPANDABLE(cmd) ((cmd) > MAX_COMMAND && (cmd) != CMD_END_CS_NAME)
 
@@ -790,6 +792,22 @@ static void expand(macro_expander_t *me) {
         return;
     }
 
+    if (me->cur_cmd == CMD_MAKETLETTER_PRIM) {
+        /* \makeatletter: make @ a letter (catcode 11) */
+        int cs = eq_lookup(me, "@");
+        if (cs >= 0) me->eqtb[cs].cmd = me->cat_code['@'];
+        me->cat_code['@'] = CMD_LETTER;
+        return;
+    }
+
+    if (me->cur_cmd == CMD_MAKETOTHER_PRIM) {
+        /* \makeatother: make @ other (catcode 12) */
+        int cs = eq_lookup(me, "@");
+        if (cs >= 0) me->eqtb[cs].cmd = me->cat_code['@'];
+        me->cat_code['@'] = CMD_OTHER_CHAR;
+        return;
+    }
+
     if (me->cur_cmd == CMD_CS_NAME) {
         char namebuf[256];
         int namelen = 0;
@@ -844,6 +862,8 @@ static void init_primitives(macro_expander_t *me) {
     eq_define(me, "csname",  CMD_CS_NAME, 0);
     eq_define(me, "endcsname", CMD_END_CS_NAME, 0);
     eq_define(me, "relax", CMD_RELAX, 0);
+    eq_define(me, "makeatletter", CMD_MAKETLETTER_PRIM, 0);
+    eq_define(me, "makeatother", CMD_MAKETOTHER_PRIM, 0);
 }
 
 macro_expander_t *macro_expander_create(void) {
