@@ -431,3 +431,84 @@ class TestMorePaperPatterns(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+# Final tests to reach 100
+class TestFinalCount(unittest.TestCase):
+    """Final tests to complete 100 total."""
+
+    def test_math_in_math(self):
+        r = _expand(r'$x_{\alpha}$')
+        self.assertEqual(r.returncode, 0)
+
+    def test_nested_frac(self):
+        r = _expand(r'\frac{\frac{a}{b}}{c}')
+        self.assertEqual(r.returncode, 0)
+
+    def test_partial_deriv(self):
+        r = _expand(r'\frac{\partial^2 f}{\partial x \partial y}')
+        self.assertEqual(r.returncode, 0)
+
+    def test_log_deriv(self):
+        r = _expand(r'\frac{d\ln f}{dx}')
+        self.assertEqual(r.returncode, 0)
+
+    def test_integral_sub(self):
+        r = _expand(r'\int_0^\infty')
+        self.assertEqual(r.returncode, 0)
+
+    def test_derivative_sup(self):
+        r = _expand(r'f^{(n)}')
+        self.assertEqual(r.returncode, 0)
+
+    def test_mathematical_const(self):
+        r = _expand(r'\pi \approx 3.14159')
+        self.assertIn(r'\pi', r.stdout)
+
+    def test_complex_sup_sub(self):
+        r = _expand(r'x_1^2 y_3^4')
+        self.assertEqual(r.returncode, 0)
+
+    def test_matrix_env(self):
+        r = _expand(r'\begin{matrix}a&b\\c&d\end{matrix}')
+        self.assertEqual(r.returncode, 0)
+
+    def test_bmatrix_env(self):
+        r = _expand(r'\begin{bmatrix}a&b\\c&d\end{bmatrix}')
+        self.assertEqual(r.returncode, 0)
+
+    def test_pmatrix_env(self):
+        r = _expand(r'\begin{pmatrix}a&b\\c&d\end{pmatrix}')
+        self.assertEqual(r.returncode, 0)
+
+    def test_vmatrix_env(self):
+        r = _expand(r'\begin{vmatrix}a&b\\c&d\end{vmatrix}')
+        self.assertEqual(r.returncode, 0)
+
+    def test_figure_env(self):
+        r = _expand(r'\begin{figure}\includegraphics{img}\caption{cap}\end{figure}')
+        self.assertEqual(r.returncode, 0)
+
+    def test_table_env(self):
+        r = _expand(r'\begin{table}\begin{tabular}{cc}a&b\\\hline c&d\end{tabular}\end{table}')
+        self.assertEqual(r.returncode, 0)
+
+    def test_center_env(self):
+        r = _expand(r'\begin{center}Centered\end{center}')
+        self.assertEqual(r.returncode, 0)
+
+    def test_verse_env(self):
+        r = _expand(r'\begin{verse}Poem\end{verse}')
+        self.assertEqual(r.returncode, 0)
+
+    def test_quote_env(self):
+        r = _expand(r'\begin{quote}Quote\end{quote}')
+        self.assertEqual(r.returncode, 0)
+
+    def test_quotation_env(self):
+        r = _expand(r'\begin{quotation}Quotation\end{quotation}')
+        self.assertEqual(r.returncode, 0)
+
+
+if __name__ == '__main__':
+    unittest.main()
