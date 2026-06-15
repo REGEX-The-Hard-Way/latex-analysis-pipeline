@@ -26,7 +26,7 @@
 #include <string.h>
 #include <stdint.h>
 #include <ctype.h>
-#include "../../include/regex_util.h"
+#include "../../../include/regex_util.h"
 
 
 extern int porter2_stem(char *word);
