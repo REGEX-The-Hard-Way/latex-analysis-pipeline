@@ -278,7 +278,7 @@ static void catcode_defaults(macro_expander_t *me) {
     me->cat_code['~']  = CMD_ACTIVE_CHAR;
     me->cat_code['%']  = CMD_COMMENT;
     me->cat_code[' ']  = CMD_SPACER;
-    me->cat_code['\n'] = CMD_SPACER;
+    me->cat_code['\n'] = CMD_CAR_RET;  // NEWLINE: preserve newlines (was CMD_SPACER)
     me->cat_code['\r'] = CMD_IGNORE;
     me->cat_code['\t'] = CMD_SPACER;
     for (int c = 'a'; c <= 'z'; c++) me->cat_code[c] = CMD_LETTER;
@@ -372,8 +372,10 @@ static int32_t get_token_from_string(macro_expander_t *me) {
 
     if (cat == CMD_COMMENT || cat == CMD_IGNORE || cat == CMD_INVALID_CHAR)
         return SPACE_TOKEN;
-    if (cat == CMD_SPACER || cat == CMD_CAR_RET)
+    if (cat == CMD_SPACER)
         return SPACE_TOKEN;
+    if (cat == CMD_CAR_RET)
+        return TOKEN(CMD_CAR_RET, '\n');  // Preserve newlines
 
     if (cat == CMD_ESCAPE)
         return scan_control_sequence(me, f);
@@ -388,7 +390,8 @@ static int32_t get_token_from_string(macro_expander_t *me) {
         if (result >= 0) {
             c = TOKEN_CHR(result);
             cat = (c < 128) ? me->cat_code[c] : CMD_OTHER_CHAR;
-            if (cat == CMD_SPACER || cat == CMD_CAR_RET) return SPACE_TOKEN;
+            if (cat == CMD_SPACER) return SPACE_TOKEN;
+            if (cat == CMD_CAR_RET) return TOKEN(CMD_CAR_RET, '\n');  // Preserve newlines
             if (cat == CMD_ESCAPE) return scan_control_sequence(me, f);
         }
     }
@@ -541,6 +544,7 @@ static void print_token(macro_expander_t *me, int32_t tok) {
         case CMD_LETTER: case CMD_OTHER_CHAR:
             buf[0] = (char)chr; out_append(me, buf, 1); break;
         case CMD_SPACER: out_append(me, " ", 1); break;
+        case CMD_CAR_RET: out_append(me, "\n", 1); break;  // NEWLINE: output newline
         case CMD_LEFT_BRACE:  out_append(me, "{", 1); break;
         case CMD_RIGHT_BRACE: out_append(me, "}", 1); break;
         case CMD_MATH_SHIFT:  out_append(me, "$", 1); break;
