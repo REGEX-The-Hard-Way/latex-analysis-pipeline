@@ -77,6 +77,7 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
         KW_ANY      = [Aa][Nn][Yy];
         KW_NONE     = [Nn][Oo][Nn][Ee];
         KW_SINGLE   = [Ss][Ii][Nn][Gg][Ll][Ee];
+        KW_UNION    = [Uu][Nn][Ii][Oo][Nn];
 
         main := |*
             wsp+ => { /* skip */ };
@@ -375,6 +376,7 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
             KW_ANY      => { tokens[tok_count].type = TOK_ANY;      tok_count++; };
             KW_NONE     => { tokens[tok_count].type = TOK_NONE;     tok_count++; };
             KW_SINGLE   => { tokens[tok_count].type = TOK_SINGLE;   tok_count++; };
+            KW_UNION    => { tokens[tok_count].type = TOK_UNION;    tok_count++; };
 
             id => {
                 if (tok_count < max_tokens) {

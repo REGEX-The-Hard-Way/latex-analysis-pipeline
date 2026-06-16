@@ -299,8 +299,19 @@ static void fsm_emit_cell(cypher_fsm_ctx_t *ctx, int row, int col,
         double v = fsm_eval_value(ctx, nid, expr);
         snprintf(buf, sizeof(buf), "%g", v);
     } else if (expr->type == AST_CASE) {
-        double v = fsm_eval_value(ctx, nid, expr);
-        snprintf(buf, sizeof(buf), "%g", v);
+        for (cypher_ast_t *w = expr->bin.l; w; w = w->next) {
+            if (w->type == AST_BINARY && w->bin.op == TOK_WHEN) {
+                if (fsm_eval_where(ctx, nid, w->bin.l)) {
+                    fsm_emit_cell(ctx, row, col, nid, w->bin.r);
+                    return;
+                }
+            }
+        }
+        if (expr->bin.r) {
+            fsm_emit_cell(ctx, row, col, nid, expr->bin.r);
+            return;
+        }
+        snprintf(buf, sizeof(buf), "NULL");
     } else if (expr->type == AST_UNARY) {
         double v = fsm_eval_value(ctx, nid, expr);
         snprintf(buf, sizeof(buf), "%g", v);
@@ -408,6 +419,89 @@ cypher_result_t *cypher_fsm_exec(cypher_graph_t *g, cypher_ast_t *match_cl,
     graph_store_t *gs = (graph_store_t *)cypher_graph_get_store(g);
     if (!gs || !return_cl) return cypher_result_new();
 
+    /* RETURN-only (no MATCH): emit one literal row with aggregation support */
+    if (!match_cl) {
+        cypher_fsm_ctx_t ctx;
+        ctx.gs = gs;
+        ctx.result = cypher_result_new();
+        for (int i = 0; i < return_cl->list.n; i++) {
+            cypher_ast_t *col = return_cl->list.items[i];
+            const char *name = "expr";
+            if (col->col.as) name = col->col.as->str;
+            else if (col->col.name->type == AST_IDENT) name = col->col.name->str;
+            else if (col->col.name->type == AST_PROP && col->col.name->prop.n)
+                name = col->col.name->prop.n->str;
+            else if (col->col.name->type == AST_FUNCALL && col->col.name->call.func)
+                name = col->col.name->call.func->str;
+            cypher_result_add_col(ctx.result, name);
+        }
+        /* scan all nodes so aggregate functions like COUNT(*) work */
+        uint32_t ncan = gs_node_count(gs);
+        for (uint32_t ni = 0; ni < ncan && ctx.result->nrows < MAX_ROWS; ni++) {
+            cypher_result_add_row_empty(ctx.result);
+            for (int ci = 0; ci < return_cl->list.n; ci++)
+                fsm_emit_cell(&ctx, ctx.result->nrows-1, ci, ni, return_cl->list.items[ci]->col.name);
+        }
+        /* if no nodes exist, emit one row for literal expressions */
+        if (ncan == 0) {
+            cypher_result_add_row_empty(ctx.result);
+            for (int ci = 0; ci < return_cl->list.n; ci++)
+                fsm_emit_cell(&ctx, 0, ci, 0, return_cl->list.items[ci]->col.name);
+        }
+        /* aggregation pass */
+        {
+            char agg_vals[16][64];
+            int agg_cols[16], n_agg = 0;
+            for (int ci = 0; ci < return_cl->list.n; ci++) {
+                cypher_ast_t *col = return_cl->list.items[ci];
+                if (col->col.name->type != AST_FUNCALL || !col->col.name->call.func) continue;
+                const char *fnname = col->col.name->call.func->str;
+                int is_count = !strcasecmp(fnname, "COUNT");
+                int is_sum   = !strcasecmp(fnname, "SUM");
+                int is_avg   = !strcasecmp(fnname, "AVG");
+                int is_min   = !strcasecmp(fnname, "MIN");
+                int is_max   = !strcasecmp(fnname, "MAX");
+                if (!is_count && !is_sum && !is_avg && !is_min && !is_max) continue;
+                if (is_count) {
+                    snprintf(agg_vals[n_agg], sizeof(agg_vals[0]), "%d", ctx.result->nrows);
+                } else {
+                    double result = 0;
+                    if (is_sum || is_avg) {
+                        for (int ri = 0; ri < ctx.result->nrows; ri++)
+                            result += strtod(ctx.result->rows[ri][ci] ? ctx.result->rows[ri][ci] : "0", NULL);
+                        if (is_avg && ctx.result->nrows > 0) result /= (double)ctx.result->nrows;
+                    } else if (is_min) {
+                        result = ctx.result->nrows > 0 ? strtod(ctx.result->rows[0][ci] ? ctx.result->rows[0][ci] : "0", NULL) : 0;
+                        for (int ri = 1; ri < ctx.result->nrows; ri++) {
+                            double v = strtod(ctx.result->rows[ri][ci] ? ctx.result->rows[ri][ci] : "0", NULL);
+                            if (v < result) result = v;
+                        }
+                    } else if (is_max) {
+                        result = ctx.result->nrows > 0 ? strtod(ctx.result->rows[0][ci] ? ctx.result->rows[0][ci] : "0", NULL) : 0;
+                        for (int ri = 1; ri < ctx.result->nrows; ri++) {
+                            double v = strtod(ctx.result->rows[ri][ci] ? ctx.result->rows[ri][ci] : "0", NULL);
+                            if (v > result) result = v;
+                        }
+                    }
+                    snprintf(agg_vals[n_agg], sizeof(agg_vals[0]), "%g", result);
+                }
+                agg_cols[n_agg++] = ci;
+            }
+            if (n_agg > 0) {
+                for (int ri = 0; ri < ctx.result->nrows; ri++) {
+                    for (int ck = 0; ck < ctx.result->ncols; ck++)
+                        free(ctx.result->rows[ri][ck]);
+                    free(ctx.result->rows[ri]);
+                }
+                ctx.result->nrows = 0;
+                cypher_result_add_row_empty(ctx.result);
+                for (int ai = 0; ai < n_agg; ai++)
+                    cypher_result_set_cell(ctx.result, 0, agg_cols[ai], agg_vals[ai]);
+            }
+        }
+        return ctx.result;
+    }
+
     /* comma-separated patterns: two-pass cross-product.
        Second pattern reuses return columns from first pass.
        WHERE clause applies to all patterns (scoped by variable name). */
@@ -506,42 +600,28 @@ cypher_result_t *cypher_fsm_exec(cypher_graph_t *g, cypher_ast_t *match_cl,
 
         candidates = malloc(cap * sizeof(uint32_t));
         {
-            int use_prop_idx = 0;
             const char *pk = fsm_first_prop_key(where);
             if (!pk) pk = fsm_first_prop_key(props);
 
-            /* trigram text index: check for CONTAINS/STARTS/ENDS */
+            /* trigram text index: best-effort pre-filter */
             const char *tk = NULL;
             int top_type = 0;
             const char *search_str = fsm_first_text_op(where, &tk, &top_type);
 
             if (search_str && tk) {
                 ncan = gs_text_search(gs, tk, search_str, candidates, cap);
-                if (ncan == 0) { /* trigram found nothing, fall back */ }
-            } else if (use_prop_idx) {
-                ncan = gs_prop_key_nodes(gs, pk, candidates, cap);
-            } else if (labels && labels->str[0]) {
+            }
+            /* if text search found nothing, fall through to label/prop/full scan */
+            if (ncan == 0 && labels && labels->str[0]) {
                 ncan = gs_label_nodes(gs, labels->str, candidates, cap);
-            } else if (pk) {
+            }
+            if (ncan == 0 && pk) {
                 ncan = gs_prop_key_nodes(gs, pk, candidates, cap);
-                if (ncan == 0) {
-                    ncan = gs_node_count(gs);
-                    if (ncan > cap) { cap = ncan; candidates = realloc(candidates, cap * sizeof(uint32_t)); }
-                    for (uint32_t ni = 0; ni < ncan; ni++) candidates[ni] = ni;
-                }
-            } else {
+            }
+            if (ncan == 0) {
                 ncan = gs_node_count(gs);
                 if (ncan > cap) { cap = ncan; candidates = realloc(candidates, cap * sizeof(uint32_t)); }
                 for (uint32_t ni = 0; ni < ncan; ni++) candidates[ni] = ni;
-            }
-
-            /* if text search returned 0, use label/prop index as fallback */
-            if (ncan == 0 && (labels || pk)) {
-                if (labels && labels->str[0]) {
-                    ncan = gs_label_nodes(gs, labels->str, candidates, cap);
-                } else if (pk) {
-                    ncan = gs_prop_key_nodes(gs, pk, candidates, cap);
-                }
             }
         }
     } else {

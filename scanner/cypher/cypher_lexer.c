@@ -32,7 +32,7 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 	int tok_count = 0;
 	
 	
-#line 393 "cypher_lexer.rl"
+#line 395 "cypher_lexer.rl"
 
 	
 
@@ -43,7 +43,7 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 		te = 0;
 	}
 	
-#line 395 "cypher_lexer.rl"
+#line 397 "cypher_lexer.rl"
 
 
 #line 41 "cypher_lexer.c"
@@ -419,14 +419,20 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 			goto st_case_184;
 			case 185:
 			goto st_case_185;
+			case 186:
+			goto st_case_186;
+			case 187:
+			goto st_case_187;
+			case 188:
+			goto st_case_188;
 			case 9:
 			goto st_case_9;
 		}
 		_ctr2:
 			{
-#line 286 "cypher_lexer.rl"
+#line 287 "cypher_lexer.rl"
 			{te = p+1;{
-#line 286 "cypher_lexer.rl"
+#line 287 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_STRING;
@@ -439,14 +445,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 433 "cypher_lexer.c"
+#line 439 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr5:
 			{
-#line 297 "cypher_lexer.rl"
+#line 298 "cypher_lexer.rl"
 			{te = p+1;{
-#line 297 "cypher_lexer.rl"
+#line 298 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_STRING;
@@ -459,15 +465,15 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 452 "cypher_lexer.c"
+#line 458 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr7:
 			{
-#line 240 "cypher_lexer.rl"
+#line 241 "cypher_lexer.rl"
 			{p = ((te))-1;
 				{
-#line 240 "cypher_lexer.rl"
+#line 241 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_SLASH;
@@ -476,26 +482,26 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 468 "cypher_lexer.c"
+#line 474 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr10:
 			{
-#line 391 "cypher_lexer.rl"
+#line 393 "cypher_lexer.rl"
 			{te = p+1;{
-#line 391 "cypher_lexer.rl"
+#line 393 "cypher_lexer.rl"
 					/* skip block comment */ }
 			}}
 		
-#line 478 "cypher_lexer.c"
+#line 484 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr11:
 			{
-#line 324 "cypher_lexer.rl"
+#line 325 "cypher_lexer.rl"
 			{p = ((te))-1;
 				{
-#line 324 "cypher_lexer.rl"
+#line 325 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_INTEGER;
@@ -505,14 +511,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 495 "cypher_lexer.c"
+#line 501 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr15:
 			{
-#line 275 "cypher_lexer.rl"
+#line 276 "cypher_lexer.rl"
 			{te = p+1;{
-#line 275 "cypher_lexer.rl"
+#line 276 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_IDENT;
@@ -525,25 +531,25 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 514 "cypher_lexer.c"
+#line 520 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr18:
 			{
-#line 84 "cypher_lexer.rl"
+#line 85 "cypher_lexer.rl"
 			{te = p+1;{
-#line 84 "cypher_lexer.rl"
+#line 85 "cypher_lexer.rl"
 					/* skip, consumed like whitespace */ }
 			}}
 		
-#line 524 "cypher_lexer.c"
+#line 530 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr20:
 			{
-#line 261 "cypher_lexer.rl"
+#line 262 "cypher_lexer.rl"
 			{te = p+1;{
-#line 261 "cypher_lexer.rl"
+#line 262 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_DOLLAR;
@@ -552,14 +558,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 539 "cypher_lexer.c"
+#line 545 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr21:
 			{
-#line 247 "cypher_lexer.rl"
+#line 248 "cypher_lexer.rl"
 			{te = p+1;{
-#line 247 "cypher_lexer.rl"
+#line 248 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_PCT;
@@ -568,14 +574,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 554 "cypher_lexer.c"
+#line 560 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr22:
 			{
-#line 121 "cypher_lexer.rl"
+#line 122 "cypher_lexer.rl"
 			{te = p+1;{
-#line 121 "cypher_lexer.rl"
+#line 122 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_LPAREN;
@@ -584,14 +590,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 569 "cypher_lexer.c"
+#line 575 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr23:
 			{
-#line 128 "cypher_lexer.rl"
+#line 129 "cypher_lexer.rl"
 			{te = p+1;{
-#line 128 "cypher_lexer.rl"
+#line 129 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_RPAREN;
@@ -600,14 +606,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 584 "cypher_lexer.c"
+#line 590 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr24:
 			{
-#line 233 "cypher_lexer.rl"
+#line 234 "cypher_lexer.rl"
 			{te = p+1;{
-#line 233 "cypher_lexer.rl"
+#line 234 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_STAR;
@@ -616,14 +622,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 599 "cypher_lexer.c"
+#line 605 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr26:
 			{
-#line 93 "cypher_lexer.rl"
+#line 94 "cypher_lexer.rl"
 			{te = p+1;{
-#line 93 "cypher_lexer.rl"
+#line 94 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_COMMA;
@@ -632,14 +638,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 614 "cypher_lexer.c"
+#line 620 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr32:
 			{
-#line 114 "cypher_lexer.rl"
+#line 115 "cypher_lexer.rl"
 			{te = p+1;{
-#line 114 "cypher_lexer.rl"
+#line 115 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_COLON;
@@ -648,14 +654,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 629 "cypher_lexer.c"
+#line 635 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr33:
 			{
-#line 86 "cypher_lexer.rl"
+#line 87 "cypher_lexer.rl"
 			{te = p+1;{
-#line 86 "cypher_lexer.rl"
+#line 87 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_SEMI;
@@ -664,14 +670,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 644 "cypher_lexer.c"
+#line 650 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr35:
 			{
-#line 163 "cypher_lexer.rl"
+#line 164 "cypher_lexer.rl"
 			{te = p+1;{
-#line 163 "cypher_lexer.rl"
+#line 164 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_EQ;
@@ -680,14 +686,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 659 "cypher_lexer.c"
+#line 665 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr56:
 			{
-#line 135 "cypher_lexer.rl"
+#line 136 "cypher_lexer.rl"
 			{te = p+1;{
-#line 135 "cypher_lexer.rl"
+#line 136 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_LBRACKET;
@@ -696,14 +702,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 674 "cypher_lexer.c"
+#line 680 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr57:
 			{
-#line 142 "cypher_lexer.rl"
+#line 143 "cypher_lexer.rl"
 			{te = p+1;{
-#line 142 "cypher_lexer.rl"
+#line 143 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_RBRACKET;
@@ -712,14 +718,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 689 "cypher_lexer.c"
+#line 695 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr58:
 			{
-#line 254 "cypher_lexer.rl"
+#line 255 "cypher_lexer.rl"
 			{te = p+1;{
-#line 254 "cypher_lexer.rl"
+#line 255 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_CARET;
@@ -728,14 +734,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 704 "cypher_lexer.c"
+#line 710 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr59:
 			{
-#line 149 "cypher_lexer.rl"
+#line 150 "cypher_lexer.rl"
 			{te = p+1;{
-#line 149 "cypher_lexer.rl"
+#line 150 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_LBRACE;
@@ -744,14 +750,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 719 "cypher_lexer.c"
+#line 725 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr60:
 			{
-#line 268 "cypher_lexer.rl"
+#line 269 "cypher_lexer.rl"
 			{te = p+1;{
-#line 268 "cypher_lexer.rl"
+#line 269 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_PIPE;
@@ -760,14 +766,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 734 "cypher_lexer.c"
+#line 740 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr61:
 			{
-#line 156 "cypher_lexer.rl"
+#line 157 "cypher_lexer.rl"
 			{te = p+1;{
-#line 156 "cypher_lexer.rl"
+#line 157 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_RBRACE;
@@ -776,36 +782,36 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 749 "cypher_lexer.c"
+#line 755 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr62:
 			{
-#line 82 "cypher_lexer.rl"
+#line 83 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 82 "cypher_lexer.rl"
+#line 83 "cypher_lexer.rl"
 					/* skip */ }
 			}}
 		
-#line 759 "cypher_lexer.c"
+#line 765 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr63:
 			{
-#line 84 "cypher_lexer.rl"
+#line 85 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 84 "cypher_lexer.rl"
+#line 85 "cypher_lexer.rl"
 					/* skip, consumed like whitespace */ }
 			}}
 		
-#line 769 "cypher_lexer.c"
+#line 775 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr64:
 			{
-#line 212 "cypher_lexer.rl"
+#line 213 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 212 "cypher_lexer.rl"
+#line 213 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_PLUS;
@@ -814,14 +820,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 784 "cypher_lexer.c"
+#line 790 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr65:
 			{
-#line 177 "cypher_lexer.rl"
+#line 178 "cypher_lexer.rl"
 			{te = p+1;{
-#line 177 "cypher_lexer.rl"
+#line 178 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_PLUSEQ;
@@ -830,14 +836,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 799 "cypher_lexer.c"
+#line 805 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr66:
 			{
-#line 219 "cypher_lexer.rl"
+#line 220 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 219 "cypher_lexer.rl"
+#line 220 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_MINUS;
@@ -846,14 +852,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 814 "cypher_lexer.c"
+#line 820 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr67:
 			{
-#line 226 "cypher_lexer.rl"
+#line 227 "cypher_lexer.rl"
 			{te = p+1;{
-#line 226 "cypher_lexer.rl"
+#line 227 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_DASH;
@@ -862,14 +868,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 829 "cypher_lexer.c"
+#line 835 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr68:
 			{
-#line 107 "cypher_lexer.rl"
+#line 108 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 107 "cypher_lexer.rl"
+#line 108 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_DOT;
@@ -878,14 +884,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 844 "cypher_lexer.c"
+#line 850 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr69:
 			{
-#line 100 "cypher_lexer.rl"
+#line 101 "cypher_lexer.rl"
 			{te = p+1;{
-#line 100 "cypher_lexer.rl"
+#line 101 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_DOTDOT;
@@ -894,14 +900,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 859 "cypher_lexer.c"
+#line 865 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr70:
 			{
-#line 240 "cypher_lexer.rl"
+#line 241 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 240 "cypher_lexer.rl"
+#line 241 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_SLASH;
@@ -910,25 +916,25 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 874 "cypher_lexer.c"
+#line 880 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr72:
 			{
-#line 390 "cypher_lexer.rl"
+#line 392 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 390 "cypher_lexer.rl"
+#line 392 "cypher_lexer.rl"
 					/* skip line comment */ }
 			}}
 		
-#line 884 "cypher_lexer.c"
+#line 890 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr73:
 			{
-#line 324 "cypher_lexer.rl"
+#line 325 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 324 "cypher_lexer.rl"
+#line 325 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_INTEGER;
@@ -938,14 +944,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 900 "cypher_lexer.c"
+#line 906 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr76:
 			{
-#line 316 "cypher_lexer.rl"
+#line 317 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 316 "cypher_lexer.rl"
+#line 317 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_FLOAT;
@@ -955,14 +961,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 916 "cypher_lexer.c"
+#line 922 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr77:
 			{
-#line 308 "cypher_lexer.rl"
+#line 309 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 308 "cypher_lexer.rl"
+#line 309 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_INTEGER;
@@ -972,14 +978,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 932 "cypher_lexer.c"
+#line 938 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr78:
 			{
-#line 198 "cypher_lexer.rl"
+#line 199 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 198 "cypher_lexer.rl"
+#line 199 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_LT;
@@ -988,14 +994,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 947 "cypher_lexer.c"
+#line 953 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr79:
 			{
-#line 184 "cypher_lexer.rl"
+#line 185 "cypher_lexer.rl"
 			{te = p+1;{
-#line 184 "cypher_lexer.rl"
+#line 185 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_LE;
@@ -1004,14 +1010,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 962 "cypher_lexer.c"
+#line 968 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr80:
 			{
-#line 170 "cypher_lexer.rl"
+#line 171 "cypher_lexer.rl"
 			{te = p+1;{
-#line 170 "cypher_lexer.rl"
+#line 171 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_NEQ;
@@ -1020,14 +1026,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 977 "cypher_lexer.c"
+#line 983 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr81:
 			{
-#line 205 "cypher_lexer.rl"
+#line 206 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 205 "cypher_lexer.rl"
+#line 206 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_GT;
@@ -1036,14 +1042,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 992 "cypher_lexer.c"
+#line 998 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr82:
 			{
-#line 191 "cypher_lexer.rl"
+#line 192 "cypher_lexer.rl"
 			{te = p+1;{
-#line 191 "cypher_lexer.rl"
+#line 192 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_GE;
@@ -1052,14 +1058,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 1007 "cypher_lexer.c"
+#line 1013 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr83:
 			{
-#line 379 "cypher_lexer.rl"
+#line 381 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 379 "cypher_lexer.rl"
+#line 381 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						int l = (int)(te - ts);
@@ -1072,513 +1078,524 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 1026 "cypher_lexer.c"
+#line 1032 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr88:
 			{
-#line 374 "cypher_lexer.rl"
+#line 375 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 374 "cypher_lexer.rl"
+#line 375 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_ALL;      tok_count++; }
 			}}
 		
-#line 1036 "cypher_lexer.c"
+#line 1042 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr91:
 			{
-#line 344 "cypher_lexer.rl"
+#line 345 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 344 "cypher_lexer.rl"
+#line 345 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_AND;      tok_count++; }
 			}}
 		
-#line 1046 "cypher_lexer.c"
+#line 1052 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr92:
 			{
-#line 375 "cypher_lexer.rl"
+#line 376 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 375 "cypher_lexer.rl"
+#line 376 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_ANY;      tok_count++; }
 			}}
 		
-#line 1056 "cypher_lexer.c"
+#line 1062 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr93:
 			{
-#line 350 "cypher_lexer.rl"
+#line 351 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 350 "cypher_lexer.rl"
+#line 351 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_AS;       tok_count++; }
 			}}
 		
-#line 1066 "cypher_lexer.c"
+#line 1072 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr95:
 			{
-#line 365 "cypher_lexer.rl"
+#line 366 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 365 "cypher_lexer.rl"
+#line 366 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_ASC;      tok_count++; }
 			}}
 		
-#line 1076 "cypher_lexer.c"
+#line 1082 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr97:
 			{
-#line 341 "cypher_lexer.rl"
+#line 342 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 341 "cypher_lexer.rl"
+#line 342 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_BY;       tok_count++; }
 			}}
 		
-#line 1086 "cypher_lexer.c"
+#line 1092 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr104:
 			{
-#line 372 "cypher_lexer.rl"
+#line 373 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 372 "cypher_lexer.rl"
+#line 373 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_CALL;     tok_count++; }
 			}}
 		
-#line 1096 "cypher_lexer.c"
+#line 1102 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr106:
 			{
-#line 359 "cypher_lexer.rl"
+#line 360 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 359 "cypher_lexer.rl"
+#line 360 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_CASE;     tok_count++; }
 			}}
 		
-#line 1106 "cypher_lexer.c"
+#line 1112 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr114:
 			{
-#line 354 "cypher_lexer.rl"
+#line 355 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 354 "cypher_lexer.rl"
+#line 355 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_CONTAINS; tok_count++; }
 			}}
 		
-#line 1116 "cypher_lexer.c"
+#line 1122 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr117:
 			{
-#line 366 "cypher_lexer.rl"
+#line 367 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 366 "cypher_lexer.rl"
+#line 367 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_COUNT;    tok_count++; }
 			}}
 		
-#line 1126 "cypher_lexer.c"
+#line 1132 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr122:
 			{
-#line 335 "cypher_lexer.rl"
+#line 336 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 335 "cypher_lexer.rl"
+#line 336 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_CREATE;   tok_count++; }
 			}}
 		
-#line 1136 "cypher_lexer.c"
+#line 1142 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr131:
 			{
-#line 336 "cypher_lexer.rl"
+#line 337 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 336 "cypher_lexer.rl"
+#line 337 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_DELETE;   tok_count++; }
 			}}
 		
-#line 1146 "cypher_lexer.c"
+#line 1152 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr133:
 			{
-#line 364 "cypher_lexer.rl"
+#line 365 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 364 "cypher_lexer.rl"
+#line 365 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_DESC;     tok_count++; }
 			}}
 		
-#line 1156 "cypher_lexer.c"
+#line 1162 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr137:
 			{
-#line 353 "cypher_lexer.rl"
+#line 354 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 353 "cypher_lexer.rl"
+#line 354 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_DETACH;   tok_count++; }
 			}}
 		
-#line 1166 "cypher_lexer.c"
+#line 1172 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr144:
 			{
-#line 351 "cypher_lexer.rl"
+#line 352 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 351 "cypher_lexer.rl"
+#line 352 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_DISTINCT; tok_count++; }
 			}}
 		
-#line 1176 "cypher_lexer.c"
+#line 1182 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr150:
 			{
-#line 362 "cypher_lexer.rl"
+#line 363 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 362 "cypher_lexer.rl"
+#line 363 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_ELSE;     tok_count++; }
 			}}
 		
-#line 1186 "cypher_lexer.c"
+#line 1192 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr152:
 			{
-#line 363 "cypher_lexer.rl"
+#line 364 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 363 "cypher_lexer.rl"
+#line 364 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_END;      tok_count++; }
 			}}
 		
-#line 1196 "cypher_lexer.c"
+#line 1202 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr154:
 			{
-#line 356 "cypher_lexer.rl"
+#line 357 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 356 "cypher_lexer.rl"
+#line 357 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_ENDS;     tok_count++; }
 			}}
 		
-#line 1206 "cypher_lexer.c"
+#line 1212 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr159:
 			{
-#line 367 "cypher_lexer.rl"
+#line 368 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 367 "cypher_lexer.rl"
+#line 368 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_EXISTS;   tok_count++; }
 			}}
 		
-#line 1216 "cypher_lexer.c"
+#line 1222 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr164:
 			{
-#line 370 "cypher_lexer.rl"
+#line 371 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 370 "cypher_lexer.rl"
+#line 371 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_BOOL; tokens[tok_count].ival = 0; tok_count++; }
 			}}
 		
-#line 1226 "cypher_lexer.c"
+#line 1232 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr167:
 			{
-#line 348 "cypher_lexer.rl"
+#line 349 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 348 "cypher_lexer.rl"
+#line 349 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_IN;       tok_count++; }
 			}}
 		
-#line 1236 "cypher_lexer.c"
+#line 1242 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr168:
 			{
-#line 349 "cypher_lexer.rl"
+#line 350 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 349 "cypher_lexer.rl"
+#line 350 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_IS;       tok_count++; }
 			}}
 		
-#line 1246 "cypher_lexer.c"
+#line 1252 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr173:
 			{
-#line 342 "cypher_lexer.rl"
+#line 343 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 342 "cypher_lexer.rl"
+#line 343 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_LIMIT;    tok_count++; }
 			}}
 		
-#line 1256 "cypher_lexer.c"
+#line 1262 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr179:
 			{
-#line 332 "cypher_lexer.rl"
+#line 333 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 332 "cypher_lexer.rl"
+#line 333 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_MATCH;    tok_count++; }
 			}}
 		
-#line 1266 "cypher_lexer.c"
+#line 1272 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr183:
 			{
-#line 338 "cypher_lexer.rl"
+#line 339 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 338 "cypher_lexer.rl"
+#line 339 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_MERGE;    tok_count++; }
 			}}
 		
-#line 1276 "cypher_lexer.c"
+#line 1282 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr189:
 			{
-#line 376 "cypher_lexer.rl"
+#line 377 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 376 "cypher_lexer.rl"
+#line 377 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_NONE;     tok_count++; }
 			}}
 		
-#line 1286 "cypher_lexer.c"
+#line 1292 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr190:
 			{
-#line 346 "cypher_lexer.rl"
+#line 347 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 346 "cypher_lexer.rl"
+#line 347 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_NOT;      tok_count++; }
 			}}
 		
-#line 1296 "cypher_lexer.c"
+#line 1302 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr193:
 			{
-#line 371 "cypher_lexer.rl"
+#line 372 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 371 "cypher_lexer.rl"
+#line 372 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_NULL;     tok_count++; }
 			}}
 		
-#line 1306 "cypher_lexer.c"
+#line 1312 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr197:
 			{
-#line 358 "cypher_lexer.rl"
+#line 359 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 358 "cypher_lexer.rl"
+#line 359 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_ON;       tok_count++; }
 			}}
 		
-#line 1316 "cypher_lexer.c"
+#line 1322 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr204:
 			{
-#line 352 "cypher_lexer.rl"
+#line 353 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 352 "cypher_lexer.rl"
+#line 353 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_OPTIONAL; tok_count++; }
 			}}
 		
-#line 1326 "cypher_lexer.c"
+#line 1332 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr205:
 			{
-#line 345 "cypher_lexer.rl"
+#line 346 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 345 "cypher_lexer.rl"
+#line 346 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_OR;       tok_count++; }
 			}}
 		
-#line 1336 "cypher_lexer.c"
+#line 1342 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr209:
 			{
-#line 340 "cypher_lexer.rl"
+#line 341 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 340 "cypher_lexer.rl"
+#line 341 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_ORDER;    tok_count++; }
 			}}
 		
-#line 1346 "cypher_lexer.c"
+#line 1352 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr216:
 			{
-#line 368 "cypher_lexer.rl"
+#line 369 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 368 "cypher_lexer.rl"
+#line 369 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_REMOVE;   tok_count++; }
 			}}
 		
-#line 1356 "cypher_lexer.c"
+#line 1362 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr220:
 			{
-#line 333 "cypher_lexer.rl"
+#line 334 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 333 "cypher_lexer.rl"
+#line 334 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_RETURN;   tok_count++; }
 			}}
 		
-#line 1366 "cypher_lexer.c"
+#line 1372 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr226:
 			{
-#line 337 "cypher_lexer.rl"
+#line 338 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 337 "cypher_lexer.rl"
+#line 338 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_SET;      tok_count++; }
 			}}
 		
-#line 1376 "cypher_lexer.c"
+#line 1382 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr231:
 			{
-#line 377 "cypher_lexer.rl"
+#line 378 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 377 "cypher_lexer.rl"
+#line 378 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_SINGLE;   tok_count++; }
 			}}
 		
-#line 1386 "cypher_lexer.c"
+#line 1392 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr234:
 			{
-#line 343 "cypher_lexer.rl"
+#line 344 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 343 "cypher_lexer.rl"
+#line 344 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_SKIP;     tok_count++; }
 			}}
 		
-#line 1396 "cypher_lexer.c"
+#line 1402 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr239:
 			{
-#line 355 "cypher_lexer.rl"
+#line 356 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 355 "cypher_lexer.rl"
+#line 356 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_STARTS;   tok_count++; }
 			}}
 		
-#line 1406 "cypher_lexer.c"
+#line 1412 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr244:
 			{
-#line 361 "cypher_lexer.rl"
+#line 362 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 361 "cypher_lexer.rl"
+#line 362 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_THEN;     tok_count++; }
 			}}
 		
-#line 1416 "cypher_lexer.c"
+#line 1422 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr247:
 			{
-#line 369 "cypher_lexer.rl"
+#line 370 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 369 "cypher_lexer.rl"
+#line 370 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_BOOL; tokens[tok_count].ival = 1; tok_count++; }
 			}}
 		
-#line 1426 "cypher_lexer.c"
+#line 1432 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr253:
 			{
-#line 339 "cypher_lexer.rl"
+#line 379 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 339 "cypher_lexer.rl"
+#line 379 "cypher_lexer.rl"
+					tokens[tok_count].type = TOK_UNION;    tok_count++; }
+			}}
+		
+#line 1442 "cypher_lexer.c"
+
+		goto _st10;
+		_ctr257:
+			{
+#line 340 "cypher_lexer.rl"
+			{te = p;p = p - 1;{
+#line 340 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_UNWIND;   tok_count++; }
 			}}
 		
-#line 1436 "cypher_lexer.c"
+#line 1452 "cypher_lexer.c"
 
 		goto _st10;
-		_ctr259:
+		_ctr263:
 			{
-#line 360 "cypher_lexer.rl"
+#line 361 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 360 "cypher_lexer.rl"
+#line 361 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_WHEN;     tok_count++; }
 			}}
 		
-#line 1446 "cypher_lexer.c"
+#line 1462 "cypher_lexer.c"
 
 		goto _st10;
-		_ctr261:
+		_ctr265:
 			{
-#line 334 "cypher_lexer.rl"
+#line 335 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 334 "cypher_lexer.rl"
+#line 335 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_WHERE;    tok_count++; }
 			}}
 		
-#line 1456 "cypher_lexer.c"
+#line 1472 "cypher_lexer.c"
 
 		goto _st10;
-		_ctr264:
+		_ctr268:
 			{
-#line 357 "cypher_lexer.rl"
+#line 358 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 357 "cypher_lexer.rl"
+#line 358 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_WITH;     tok_count++; }
 			}}
 		
-#line 1466 "cypher_lexer.c"
+#line 1482 "cypher_lexer.c"
 
 		goto _st10;
-		_ctr267:
+		_ctr271:
 			{
-#line 347 "cypher_lexer.rl"
+#line 348 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 347 "cypher_lexer.rl"
+#line 348 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_XOR;      tok_count++; }
 			}}
 		
-#line 1476 "cypher_lexer.c"
+#line 1492 "cypher_lexer.c"
 
 		goto _st10;
-		_ctr272:
+		_ctr276:
 			{
-#line 373 "cypher_lexer.rl"
+#line 374 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 373 "cypher_lexer.rl"
+#line 374 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_YIELD;    tok_count++; }
 			}}
 		
-#line 1486 "cypher_lexer.c"
+#line 1502 "cypher_lexer.c"
 
 		goto _st10;
 		_st10:
@@ -1588,7 +1605,7 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 #line 1 "NONE"
 			{ts = 0;}}
 		
-#line 1495 "cypher_lexer.c"
+#line 1511 "cypher_lexer.c"
 
 		p+= 1;
 		st_case_10:
@@ -1596,7 +1613,7 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 #line 1 "NONE"
 			{ts = p;}}
 		
-#line 1502 "cypher_lexer.c"
+#line 1518 "cypher_lexer.c"
 
 		switch( ( (*( p))) ) {
 			case 9: {
@@ -1711,13 +1728,13 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				goto _st163;
 			}
 			case 87: {
-				goto _st169;
+				goto _st172;
 			}
 			case 88: {
-				goto _st178;
+				goto _st181;
 			}
 			case 89: {
-				goto _st181;
+				goto _st184;
 			}
 			case 91: {
 				goto _ctr56;
@@ -1777,13 +1794,13 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				goto _st163;
 			}
 			case 119: {
-				goto _st169;
+				goto _st172;
 			}
 			case 120: {
-				goto _st178;
+				goto _st181;
 			}
 			case 121: {
-				goto _st181;
+				goto _st184;
 			}
 			case 123: {
 				goto _ctr59;
@@ -1907,7 +1924,7 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 #line 1 "NONE"
 			{te = p+1;}}
 		
-#line 1812 "cypher_lexer.c"
+#line 1828 "cypher_lexer.c"
 
 		goto _st16;
 		_st16:
@@ -1961,7 +1978,7 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 #line 1 "NONE"
 			{te = p+1;}}
 		
-#line 1865 "cypher_lexer.c"
+#line 1881 "cypher_lexer.c"
 
 		goto _st18;
 		_st18:
@@ -2004,7 +2021,7 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 #line 1 "NONE"
 			{te = p+1;}}
 		
-#line 1907 "cypher_lexer.c"
+#line 1923 "cypher_lexer.c"
 
 		goto _st20;
 		_st20:
@@ -5836,14 +5853,20 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 		p+= 1;
 		st_case_164:
 		switch( ( (*( p))) ) {
-			case 87: {
+			case 73: {
 				goto _st165;
+			}
+			case 87: {
+				goto _st168;
 			}
 			case 95: {
 				goto _st25;
 			}
-			case 119: {
+			case 105: {
 				goto _st165;
+			}
+			case 119: {
+				goto _st168;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
@@ -5864,13 +5887,13 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 		p+= 1;
 		st_case_165:
 		switch( ( (*( p))) ) {
-			case 73: {
+			case 79: {
 				goto _st166;
 			}
 			case 95: {
 				goto _st25;
 			}
-			case 105: {
+			case 111: {
 				goto _st166;
 			}
 		}
@@ -5919,34 +5942,6 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 			goto _out167;
 		p+= 1;
 		st_case_167:
-		switch( ( (*( p))) ) {
-			case 68: {
-				goto _st168;
-			}
-			case 95: {
-				goto _st25;
-			}
-			case 100: {
-				goto _st168;
-			}
-		}
-		if ( ( (*( p))) < 65 ) {
-			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st25;
-			}
-		} else if ( ( (*( p))) > 90 ) {
-			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st25;
-			}
-		} else {
-			goto _st25;
-		}
-		goto _ctr83;
-		_st168:
-		if ( p == eof )
-			goto _out168;
-		p+= 1;
-		st_case_168:
 		if ( ( (*( p))) == 95 ) {
 			goto _st25;
 		}
@@ -5962,26 +5957,48 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 			goto _st25;
 		}
 		goto _ctr253;
+		_st168:
+		if ( p == eof )
+			goto _out168;
+		p+= 1;
+		st_case_168:
+		switch( ( (*( p))) ) {
+			case 73: {
+				goto _st169;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 105: {
+				goto _st169;
+			}
+		}
+		if ( ( (*( p))) < 65 ) {
+			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
+				goto _st25;
+			}
+		} else if ( ( (*( p))) > 90 ) {
+			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
+				goto _st25;
+			}
+		} else {
+			goto _st25;
+		}
+		goto _ctr83;
 		_st169:
 		if ( p == eof )
 			goto _out169;
 		p+= 1;
 		st_case_169:
 		switch( ( (*( p))) ) {
-			case 72: {
+			case 78: {
 				goto _st170;
-			}
-			case 73: {
-				goto _st175;
 			}
 			case 95: {
 				goto _st25;
 			}
-			case 104: {
+			case 110: {
 				goto _st170;
-			}
-			case 105: {
-				goto _st175;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
@@ -6002,13 +6019,13 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 		p+= 1;
 		st_case_170:
 		switch( ( (*( p))) ) {
-			case 69: {
+			case 68: {
 				goto _st171;
 			}
 			case 95: {
 				goto _st25;
 			}
-			case 101: {
+			case 100: {
 				goto _st171;
 			}
 		}
@@ -6029,40 +6046,6 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 			goto _out171;
 		p+= 1;
 		st_case_171:
-		switch( ( (*( p))) ) {
-			case 78: {
-				goto _st172;
-			}
-			case 82: {
-				goto _st173;
-			}
-			case 95: {
-				goto _st25;
-			}
-			case 110: {
-				goto _st172;
-			}
-			case 114: {
-				goto _st173;
-			}
-		}
-		if ( ( (*( p))) < 65 ) {
-			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st25;
-			}
-		} else if ( ( (*( p))) > 90 ) {
-			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st25;
-			}
-		} else {
-			goto _st25;
-		}
-		goto _ctr83;
-		_st172:
-		if ( p == eof )
-			goto _out172;
-		p+= 1;
-		st_case_172:
 		if ( ( (*( p))) == 95 ) {
 			goto _st25;
 		}
@@ -6077,7 +6060,41 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 		} else {
 			goto _st25;
 		}
-		goto _ctr259;
+		goto _ctr257;
+		_st172:
+		if ( p == eof )
+			goto _out172;
+		p+= 1;
+		st_case_172:
+		switch( ( (*( p))) ) {
+			case 72: {
+				goto _st173;
+			}
+			case 73: {
+				goto _st178;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 104: {
+				goto _st173;
+			}
+			case 105: {
+				goto _st178;
+			}
+		}
+		if ( ( (*( p))) < 65 ) {
+			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
+				goto _st25;
+			}
+		} else if ( ( (*( p))) > 90 ) {
+			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
+				goto _st25;
+			}
+		} else {
+			goto _st25;
+		}
+		goto _ctr83;
 		_st173:
 		if ( p == eof )
 			goto _out173;
@@ -6111,34 +6128,20 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 			goto _out174;
 		p+= 1;
 		st_case_174:
-		if ( ( (*( p))) == 95 ) {
-			goto _st25;
-		}
-		if ( ( (*( p))) < 65 ) {
-			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st25;
-			}
-		} else if ( ( (*( p))) > 90 ) {
-			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st25;
-			}
-		} else {
-			goto _st25;
-		}
-		goto _ctr261;
-		_st175:
-		if ( p == eof )
-			goto _out175;
-		p+= 1;
-		st_case_175:
 		switch( ( (*( p))) ) {
-			case 84: {
+			case 78: {
+				goto _st175;
+			}
+			case 82: {
 				goto _st176;
 			}
 			case 95: {
 				goto _st25;
 			}
-			case 116: {
+			case 110: {
+				goto _st175;
+			}
+			case 114: {
 				goto _st176;
 			}
 		}
@@ -6154,19 +6157,39 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 			goto _st25;
 		}
 		goto _ctr83;
+		_st175:
+		if ( p == eof )
+			goto _out175;
+		p+= 1;
+		st_case_175:
+		if ( ( (*( p))) == 95 ) {
+			goto _st25;
+		}
+		if ( ( (*( p))) < 65 ) {
+			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
+				goto _st25;
+			}
+		} else if ( ( (*( p))) > 90 ) {
+			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
+				goto _st25;
+			}
+		} else {
+			goto _st25;
+		}
+		goto _ctr263;
 		_st176:
 		if ( p == eof )
 			goto _out176;
 		p+= 1;
 		st_case_176:
 		switch( ( (*( p))) ) {
-			case 72: {
+			case 69: {
 				goto _st177;
 			}
 			case 95: {
 				goto _st25;
 			}
-			case 104: {
+			case 101: {
 				goto _st177;
 			}
 		}
@@ -6201,20 +6224,20 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 		} else {
 			goto _st25;
 		}
-		goto _ctr264;
+		goto _ctr265;
 		_st178:
 		if ( p == eof )
 			goto _out178;
 		p+= 1;
 		st_case_178:
 		switch( ( (*( p))) ) {
-			case 79: {
+			case 84: {
 				goto _st179;
 			}
 			case 95: {
 				goto _st25;
 			}
-			case 111: {
+			case 116: {
 				goto _st179;
 			}
 		}
@@ -6236,13 +6259,13 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 		p+= 1;
 		st_case_179:
 		switch( ( (*( p))) ) {
-			case 82: {
+			case 72: {
 				goto _st180;
 			}
 			case 95: {
 				goto _st25;
 			}
-			case 114: {
+			case 104: {
 				goto _st180;
 			}
 		}
@@ -6277,20 +6300,20 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 		} else {
 			goto _st25;
 		}
-		goto _ctr267;
+		goto _ctr268;
 		_st181:
 		if ( p == eof )
 			goto _out181;
 		p+= 1;
 		st_case_181:
 		switch( ( (*( p))) ) {
-			case 73: {
+			case 79: {
 				goto _st182;
 			}
 			case 95: {
 				goto _st25;
 			}
-			case 105: {
+			case 111: {
 				goto _st182;
 			}
 		}
@@ -6312,13 +6335,13 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 		p+= 1;
 		st_case_182:
 		switch( ( (*( p))) ) {
-			case 69: {
+			case 82: {
 				goto _st183;
 			}
 			case 95: {
 				goto _st25;
 			}
-			case 101: {
+			case 114: {
 				goto _st183;
 			}
 		}
@@ -6339,16 +6362,8 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 			goto _out183;
 		p+= 1;
 		st_case_183:
-		switch( ( (*( p))) ) {
-			case 76: {
-				goto _st184;
-			}
-			case 95: {
-				goto _st25;
-			}
-			case 108: {
-				goto _st184;
-			}
+		if ( ( (*( p))) == 95 ) {
+			goto _st25;
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
@@ -6361,20 +6376,20 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 		} else {
 			goto _st25;
 		}
-		goto _ctr83;
+		goto _ctr271;
 		_st184:
 		if ( p == eof )
 			goto _out184;
 		p+= 1;
 		st_case_184:
 		switch( ( (*( p))) ) {
-			case 68: {
+			case 73: {
 				goto _st185;
 			}
 			case 95: {
 				goto _st25;
 			}
-			case 100: {
+			case 105: {
 				goto _st185;
 			}
 		}
@@ -6395,6 +6410,90 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 			goto _out185;
 		p+= 1;
 		st_case_185:
+		switch( ( (*( p))) ) {
+			case 69: {
+				goto _st186;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 101: {
+				goto _st186;
+			}
+		}
+		if ( ( (*( p))) < 65 ) {
+			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
+				goto _st25;
+			}
+		} else if ( ( (*( p))) > 90 ) {
+			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
+				goto _st25;
+			}
+		} else {
+			goto _st25;
+		}
+		goto _ctr83;
+		_st186:
+		if ( p == eof )
+			goto _out186;
+		p+= 1;
+		st_case_186:
+		switch( ( (*( p))) ) {
+			case 76: {
+				goto _st187;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 108: {
+				goto _st187;
+			}
+		}
+		if ( ( (*( p))) < 65 ) {
+			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
+				goto _st25;
+			}
+		} else if ( ( (*( p))) > 90 ) {
+			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
+				goto _st25;
+			}
+		} else {
+			goto _st25;
+		}
+		goto _ctr83;
+		_st187:
+		if ( p == eof )
+			goto _out187;
+		p+= 1;
+		st_case_187:
+		switch( ( (*( p))) ) {
+			case 68: {
+				goto _st188;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 100: {
+				goto _st188;
+			}
+		}
+		if ( ( (*( p))) < 65 ) {
+			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
+				goto _st25;
+			}
+		} else if ( ( (*( p))) > 90 ) {
+			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
+				goto _st25;
+			}
+		} else {
+			goto _st25;
+		}
+		goto _ctr83;
+		_st188:
+		if ( p == eof )
+			goto _out188;
+		p+= 1;
+		st_case_188:
 		if ( ( (*( p))) == 95 ) {
 			goto _st25;
 		}
@@ -6409,7 +6508,7 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 		} else {
 			goto _st25;
 		}
-		goto _ctr272;
+		goto _ctr276;
 		_st9:
 		if ( p == eof )
 			goto _out9;
@@ -6604,11 +6703,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 		_out183: cs = 183; goto _out; 
 		_out184: cs = 184; goto _out; 
 		_out185: cs = 185; goto _out; 
+		_out186: cs = 186; goto _out; 
+		_out187: cs = 187; goto _out; 
+		_out188: cs = 188; goto _out; 
 		_out9: cs = 9; goto _out; 
 		_out: {}
 	}
 	
-#line 396 "cypher_lexer.rl"
+#line 398 "cypher_lexer.rl"
 
 	
 	return tok_count;

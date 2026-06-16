@@ -470,6 +470,63 @@ cypher_result_t *cypher_execute(cypher_graph_t *g, cypher_ast_t *ast, const char
 
     gs_build_indexes(gs);
 
+    /* UNION: multiple RETURN clauses → execute each sub-query independently */
+    {
+        int n_returns = 0;
+        for (cypher_ast_t *cur = ast; cur; cur = cur->next)
+            if (cur->type == AST_RETURN) n_returns++;
+        if (n_returns > 1) {
+            /* Split at RETURN boundaries, execute each sub-query, concatenate */
+            cypher_result_t *result = cypher_result_new();
+            cypher_ast_t *sub_start = ast;
+            cypher_ast_t *prev = NULL;
+            for (cypher_ast_t *cur = ast; cur; ) {
+                if (cur->type == AST_RETURN && prev && prev->type == AST_RETURN) {
+                    /* Found a new sub-query boundary */
+                    cypher_ast_t *sub_end = prev;
+                    cypher_ast_t *next_sub = cur;
+                    /* Detach sub_start..sub_end */
+                    if (sub_end) sub_end->next = NULL;
+                    /* Execute this sub-query */
+                    cypher_result_t *sub_r = cypher_execute(g, sub_start, error);
+                    if (sub_r) {
+                        if (result->ncols == 0)
+                            for (int ci = 0; ci < sub_r->ncols; ci++)
+                                cypher_result_add_col(result, sub_r->columns[ci]);
+                        for (int ri = 0; ri < sub_r->nrows && result->nrows < MAX_ROWS; ri++) {
+                            cypher_result_add_row_empty(result);
+                            for (int ci = 0; ci < sub_r->ncols && ci < result->ncols; ci++)
+                                cypher_result_set_cell(result, result->nrows-1, ci,
+                                    sub_r->rows[ri][ci]);
+                        }
+                        cypher_result_free(sub_r);
+                    }
+                    sub_start = next_sub;
+                    prev = NULL;
+                    cur = next_sub;
+                    continue;
+                }
+                prev = cur;
+                cur = cur->next;
+            }
+            /* Execute last sub-query */
+            cypher_result_t *sub_r = cypher_execute(g, sub_start, error);
+            if (sub_r) {
+                if (result->ncols == 0)
+                    for (int ci = 0; ci < sub_r->ncols; ci++)
+                        cypher_result_add_col(result, sub_r->columns[ci]);
+                for (int ri = 0; ri < sub_r->nrows && result->nrows < MAX_ROWS; ri++) {
+                    cypher_result_add_row_empty(result);
+                    for (int ci = 0; ci < sub_r->ncols && ci < result->ncols; ci++)
+                        cypher_result_set_cell(result, result->nrows-1, ci,
+                            sub_r->rows[ri][ci]);
+                }
+                cypher_result_free(sub_r);
+            }
+            return result;
+        }
+    }
+
     cypher_ast_t *match_cl = NULL, *return_cl = NULL, *opt_match = NULL, *with_cl = NULL;
     cypher_ast_t *unwind_cl = NULL;
     for (cypher_ast_t *cur = ast; cur; cur = cur->next) {
