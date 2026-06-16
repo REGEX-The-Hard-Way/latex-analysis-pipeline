@@ -67,8 +67,8 @@
 
 #define IS_EXPANDABLE(cmd) ((cmd) > MAX_COMMAND && (cmd) != CMD_END_CS_NAME)
 
-#define CMD_MATCH           13
-#define CMD_END_MATCH       14
+#define CMD_MATCH           18
+#define CMD_END_MATCH       19
 
 #define MAX_MACRO_NAME      256
 #define HASH_SIZE           4096
@@ -302,7 +302,20 @@ static int32_t scan_control_sequence(macro_expander_t *me, input_frame_t *f) {
     cat = (c < 128) ? me->cat_code[c] : CMD_OTHER_CHAR;
 
     if (cat == CMD_LETTER) {
-        while (f->buf_loc < f->buf_limit && cat == CMD_LETTER) {
+        while (f->buf_loc < f->buf_limit) {
+            if (c == '\n' || c == '\r') {
+                /* line continuation inside CS name: skip newline + leading whitespace */
+                f->buf_loc++;
+                while (f->buf_loc < f->buf_limit &&
+                       (f->buffer[f->buf_loc] == ' ' || f->buffer[f->buf_loc] == '\t'))
+                    f->buf_loc++;
+                if (f->buf_loc < f->buf_limit) {
+                    c = (unsigned char)f->buffer[f->buf_loc];
+                    cat = (c < 128) ? me->cat_code[c] : CMD_OTHER_CHAR;
+                }
+                continue;
+            }
+            if (cat != CMD_LETTER) break;
             if (cslen < 255) csname[cslen++] = (char)c;
             f->buf_loc++;
             if (f->buf_loc < f->buf_limit) {
@@ -355,6 +368,9 @@ static int32_t scan_sup_mark(macro_expander_t *me, input_frame_t *f) {
     return TOKEN(CMD_OTHER_CHAR, val);
 }
 
+static int32_t get_token_from_string(macro_expander_t *me);
+static void out_append(macro_expander_t *me, const char *s, size_t len);
+
 static int32_t get_token_from_string(macro_expander_t *me) {
     input_frame_t *f = &me->input_stack[me->input_ptr - 1];
     int c, cat;
@@ -370,15 +386,34 @@ static int32_t get_token_from_string(macro_expander_t *me) {
 
     cat = (c < 128) ? me->cat_code[c] : CMD_OTHER_CHAR;
 
-    if (cat == CMD_COMMENT || cat == CMD_IGNORE || cat == CMD_INVALID_CHAR)
+    if (cat == CMD_IGNORE || cat == CMD_INVALID_CHAR)
         return SPACE_TOKEN;
+
+    if (cat == CMD_COMMENT) {
+        /* Preserve comment: scan to end of line and output as-is */
+        int start = f->buf_loc - 1; /* include the % */
+        while (f->buf_loc < f->buf_limit && f->buffer[f->buf_loc] != '\n')
+            f->buf_loc++;
+        if (f->buf_loc < f->buf_limit) f->buf_loc++; /* consume \n */
+        out_append(me, f->buffer + start, (size_t)(f->buf_loc - start));
+        return -2; /* signal: token consumed, get next */
+    }
     if (cat == CMD_SPACER)
         return SPACE_TOKEN;
     if (cat == CMD_CAR_RET)
         return TOKEN(CMD_CAR_RET, '\n');  // Preserve newlines
 
-    if (cat == CMD_ESCAPE)
+    if (cat == CMD_ESCAPE) {
+        /* Handle line continuation: \<newline> at end of line joins next line */
+        if (f->buf_loc < f->buf_limit && f->buffer[f->buf_loc] == '\n') {
+            f->buf_loc++; /* skip newline */
+            while (f->buf_loc < f->buf_limit &&
+                   (f->buffer[f->buf_loc] == ' ' || f->buffer[f->buf_loc] == '\t'))
+                f->buf_loc++;
+            if (f->buf_loc >= f->buf_limit) return SPACE_TOKEN;
+        }
         return scan_control_sequence(me, f);
+    }
 
     if (cat == CMD_ACTIVE_CHAR) {
         int cs = eq_lookup(me, "~");
@@ -412,6 +447,7 @@ restart:
         cur->tok_loc = cur->tok_loc->link;
     } else {
         t = get_token_from_string(me);
+        if (t == -2) goto restart;
         if (t < 0) { input_pop(me); goto restart; }
     }
 
@@ -549,8 +585,14 @@ static void print_token(macro_expander_t *me, int32_t tok) {
         case CMD_RIGHT_BRACE: out_append(me, "}", 1); break;
         case CMD_MATH_SHIFT:  out_append(me, "$", 1); break;
         case CMD_TAB_MARK:    out_append(me, "&", 1); break;
+        case CMD_ACTIVE_CHAR:
+            buf[0] = (char)chr; out_append(me, buf, 1); break;
         case CMD_MAC_PARAM:
-            n = snprintf(buf, sizeof(buf), "#%c", chr);
+            /* Output single # for parameter prefix */
+            out_append(me, "#", 1); break;
+        case CMD_MATCH:
+            /* Output #n for parameter references */
+            n = snprintf(buf, sizeof(buf), "#%d", chr);
             out_append(me, buf, (size_t)n); break;
         case CMD_SUP_MARK:    out_append(me, "^", 1); break;
         case CMD_SUB_MARK:    out_append(me, "_", 1); break;

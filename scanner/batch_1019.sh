@@ -33,16 +33,16 @@ for f in "$DIR"/03*.tex; do
 
     # ---- Macro expand ----
     expanded="$OUT/${base}_exp.tex"
-    macros_before=$(grep -cE '\\(newcommand|renewcommand|def|newenvironment)\b' "$cleaned" 2>/dev/null || echo 0)
+    macros_before=$(grep -c '\\newcommand\|\\renewcommand\|\\def\|\\newenvironment' "$cleaned" 2>/dev/null | tr '\n' ' ' | awk '{print $1}'); macros_before=${macros_before:-0}
     timeout 30 "$MACRO" < "$cleaned" > "$expanded" 2>/dev/null || true
     if [ ! -s "$expanded" ]; then
         state="expand_fail"
         cat="expand_fail"
         printf '{"f":"%s","s":"%s","c":"%s","p":%d,"mb":%d,"ma":%d,"e":%d}\n' \
-            "$base" "$state" "$cat" "$pdf_pages" "$macros_before" "$macros_after" "$errs" >> "$SUMMARY"
+            "$base" "$state" "$cat" "$pdf_pages" "$macros_before" 0 0 >> "$SUMMARY"
         continue
     fi
-    macros_after=$(grep -cE '\\(newcommand|renewcommand|def|newenvironment)\b' "$expanded" 2>/dev/null || echo 0)
+    macros_after=$(grep -c '\\newcommand\|\\renewcommand\|\\def\|\\newenvironment' "$expanded" 2>/dev/null | tr '\n' ' ' | awk '{print $1}'); macros_after=${macros_after:-0}
 
     # ---- pdflatex ----
     log="$OUT/${base}.log"
@@ -51,15 +51,15 @@ for f in "$DIR"/03*.tex; do
     pdf="$OUT/${base}_exp.pdf"
     if [ -f "$pdf" ]; then
         pdf_pages=$(pdfinfo "$pdf" 2>/dev/null | grep 'Pages:' | awk '{print $2}' || echo 0)
-        errs=$(grep -c '^!' "$log" 2>/dev/null || echo 0)
+        errs=$(grep -c '^!' "$log" 2>/dev/null | tr '\n' ' ' | awk '{print $1}'); errs=${errs:-0}
     else
-        errs=$(grep -c '^!' "$log" 2>/dev/null || echo 0)
+        errs=$(grep -c '^!' "$log" 2>/dev/null | tr '\n' ' ' | awk '{print $1}'); errs=${errs:-0}
     fi
 
     # ---- Categorise ----
-    if [ -f "$pdf" ] && [ "$errs" -eq 0 ]; then
+    if [ -f "$pdf" ] && [ "$errs" -eq 0 ] 2>/dev/null; then
         cat="clean"
-    elif [ -f "$pdf" ] && [ "$errs" -gt 0 ]; then
+    elif [ -f "$pdf" ] && [ "${errs:-0}" -gt 0 ] 2>/dev/null; then
         cat="pdf_with_errors"
     elif grep -q 'Missing \\begin{document}' "$log" 2>/dev/null; then
         cat="missing_begin_document"
