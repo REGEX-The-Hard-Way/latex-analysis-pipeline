@@ -1,7 +1,10 @@
 CC = gcc
 CFLAGS = -O2 -I.
 
-all: json_scan.o sidecar_mod cluster_find expr_tree lean4_gen def_extract.o
+all: json_scan.o sidecar_mod cluster_find expr_tree lean4_gen def_extract def_extract.o
+
+def_extract: def_extract_main.c def_extract.c def_extract.h
+	$(CC) $(CFLAGS) -o $@ def_extract_main.c def_extract.c
 
 expr_tree: expr_tree.c json_scan.o
 	$(CC) $(CFLAGS) -o $@ expr_tree.c json_scan.o
@@ -28,6 +31,6 @@ test: all
 	bash test_tools.sh
 
 clean:
-	rm -f sidecar_mod cluster_find json_scan.o json_scan.c
+	rm -f sidecar_mod cluster_find expr_tree lean4_gen def_extract json_scan.o json_scan.c
 
 .PHONY: all test clean
