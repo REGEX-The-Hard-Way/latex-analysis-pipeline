@@ -36,16 +36,16 @@ cypher_result_t *result) {
 	if (fd < 0) return -1;
 		struct stat st;
 	if (fstat(fd, &st) < 0) { close(fd); return -1; }
-	char *p  = mmap(NULL, (size_t)st.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
+	const char *p  = (const char *)mmap(NULL, (size_t)st.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
 	close(fd);
 	if (p == MAP_FAILED) return -1;
-		char *pe = p + st.st_size;
-	char *eof = pe;
+		const char *pe = p + st.st_size;
+	const char *eof = pe;
 	
 	int cs, act;
 	const char *ts, *te;
 	int count = 0;
-	int limit_val = limit > 0 ? limit : 200;
+	int limit_val = limit > 0 ? limit : MAX_ROWS;
 	int type_match = 0;
 	char text_buf[2048];
 	
@@ -500,6 +500,6 @@ cypher_result_t *result) {
 #line 89 "graph_scan.rl"
 
 	
-	munmap(p, (size_t)st.st_size);
+	munmap((void *)p, (size_t)st.st_size);
 	return count;
 }

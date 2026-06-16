@@ -8,6 +8,7 @@
 
 #define MAX_STR    256
 #define MAX_TOKENS 1024
+#define MAX_ROWS   200
 
 typedef enum {
     TOK_EOF = 0,
@@ -19,12 +20,13 @@ typedef enum {
     TOK_IDENT, TOK_STRING, TOK_INTEGER, TOK_FLOAT, TOK_BOOL, TOK_NULL,
     /* keywords */
     TOK_MATCH, TOK_RETURN, TOK_WHERE, TOK_CREATE, TOK_DELETE, TOK_SET, TOK_MERGE,
-    TOK_ORDER, TOK_BY, TOK_LIMIT, TOK_SKIP, TOK_WITH,
+    TOK_ORDER, TOK_BY, TOK_LIMIT, TOK_SKIP, TOK_WITH, TOK_UNWIND,
     TOK_AND, TOK_OR, TOK_NOT, TOK_XOR,
     TOK_IN, TOK_IS, TOK_AS, TOK_DISTINCT, TOK_OPTIONAL, TOK_DETACH,
     TOK_CONTAINS, TOK_STARTS, TOK_ENDS,
     TOK_ON, TOK_CASE, TOK_WHEN, TOK_THEN, TOK_ELSE, TOK_END,
     TOK_DESC, TOK_ASC, TOK_COUNT, TOK_EXISTS, TOK_REMOVE, TOK_UNION,
+    TOK_DOTDOT,
 } cypher_tok_type_t;
 
 typedef struct {
@@ -38,13 +40,13 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens);
 
 /* AST node types */
 typedef enum {
-    AST_QUERY, AST_MATCH, AST_RETURN, AST_CREATE, AST_SET, AST_DELETE, AST_MERGE,
+    AST_QUERY, AST_MATCH, AST_RETURN, AST_CREATE, AST_SET, AST_DELETE, AST_MERGE, AST_UNWIND, AST_CASE,
     AST_PATTERN, AST_NODE_PAT, AST_REL_PAT,
     AST_PROPERTY, AST_MAP_ENTRY,
     AST_IDENT, AST_STRING, AST_INTEGER, AST_FLOAT, AST_BOOL, AST_NULL,
     AST_BINARY, AST_UNARY, AST_NOT, AST_PROP, AST_LABEL,
     AST_ORDER_ITEM, AST_COLUMN, AST_FUNCALL,
-    AST_LIMIT, AST_SKIP, AST_WITH, AST_LIST
+    AST_LIMIT, AST_SKIP, AST_WITH,     AST_LIST, AST_REMOVE
 } cypher_ast_type_t;
 
 typedef struct cypher_ast {
@@ -58,7 +60,8 @@ typedef struct cypher_ast {
         struct { struct cypher_ast *e; struct cypher_ast *n; } prop;
         struct { struct cypher_ast *name; struct cypher_ast *props; } node;
         struct { struct cypher_ast *name; struct cypher_ast *props;
-                 struct cypher_ast *labels; int dir; } rel;
+                 struct cypher_ast *labels; int dir;
+                 int varlen_min; int varlen_max; } rel;
         struct { struct cypher_ast **items; int n; } list;
         struct { struct cypher_ast *l; struct cypher_ast *r; } pair;
         struct { struct cypher_ast *name; struct cypher_ast *as; } col;

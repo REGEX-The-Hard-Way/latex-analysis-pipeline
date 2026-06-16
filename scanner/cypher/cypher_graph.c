@@ -101,136 +101,7 @@ void cypher_result_free(cypher_result_t *r) {
     }
     free(r->rows); free(r);
 }
-
-/* ---- emit cell value from a node ---- */
-static void emit_cell(cypher_result_t *r, int row, int col,
-                       cypher_graph_t *g, uint32_t nid, cypher_ast_t *expr) {
-    graph_store_t *gs = g->gs;
-    char buf[MAX_STR * 2]; buf[0] = 0;
-    if (expr->type == AST_IDENT) {
-        const char *lab = cypher_graph_get_label(g, nid);
-        /* check props first */
-        const char *pv = gs_prop_str(gs, nid, expr->str);
-        if (pv) snprintf(buf, sizeof(buf), "%s", pv);
-        else if (lab && lab[0]) snprintf(buf, sizeof(buf), "(:%s)", lab);
-        else snprintf(buf, sizeof(buf), "(node %u)", nid);
-    } else if (expr->type == AST_PROP) {
-        const char *pkey = expr->prop.n->str;
-        const char *pv = gs_prop_str(gs, nid, pkey);
-        if (pv) snprintf(buf, sizeof(buf), "%s", pv);
-        else { double dv = gs_prop_num(gs, nid, pkey); snprintf(buf, sizeof(buf), "%g", dv); }
-    } else if (expr->type == AST_STRING) {
-        snprintf(buf, sizeof(buf), "%s", expr->str);
-    } else if (expr->type == AST_INTEGER) {
-        snprintf(buf, sizeof(buf), "%d", expr->ival);
-    } else if (expr->type == AST_FLOAT) {
-        snprintf(buf, sizeof(buf), "%g", expr->fval);
-    } else {
-        snprintf(buf, sizeof(buf), "?");
-    }
-    cypher_result_set_cell(r, row, col, buf);
-}
-
-/* ---- label/prop matching helpers ---- */
-static int match_label2(graph_store_t *gs, uint32_t nid, cypher_ast_t *label_ast) {
-    if (!label_ast || !label_ast->str[0]) return 1;
-    for (uint32_t li = 0; li < gs->label_count; li++) {
-        if (gs->nodes[nid].label_mask & (1ULL << li)) {
-            cypher_ast_t *l = label_ast;
-            while (l) {
-                if (!strcmp(gs->labels[li].name, l->str)) return 1;
-                l = l->next;
-            }
-        }
-    }
-    return 0;
-}
-static int match_props2(graph_store_t *gs, uint32_t nid, cypher_ast_t *props) {
-    if (!props) return 1;
-    for (cypher_ast_t *e = props; e; e = e->next) {
-        if (e->type != AST_MAP_ENTRY || !e->pair.l || !e->pair.r) continue;
-        if (e->pair.l->type != AST_STRING) continue;
-        const char *key = e->pair.l->str;
-        if (e->pair.r->type == AST_STRING) {
-            const char *v = gs_prop_str(gs, nid, key);
-            if (!v || strcmp(v, e->pair.r->str)) return 0;
-        } else if (e->pair.r->type == AST_INTEGER) {
-            double v = gs_prop_num(gs, nid, key);
-            if (v != (double)e->pair.r->ival) return 0;
-        } else if (e->pair.r->type == AST_FLOAT) {
-            double v = gs_prop_num(gs, nid, key);
-            if (v != e->pair.r->fval) return 0;
-        }
-    }
-    return 1;
-}
-static int eval_bool(graph_store_t *gs, uint32_t nid, cypher_ast_t *e) {
-    if (!e) return 1;
-    if (e->type == AST_BINARY) {
-        if (e->bin.op == TOK_AND)
-            return eval_bool(gs, nid, e->bin.l) && eval_bool(gs, nid, e->bin.r);
-        if (e->bin.op == TOK_OR)
-            return eval_bool(gs, nid, e->bin.l) || eval_bool(gs, nid, e->bin.r);
-        if (e->bin.l && e->bin.r) {
-            int cmp_op = e->bin.op;
-            if (cmp_op == TOK_EQ || cmp_op == TOK_NEQ || cmp_op == TOK_LT ||
-                cmp_op == TOK_GT || cmp_op == TOK_LE || cmp_op == TOK_GE) {
-                if (e->bin.l->type == AST_PROP) {
-                    if (e->bin.r->type == AST_STRING) {
-                        const char *v = gs_prop_str(gs, nid, e->bin.l->prop.n->str);
-                        if (cmp_op == TOK_EQ) return v && !strcmp(v, e->bin.r->str);
-                        if (cmp_op == TOK_NEQ) return !v || !!strcmp(v, e->bin.r->str);
-                        return 1;
-                    }
-                    double lv = 0, rv = 0;
-                    if (e->bin.r->type == AST_INTEGER) {
-                        lv = gs_prop_num(gs, nid, e->bin.l->prop.n->str);
-                        rv = (double)e->bin.r->ival;
-                    } else if (e->bin.r->type == AST_FLOAT) {
-                        lv = gs_prop_num(gs, nid, e->bin.l->prop.n->str);
-                        rv = e->bin.r->fval;
-                    } else {
-                        return 1;
-                    }
-                    if (cmp_op == TOK_EQ) return lv == rv;
-                    if (cmp_op == TOK_NEQ) return lv != rv;
-                    if (cmp_op == TOK_LT) return lv < rv;
-                    if (cmp_op == TOK_GT) return lv > rv;
-                    if (cmp_op == TOK_LE) return lv <= rv;
-                    if (cmp_op == TOK_GE) return lv >= rv;
-                }
-            }
-        }
-    }
-    if (e->type == AST_NOT) return !eval_bool(gs, nid, e->bin.l);
-    return 1;
-}
-
-/* ---- extract labels from node pattern AST ---- */
-static cypher_ast_t *extract_labels(cypher_ast_t *node_pat) {
-    cypher_ast_t *labels = NULL;
-    for (cypher_ast_t *p = node_pat->node.props; p; ) {
-        cypher_ast_t *nxt = p->next;
-        if (p->type == AST_LABEL) { p->next = labels; labels = p; }
-        p = nxt;
-    }
-    return labels;
-}
-static cypher_ast_t *extract_props(cypher_ast_t *node_pat) {
-    cypher_ast_t *props = NULL, *prev = NULL;
-    for (cypher_ast_t *p = node_pat->node.props; p;) {
-        cypher_ast_t *nxt = p->next;
-        if (p->type != AST_LABEL) {
-            p->next = NULL;
-            if (prev) prev->next = p; else props = p;
-            prev = p;
-        }
-        p = nxt;
-    }
-    return props;
-}
-
-/* ---- main executor ---- */
+/* ---- mutations ---- */
 
 static void apply_set(cypher_graph_t *g, cypher_ast_t *set) {
     graph_store_t *gs = g->gs;
@@ -265,6 +136,10 @@ static void apply_set(cypher_graph_t *g, cypher_ast_t *set) {
                 gs_set_prop_num(gs, nid, key, (double)rhs->ival);
             else if (rhs->type == AST_FLOAT)
                 gs_set_prop_num(gs, nid, key, rhs->fval);
+            else if (rhs->type == AST_UNARY && rhs->una.a->type == AST_INTEGER) {
+                double v = rhs->una.op == '-' ? -(double)rhs->una.a->ival : (double)rhs->una.a->ival;
+                gs_set_prop_num(gs, nid, key, v);
+            }
         }
     }
 }
@@ -295,215 +170,162 @@ static void apply_delete(cypher_graph_t *g, cypher_ast_t *del) {
     }
 }
 
-static void result_sort(cypher_result_t *r, cypher_ast_t *order) {
-    if (!r->nrows || !order) return;
-    int ncols = r->ncols;
-    for (int i = 0; i < r->nrows - 1; i++) {
-        for (int j = 0; j < r->nrows - i - 1; j++) {
-            int cmp = 0;
-            for (cypher_ast_t *o = order; o; o = o->next) {
-                if (o->type != AST_ORDER_ITEM) continue;
-                const char *key = (o->bin.l && o->bin.l->type == AST_IDENT)
-                    ? o->bin.l->str : NULL;
-                if (!key) {
-                    if (o->bin.l && o->bin.l->type == AST_PROP && o->bin.l->prop.n)
-                        key = o->bin.l->prop.n->str;
-                }
-                if (!key) continue;
-                int col = -1;
-                for (int c = 0; c < ncols; c++)
-                    if (!strcmp(r->columns[c], key)) { col = c; break; }
-                if (col < 0) continue;
-                const char *a = r->rows[j][col];
-                const char *b = r->rows[j+1][col];
-                if (!a && !b) continue;
-                if (!a) { cmp = -1; break; }
-                if (!b) { cmp = 1; break; }
-                cmp = strcasecmp(a, b);
-                if (o->bin.op) cmp = -cmp;
-                if (cmp != 0) break;
-            }
-            if (cmp > 0) {
-                char **tmp = r->rows[j];
-                r->rows[j] = r->rows[j+1];
-                r->rows[j+1] = tmp;
-            }
-        }
-    }
-}
-
-static void result_distinct(cypher_result_t *r) {
-    if (r->nrows < 2) return;
-    int write = 0;
-    for (int i = 0; i < r->nrows; i++) {
-        int dup = 0;
-        for (int k = 0; k < write; k++) {
-            int same = 1;
-            for (int c = 0; c < r->ncols; c++) {
-                const char *a = r->rows[i][c];
-                const char *b = r->rows[k][c];
-                if (!a && !b) continue;
-                if (!a || !b || strcmp(a, b)) { same = 0; break; }
-            }
-            if (same) { dup = 1; break; }
-        }
-        if (!dup) {
-            if (write != i) {
-                char **tmp = r->rows[i];
-                r->rows[i] = r->rows[write];
-                r->rows[write] = tmp;
-            }
-            write++;
-        }
-    }
-    r->nrows = write;
-}
-
-static void result_limit_skip(cypher_result_t *r, cypher_ast_t *clauses) {
-    int limit_val = r->nrows;
-    int skip_val = 0;
-    for (cypher_ast_t *n = clauses; n; n = n->next) {
-        if (n->type == AST_LIMIT) limit_val = n->ival;
-        else if (n->type == AST_SKIP) skip_val = n->ival;
-    }
-    if (skip_val > 0) {
-        /* free skipped rows */
-        for (int i = 0; i < skip_val && i < r->nrows; i++) {
-            if (r->rows[i]) {
-                for (int c = 0; c < r->ncols; c++) free(r->rows[i][c]);
-                free(r->rows[i]);
-                r->rows[i] = NULL;
-            }
-        }
-        int dst = 0;
-        for (int i = skip_val; i < r->nrows; i++) {
-            r->rows[dst] = r->rows[i];
-            r->rows[i] = NULL;
-            dst++;
-        }
-        r->nrows = dst;
-    }
-    /* free rows beyond limit */
-    for (int i = limit_val; i < r->nrows; i++) {
-        if (r->rows[i]) {
-            for (int c = 0; c < r->ncols; c++) free(r->rows[i][c]);
-            free(r->rows[i]);
-            r->rows[i] = NULL;
-        }
-    }
-    if (limit_val < r->nrows) r->nrows = limit_val;
-}
-
-static int exec_match_return(cypher_graph_t *g, cypher_ast_t *match_cl,
-                              cypher_ast_t *return_cl, cypher_result_t *result) {
+// MERGE: Create pattern if it doesn't exist, match if it does
+static void apply_merge(cypher_graph_t *g, cypher_ast_t *m) {
     graph_store_t *gs = g->gs;
-    int distinct = (return_cl->bin.op == 1);
-    uint32_t *candidates = NULL;
-    uint32_t ncan = 0, cap = 16384;
-
-    if (match_cl && match_cl->bin.l && match_cl->bin.l->type == AST_PATTERN) {
-        cypher_ast_t *pat = match_cl->bin.l;
-        cypher_ast_t *fn = pat->list.items[0];
-
-        if (fn->type == AST_NODE_PAT) {
-            cypher_ast_t *labels = extract_labels(fn);
-            cypher_ast_t *props  = extract_props(fn);
-            cypher_ast_t *where  = match_cl->bin.r;
-
-            candidates = malloc(cap * sizeof(uint32_t));
-
-            if (labels && labels->str[0]) {
-                ncan = gs_label_nodes(gs, labels->str, candidates, cap);
-                if (ncan <= 0 && cap < gs->node_count) {
-                    cap = gs->node_count;
-                    candidates = realloc(candidates, cap * sizeof(uint32_t));
-                    ncan = gs_label_nodes(gs, labels->str, candidates, cap);
-                }
-            } else {
-                ncan = gs_node_count(gs);
-                if (ncan > cap) {
-                    cap = ncan;
-                    candidates = realloc(candidates, cap * sizeof(uint32_t));
-                }
-                for (uint32_t ni = 0; ni < ncan; ni++) candidates[ni] = ni;
-            }
-
-            cypher_ast_t *rel_pat = (pat->list.n >= 2 && pat->list.items[1]->type == AST_REL_PAT)
-                ? pat->list.items[1] : NULL;
-            cypher_ast_t *tgt_node = (pat->list.n >= 3) ? pat->list.items[2] : NULL;
-            const char *ov = (tgt_node && tgt_node->type == AST_NODE_PAT && tgt_node->node.name)
-                ? tgt_node->node.name->str : NULL;
-
-            const char *edge_type = NULL;
-            if (rel_pat && rel_pat->rel.labels && rel_pat->rel.labels->str[0])
-                edge_type = rel_pat->rel.labels->str;
-
-            cypher_ast_t *tgt_labels = NULL;
-            cypher_ast_t *tgt_props  = NULL;
-            if (tgt_node && tgt_node->type == AST_NODE_PAT) {
-                tgt_labels = extract_labels(tgt_node);
-                tgt_props  = extract_props(tgt_node);
-            }
-
-            for (uint32_t ci = 0; ci < ncan && result->nrows < 200; ci++) {
-                uint32_t ni = candidates[ci];
-
-                if (!match_label2(gs, ni, labels)) continue;
-                if (!match_props2(gs, ni, props)) continue;
-                if (!eval_bool(gs, ni, where)) continue;
-
-                if (rel_pat) {
-                    uint32_t ec = gs_edge_count(gs, ni);
-                    for (uint32_t ej = 0; ej < ec && result->nrows < 200; ej++) {
-                        uint32_t dst = gs_edge_dst(gs, ni, ej);
-                        if (dst == 0xFFFFFFFF) continue;
-                        if (edge_type) {
-                            uint32_t et = gs_edge_type(gs, ni, ej);
-                            if (gs_hash_str(edge_type) != et) continue;
-                        }
-                        if (!match_label2(gs, dst, tgt_labels)) continue;
-                        if (!match_props2(gs, dst, tgt_props)) continue;
-
-                        cypher_result_add_row_empty(result);
-                        for (int ci2 = 0; ci2 < return_cl->list.n; ci2++) {
-                            cypher_ast_t *col = return_cl->list.items[ci2];
-                            uint32_t un = ni;
-                            if (col->col.name->type == AST_PROP
-                                && col->col.name->prop.e->type == AST_IDENT) {
-                                if (tgt_node && tgt_node->node.name
-                                    && !strcmp(col->col.name->prop.e->str,
-                                               tgt_node->node.name->str))
-                                    un = dst;
-                            }
-                            emit_cell(result, result->nrows-1, ci2, g, un, col->col.name);
-                        }
-                    }
-                } else {
-                    cypher_result_add_row_empty(result);
-                    for (int ci2 = 0; ci2 < return_cl->list.n; ci2++)
-                        emit_cell(result, result->nrows-1, ci2, g, ni,
-                                  return_cl->list.items[ci2]->col.name);
+    
+    // m->bin.l is the pattern to merge
+    cypher_ast_t *pattern = m->bin.l;
+    if (!pattern || pattern->type != AST_PATTERN || pattern->list.n < 1) return;
+    
+    // Get the first node pattern
+    cypher_ast_t *first = pattern->list.items[0];
+    if (first->type != AST_NODE_PAT) return;
+    
+    // Get node variable name
+    const char *vname = first->node.name ? first->node.name->str : NULL;
+    cypher_node_id_t nid;
+    int created = 0;
+    
+    // Check if variable already bound (from previous MERGE or CREATE)
+    if (vname && var_get(g, vname) != (cypher_node_id_t)-1) {
+        nid = (cypher_node_id_t)var_get(g, vname);
+    } else {
+        // Create new node
+        nid = gs_add_node(gs);
+        created = 1;
+    }
+    
+    // Bind variable if present
+    if (vname) var_set(g, vname, nid);
+    
+    // Set labels on the node
+    for (cypher_ast_t *p = first->node.props; p; p = p->next) {
+        if (p->type == AST_LABEL) {
+            gs_set_label(gs, nid, p->str);
+        } else if (p->type == AST_MAP_ENTRY && p->pair.l && p->pair.r) {
+            if (p->pair.r->type == AST_STRING)
+                gs_add_prop_str(gs, nid, p->pair.l->str, p->pair.r->str);
+            else if (p->pair.r->type == AST_INTEGER)
+                gs_add_prop_num(gs, nid, p->pair.l->str, (double)p->pair.r->ival);
+            else if (p->pair.r->type == AST_FLOAT)
+                gs_add_prop_num(gs, nid, p->pair.l->str, p->pair.r->fval);
+        }
+    }
+    
+    // Handle relationships in pattern
+    if (pattern->list.n >= 3 && pattern->list.items[1]->type == AST_REL_PAT) {
+        cypher_ast_t *rel_pat = pattern->list.items[1];
+        cypher_ast_t *target = pattern->list.items[2];
+        
+        const char *tvname = (target->type == AST_NODE_PAT && target->node.name)
+            ? target->node.name->str : NULL;
+        cypher_node_id_t tnid;
+        int tcreated = 0;
+        
+        // Get or create target node
+        if (tvname && var_get(g, tvname) != (cypher_node_id_t)-1) {
+            tnid = (cypher_node_id_t)var_get(g, tvname);
+        } else {
+            tnid = gs_add_node(gs);
+            tcreated = 1;
+        }
+        
+        // Bind target variable
+        if (tvname) var_set(g, tvname, tnid);
+        
+        // Set target properties
+        cypher_ast_t *tgt_node = (target->type == AST_NODE_PAT) ? target : NULL;
+        if (tgt_node) {
+            for (cypher_ast_t *p = tgt_node->node.props; p; p = p->next) {
+                if (p->type == AST_LABEL) gs_set_label(gs, tnid, p->str);
+                else if (p->type == AST_MAP_ENTRY && p->pair.l && p->pair.r) {
+                    if (p->pair.r->type == AST_STRING)
+                        gs_add_prop_str(gs, tnid, p->pair.l->str, p->pair.r->str);
+                    else if (p->pair.r->type == AST_INTEGER)
+                        gs_add_prop_num(gs, tnid, p->pair.l->str, (double)p->pair.r->ival);
+                    else if (p->pair.r->type == AST_FLOAT)
+                        gs_add_prop_num(gs, tnid, p->pair.l->str, p->pair.r->fval);
                 }
             }
         }
-    } else {
-        uint32_t nc = gs_node_count(gs);
-        for (uint32_t ni = 0; ni < nc && result->nrows < 200; ni++) {
-            cypher_result_add_row_empty(result);
-            for (int ci = 0; ci < return_cl->list.n; ci++)
-                emit_cell(result, result->nrows-1, ci, g, ni,
-                          return_cl->list.items[ci]->col.name);
+        
+        // Create relationship if either node was created
+        if (created || tcreated) {
+            const char *rtype = (rel_pat->rel.labels && rel_pat->rel.labels->str[0])
+                ? rel_pat->rel.labels->str : "REL";
+            gs_add_edge(gs, nid, tnid, rtype);
+        }
+    }
+}
+
+static cypher_result_t *exec_unwind_return(cypher_ast_t *unwind_cl,
+                                           cypher_ast_t *return_cl) {
+    cypher_result_t *result = cypher_result_new();
+
+    cypher_ast_t *list_expr = unwind_cl->bin.l;
+    cypher_ast_t *var_node = unwind_cl->bin.r;
+    if (!var_node || !var_node->str[0]) return result;
+    const char *vname = var_node->str;
+
+    for (int ci = 0; ci < return_cl->list.n; ci++) {
+        cypher_ast_t *col = return_cl->list.items[ci];
+        const char *name = "expr";
+        if (col->col.as) name = col->col.as->str;
+        else if (col->col.name->type == AST_IDENT) name = col->col.name->str;
+        cypher_result_add_col(result, name);
+    }
+
+    if (list_expr->type != AST_LIST) return result;
+
+    for (int i = 0; i < list_expr->list.n; i++) {
+        cypher_ast_t *item = list_expr->list.items[i];
+        cypher_result_add_row_empty(result);
+        for (int ci = 0; ci < return_cl->list.n; ci++) {
+            cypher_ast_t *col = return_cl->list.items[ci];
+            char buf[64];
+            int matches = 0;
+            if (col->col.name->type == AST_IDENT
+                && !strcmp(col->col.name->str, vname)) matches = 1;
+            else if (col->col.name->type == AST_PROP
+                     && col->col.name->prop.e->type == AST_IDENT
+                     && !strcmp(col->col.name->prop.e->str, vname)) matches = 1;
+
+            if (matches) {
+                if (item->type == AST_INTEGER)
+                    snprintf(buf, sizeof(buf), "%d", item->ival);
+                else if (item->type == AST_STRING)
+                    snprintf(buf, sizeof(buf), "%s", item->str);
+                else if (item->type == AST_FLOAT)
+                    snprintf(buf, sizeof(buf), "%g", item->fval);
+                else
+                    snprintf(buf, sizeof(buf), "?");
+            } else {
+                snprintf(buf, sizeof(buf), "?");
+            }
+            cypher_result_set_cell(result, i, ci, buf);
         }
     }
 
-    free(candidates);
+    /* LIMIT / SKIP */
+    {
+        int limit_val = result->nrows;
+        int skip_val = 0;
+        for (cypher_ast_t *n = return_cl->next; n; n = n->next) {
+            if (n->type == AST_LIMIT) limit_val = n->ival;
+            else if (n->type == AST_SKIP) skip_val = n->ival;
+        }
+        if (skip_val > 0) {
+            int dst = 0;
+            for (int i = skip_val; i < result->nrows; i++)
+                result->rows[dst++] = result->rows[i];
+            result->nrows = dst;
+        }
+        if (limit_val < result->nrows)
+            result->nrows = limit_val;
+    }
 
-    cypher_ast_t *order = return_cl->bin.r;
-    if (order) result_sort(result, order);
-    if (distinct) result_distinct(result);
-    result_limit_skip(result, return_cl->next);
-
-    return 0;
+    return result;
 }
 
 cypher_result_t *cypher_execute(cypher_graph_t *g, cypher_ast_t *ast, const char **error) {
@@ -518,6 +340,37 @@ cypher_result_t *cypher_execute(cypher_graph_t *g, cypher_ast_t *ast, const char
         }
         if (m->type == AST_DELETE) {
             apply_delete(g, m);
+            continue;
+        }
+        // MERGE implementation: check if pattern exists, create if not
+        if (m->type == AST_MERGE) {
+            apply_merge(g, m);
+            continue;
+        }
+        // UNWIND: expand list into rows
+        // For now, store UNWIND in a way that RETURN can consume
+        if (m->type == AST_UNWIND) {
+            // UNWIND will be processed before RETURN
+            // For simple queries, we'll handle it in exec_match_return
+            continue;
+        }
+        // REMOVE: remove properties from nodes
+        if (m->type == AST_REMOVE) {
+            for (int i = 0; i < m->list.n; i++) {
+                cypher_ast_t *expr = m->list.items[i];
+                if (expr->type == AST_PROP && expr->prop.e->type == AST_IDENT) {
+                    const char *vname = expr->prop.e->str;
+                    uint32_t nid = (uint32_t)var_get(g, vname);
+                    if (nid == 0xFFFFFFFF) continue;
+                    const char *key = expr->prop.n->str;
+                    /* clear property by setting it to empty string */
+                    gs_set_prop_str(gs, nid, key, "");
+                }
+            }
+            continue;
+        }
+        if (m->type == AST_CASE) {
+            // CASE expressions are handled in evaluate_expression
             continue;
         }
         if (m->type != AST_CREATE) continue;
@@ -552,6 +405,20 @@ cypher_result_t *cypher_execute(cypher_graph_t *g, cypher_ast_t *ast, const char
             uint32_t tn = (tvname && var_get(g, tvname) != (cypher_node_id_t)-1)
                 ? (uint32_t)var_get(g, tvname) : gs_add_node(gs);
             if (tvname) var_set(g, tvname, tn);
+            /* set target node labels and properties */
+            if (tgt->type == AST_NODE_PAT) {
+                for (cypher_ast_t *tp = tgt->node.props; tp; tp = tp->next) {
+                    if (tp->type == AST_LABEL) gs_set_label(gs, tn, tp->str);
+                    else if (tp->type == AST_MAP_ENTRY && tp->pair.l && tp->pair.r) {
+                        if (tp->pair.r->type == AST_STRING)
+                            gs_add_prop_str(gs, tn, tp->pair.l->str, tp->pair.r->str);
+                        else if (tp->pair.r->type == AST_INTEGER)
+                            gs_add_prop_num(gs, tn, tp->pair.l->str, (double)tp->pair.r->ival);
+                        else if (tp->pair.r->type == AST_FLOAT)
+                            gs_add_prop_num(gs, tn, tp->pair.l->str, tp->pair.r->fval);
+                    }
+                }
+            }
             const char *rtype = (rpat->rel.labels && rpat->rel.labels->str[0])
                 ? rpat->rel.labels->str : "REL";
             gs_add_edge(gs, nn, tn, rtype);
@@ -561,13 +428,19 @@ cypher_result_t *cypher_execute(cypher_graph_t *g, cypher_ast_t *ast, const char
     gs_build_indexes(gs);
 
     cypher_ast_t *match_cl = NULL, *return_cl = NULL, *opt_match = NULL, *with_cl = NULL;
+    cypher_ast_t *unwind_cl = NULL;
     for (cypher_ast_t *cur = ast; cur; cur = cur->next) {
         if (!match_cl && cur->type == AST_MATCH) match_cl = cur;
         else if (match_cl && !opt_match && cur->type == AST_MATCH && cur->bin.op == 1)
             opt_match = cur;
         if (!with_cl && cur->type == AST_WITH) with_cl = cur;
         if (!return_cl && cur->type == AST_RETURN) return_cl = cur;
+        if (!unwind_cl && cur->type == AST_UNWIND) unwind_cl = cur;
     }
+
+    /* UNWIND without MATCH: generate rows directly from list */
+    if (unwind_cl && !match_cl && return_cl)
+        return exec_unwind_return(unwind_cl, return_cl);
 
     /* WITH pipelining: forward column names through aliases */
     if (with_cl && return_cl) {

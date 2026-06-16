@@ -510,9 +510,11 @@ const char *gs_prop_str(graph_store_t *gs, uint32_t node, const char *key) {
     if (node >= gs->node_count) return NULL;
     uint32_t kh = gs_hash_str(key);
     if (gs->nodes[node].props_off != 0xFFFFFFFF) {
-        for (uint32_t pi = gs->nodes[node].props_off;
-             pi < gs->prop_count && pi < gs->nodes[node].props_off + gs->nodes[node].prop_count; pi++) {
-            if (gs->props[pi].key_hash == kh) {
+        /* search backwards: last set wins */
+        uint32_t end = gs->nodes[node].props_off + gs->nodes[node].prop_count;
+        for (int32_t i = (int32_t)end - 1; i >= (int32_t)gs->nodes[node].props_off; i--) {
+            uint32_t pi = (uint32_t)i;
+            if (pi < gs->prop_count && gs->props[pi].key_hash == kh) {
                 char *vbuf = gs->val_data + gs->props[pi].val_off;
                 if (vbuf[0] == 0) return vbuf + 1;
             }
@@ -531,9 +533,10 @@ double gs_prop_num(graph_store_t *gs, uint32_t node, const char *key) {
     if (!s) {
         uint32_t kh = gs_hash_str(key);
         if (gs->nodes[node].props_off != 0xFFFFFFFF) {
-            for (uint32_t pi = gs->nodes[node].props_off;
-                 pi < gs->prop_count && pi < gs->nodes[node].props_off + gs->nodes[node].prop_count; pi++) {
-                if (gs->props[pi].key_hash == kh) {
+            uint32_t end = gs->nodes[node].props_off + gs->nodes[node].prop_count;
+            for (int32_t i = (int32_t)end - 1; i >= (int32_t)gs->nodes[node].props_off; i--) {
+                uint32_t pi = (uint32_t)i;
+                if (pi < gs->prop_count && gs->props[pi].key_hash == kh) {
                     char *vbuf = gs->val_data + gs->props[pi].val_off;
                     if (vbuf[0] == 1) return strtod(vbuf + 1, NULL);
                 }
@@ -548,9 +551,10 @@ uint32_t gs_prop_int(graph_store_t *gs, uint32_t node, const char *key) {
     if (node >= gs->node_count) return 0;
     uint32_t kh = gs_hash_str(key);
     if (gs->nodes[node].props_off != 0xFFFFFFFF) {
-        for (uint32_t pi = gs->nodes[node].props_off;
-             pi < gs->prop_count && pi < gs->nodes[node].props_off + gs->nodes[node].prop_count; pi++) {
-            if (gs->props[pi].key_hash == kh) {
+        uint32_t end = gs->nodes[node].props_off + gs->nodes[node].prop_count;
+        for (int32_t i = (int32_t)end - 1; i >= (int32_t)gs->nodes[node].props_off; i--) {
+            uint32_t pi = (uint32_t)i;
+            if (pi < gs->prop_count && gs->props[pi].key_hash == kh) {
                 char *vbuf = gs->val_data + gs->props[pi].val_off;
                 if (vbuf[0] == 2) {
                     uint32_t v = (unsigned char)vbuf[1]

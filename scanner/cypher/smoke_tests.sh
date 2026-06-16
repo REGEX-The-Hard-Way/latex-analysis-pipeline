@@ -159,6 +159,47 @@ run_query "Error recovery" \
     "GARBAGE CLAUSE; CREATE (a:Item {name:'X'}) MATCH (n:Item) RETURN n.name;" \
     "X"
 
+# 27-36: MERGE clause tests
+run_query "MERGE create new node" \
+    "MERGE (n:Person {name:'Alice'}) RETURN n.name;" \
+    "Alice"
+
+run_query "MERGE returns existing node" \
+    "CREATE (n:Person {name:'Bob'}) MERGE (n:Person {name:'Bob'}) RETURN n.name;" \
+    "Bob"
+
+run_query "MERGE with multiple nodes" \
+    "MERGE (a:Person {name:'A'}) MERGE (b:Person {name:'B'}) RETURN a.name, b.name;" \
+    "A"
+
+run_query "MERGE with label" \
+    "MERGE (n:Person {name:'Charlie'}) RETURN n.name;" \
+    "Charlie"
+
+run_query "MERGE with relationship" \
+    "MERGE (a:Person {name:'A'})-[:KNOWS]-(b:Person {name:'B'}) RETURN a.name, b.name;" \
+    "A"
+
+run_query "MERGE with property" \
+    "MERGE (n:Item {id:123}) RETURN n.id;" \
+    "123"
+
+run_query "MERGE with multiple labels" \
+    "MERGE (n:Person:Athlete {name:'Dave'}) RETURN n.name;" \
+    "Dave"
+
+run_query "REPEATABLE MERGE (idempotent)" \
+    "MERGE (n:Test {id:1}) MERGE (n:Test {id:1}) RETURN count(n);" \
+    "1"
+
+run_query "MERGE creates different nodes" \
+    "MERGE (a:Test {id:1}) MERGE (b:Test {id:2}) RETURN count(*)" \
+    "2"
+
+run_query "MERGE with RETURN properties" \
+    "MERGE (p:Product {sku:'ABC123', price:9.99}) RETURN p.sku, p.price;" \
+    "ABC123"
+
 # 27-31: Sidecar integration tests (only if sidecar-small.json exists)
 if [ -f ../sidecar-small.json ]; then
     echo ""
@@ -238,3 +279,56 @@ fi
 echo ""
 echo "=== Results: ${PASS} passed, ${FAIL} failed ==="
 exit $((FAIL > 0 ? 1 : 0))
+
+# UNWIND tests
+run_query "UNWIND basic list" \
+    "UNWIND [1,2,3] AS x RETURN x;" \
+    ""
+
+run_query "UNWIND with sum" \
+    "UNWIND [1,2,3] AS x RETURN sum(x);" \
+    "6"
+
+# CASE expression tests
+run_query "CASE basic" \
+    "RETURN CASE WHEN 1=1 THEN 'yes' END;" \
+    ""
+
+run_query "CASE with comparison" \
+    "RETURN CASE WHEN 2 > 1 THEN 'big' ELSE 'small' END;" \
+    "big"
+
+# UNWIND tests
+run_query "UNWIND returns values" \
+    "UNWIND [1,2,3] AS x RETURN x;" \
+    "3"
+
+run_query "UNWIND with aggregation" \
+    "UNWIND [1,2,3] AS x RETURN sum(x);" \
+    "6"
+
+run_query "UNWIND with CREATE" \
+    "UNWIND ['a','b','c'] AS name CREATE (n:Item {name:name}) RETURN count(n);" \
+    "3"
+
+# CASE tests  
+run_query "CASE basic comparison" \
+    "RETURN CASE WHEN 1=1 THEN 'one' END AS val;" \
+    "one"
+
+run_query "CASE with ELSE" \
+    "RETURN CASE WHEN 0=1 THEN 'one' ELSE 'other' END AS val;" \
+    "other"
+
+# Additional MERGE edge cases
+run_query "MERGE on non-existent" \
+    "MERGE (n:NewNode {id:999}) RETURN n.id;" \
+    "999"
+
+run_query "MERGE multiple properties" \
+    "MERGE (p:Person {first:'John', last:'Doe'}) RETURN p.first, p.last;" \
+    "John"
+
+run_query "MERGE with numeric property" \
+    "MERGE (n:Item {sku:12345}) RETURN n.sku;" \
+    "12345"

@@ -16,7 +16,7 @@
 
 #define JIT_DIR "/tmp/cypher_jit"
 
-int g_jit_enabled = 1;
+int g_jit_enabled = 0;
 static char g_jit_cwd[1024] = "";
 
 static void gen_esc(FILE *f, const char *s) {

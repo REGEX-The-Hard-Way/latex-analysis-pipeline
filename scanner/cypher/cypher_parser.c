@@ -29,6 +29,65 @@ static int expect(int t) {
 static cypher_ast_t *parse_expression(void);
 
 static cypher_ast_t *parse_atom(void) {
+    if (cur() == TOK_CASE) {
+        advance();
+        cypher_ast_t *case_node = new_ast(AST_CASE);
+        cypher_ast_t *head = NULL, *tail = NULL;
+        while (cur() == TOK_WHEN) {
+            advance();
+            cypher_ast_t *cond = parse_expression();
+            if (!expect(TOK_THEN)) break;
+            cypher_ast_t *result = parse_expression();
+            cypher_ast_t *w = new_ast(AST_BINARY);
+            w->bin.op = TOK_WHEN;
+            w->bin.l = cond;
+            w->bin.r = result;
+            w->next = NULL;
+            if (!head) head = tail = w;
+            else { tail->next = w; tail = w; }
+        }
+        cypher_ast_t *else_result = NULL;
+        if (match(TOK_ELSE)) else_result = parse_expression();
+        expect(TOK_END);
+        case_node->bin.l = head;
+        case_node->bin.r = else_result;
+        return case_node;
+    }
+    if ((cur() == TOK_IDENT || cur() == TOK_COUNT || cur() == TOK_EXISTS)
+        && peek(1) == TOK_LPAREN) {
+        cypher_ast_t *fc = new_ast(AST_FUNCALL);
+        fc->call.func = new_ast(AST_IDENT);
+        if (cur() == TOK_COUNT) strcpy(fc->call.func->str, "COUNT");
+        else if (cur() == TOK_EXISTS) strcpy(fc->call.func->str, "EXISTS");
+        else strcpy(fc->call.func->str, toks[ti].str);
+        advance(); advance(); /* consume ident and '(' */
+        cypher_ast_t *args[64]; int na = 0;
+        if (cur() != TOK_RPAREN && cur() != TOK_EOF) {
+            do {
+                if (match(TOK_COMMA)) continue;
+                if (match(TOK_STAR)) {
+                    cypher_ast_t *star = new_ast(AST_IDENT);
+                    strcpy(star->str, "*");
+                    args[na++] = star;
+                    continue;
+                }
+                if (match(TOK_DISTINCT)) continue;
+                cypher_ast_t *e = parse_expression();
+                if (e) args[na++] = e;
+            } while (cur() == TOK_COMMA);
+        }
+        expect(TOK_RPAREN);
+        fc->call.args = malloc(sizeof(cypher_ast_t *) * (size_t)(na + 1));
+        fc->call.n = na;
+        for (int i = 0; i < na; i++) fc->call.args[i] = args[i];
+        return fc;
+    }
+    if (cur() == TOK_LPAREN) {
+        advance();
+        cypher_ast_t *e = parse_expression();
+        expect(TOK_RPAREN);
+        return e;
+    }
     if (cur() == TOK_IDENT) {
         cypher_ast_t *a = new_ast(AST_IDENT);
         strcpy(a->str, toks[ti].str);
@@ -46,6 +105,21 @@ static cypher_ast_t *parse_atom(void) {
         a->ival = toks[ti].ival;
         advance();
         return a;
+    }
+    if (cur() == TOK_MINUS && (peek(1) == TOK_INTEGER || peek(1) == TOK_FLOAT)) {
+        advance();
+        if (cur() == TOK_INTEGER) {
+            cypher_ast_t *a = new_ast(AST_INTEGER);
+            a->ival = -toks[ti].ival;
+            advance();
+            return a;
+        }
+        if (cur() == TOK_FLOAT) {
+            cypher_ast_t *a = new_ast(AST_FLOAT);
+            a->fval = -toks[ti].fval;
+            advance();
+            return a;
+        }
     }
     if (cur() == TOK_FLOAT) {
         cypher_ast_t *a = new_ast(AST_FLOAT);
@@ -78,59 +152,74 @@ static cypher_ast_t *parse_atom(void) {
         for (int i = 0; i < ni; i++) lst->list.items[i] = items[i];
         return lst;
     }
-    if ((cur() == TOK_IDENT || cur() == TOK_COUNT || cur() == TOK_EXISTS)
-        && peek(1) == TOK_LPAREN) {
-        cypher_ast_t *fc = new_ast(AST_FUNCALL);
-        fc->call.func = new_ast(AST_IDENT);
-        strcpy(fc->call.func->str, toks[ti].str);
-        advance(); advance(); /* consume ident and '(' */
-        cypher_ast_t *args[64]; int na = 0;
-        if (cur() != TOK_RPAREN && cur() != TOK_EOF) {
-            do {
-                if (match(TOK_COMMA)) continue;
-                if (match(TOK_STAR)) {
-                    cypher_ast_t *star = new_ast(AST_IDENT);
-                    strcpy(star->str, "*");
-                    args[na++] = star;
-                    continue;
-                }
-                if (match(TOK_DISTINCT)) continue;
-                cypher_ast_t *e = parse_expression();
-                if (e) args[na++] = e;
-            } while (cur() == TOK_COMMA);
-        }
-        expect(TOK_RPAREN);
-        fc->call.args = malloc(sizeof(cypher_ast_t *) * (size_t)(na + 1));
-        fc->call.n = na;
-        for (int i = 0; i < na; i++) fc->call.args[i] = args[i];
-        return fc;
-    }
     return NULL;
 }
 
 static cypher_ast_t *parse_postfix(cypher_ast_t *a) {
-    while (cur() == TOK_DOT) {
-        advance();
-        cypher_ast_t *prop = new_ast(AST_PROP);
-        prop->prop.e = a;
-        cypher_ast_t *n = new_ast(AST_IDENT);
-        if (cur() == TOK_IDENT) { strcpy(n->str, toks[ti].str); advance(); }
-        prop->prop.n = n;
-        a = prop;
+    while (cur() == TOK_DOT || cur() == TOK_LBRACKET) {
+        if (cur() == TOK_DOT) {
+            advance();
+            cypher_ast_t *prop = new_ast(AST_PROP);
+            prop->prop.e = a;
+            cypher_ast_t *n = new_ast(AST_IDENT);
+            if (cur() == TOK_IDENT) { strcpy(n->str, toks[ti].str); advance(); }
+            prop->prop.n = n;
+            a = prop;
+        } else {
+            advance(); /* consume '[' */
+            cypher_ast_t *idx = parse_expression();
+            expect(TOK_RBRACKET);
+            cypher_ast_t *b = new_ast(AST_BINARY);
+            b->bin.op = TOK_LBRACKET;
+            b->bin.l = a;
+            b->bin.r = idx;
+            a = b;
+        }
     }
     return a;
 }
 
-/* arithmetic: term('*'|'/'|'%' term)* */
-static cypher_ast_t *parse_term(void) {
-    cypher_ast_t *l = parse_atom();
+/* unary: ('+'|'-')* atom postfix */
+static cypher_ast_t *parse_unary(void) {
+    if (cur() == TOK_MINUS) {
+        advance();
+        cypher_ast_t *u = new_ast(AST_UNARY);
+        u->una.op = '-';
+        u->una.a = parse_unary();
+        return u;
+    }
+    if (cur() == TOK_PLUS) {
+        advance();
+        return parse_unary();
+    }
+    cypher_ast_t *a = parse_atom();
+    if (!a) return NULL;
+    return parse_postfix(a);
+}
+
+/* power: unary('^' unary)* */
+static cypher_ast_t *parse_power(void) {
+    cypher_ast_t *l = parse_unary();
     if (!l) return NULL;
-    l = parse_postfix(l);
+    while (cur() == TOK_CARET) {
+        advance();
+        cypher_ast_t *r = parse_unary();
+        if (!r) break;
+        cypher_ast_t *b = new_ast(AST_BINARY);
+        b->bin.op = '^'; b->bin.l = l; b->bin.r = r;
+        l = b;
+    }
+    return l;
+}
+
+/* term: power('*'|'/'|'%' power)* */
+static cypher_ast_t *parse_term(void) {
+    cypher_ast_t *l = parse_power();
+    if (!l) return NULL;
     while (cur() == TOK_STAR || cur() == TOK_SLASH || cur() == TOK_PCT) {
         int op = cur(); advance();
-        cypher_ast_t *r = parse_atom();
+        cypher_ast_t *r = parse_power();
         if (!r) break;
-        r = parse_postfix(r);
         cypher_ast_t *b = new_ast(AST_BINARY);
         b->bin.op = (char)op; b->bin.l = l; b->bin.r = r;
         l = b;
@@ -205,13 +294,25 @@ static cypher_ast_t *parse_and(void) {
     return l;
 }
 
-static cypher_ast_t *parse_expression(void) {
+static cypher_ast_t *parse_xor(void) {
     cypher_ast_t *l = parse_and();
+    while (match(TOK_XOR)) {
+        cypher_ast_t *b = new_ast(AST_BINARY);
+        b->bin.op = TOK_XOR;
+        b->bin.l = l;
+        b->bin.r = parse_and();
+        l = b;
+    }
+    return l;
+}
+
+static cypher_ast_t *parse_expression(void) {
+    cypher_ast_t *l = parse_xor();
     while (match(TOK_OR)) {
         cypher_ast_t *b = new_ast(AST_BINARY);
         b->bin.op = TOK_OR;
         b->bin.l = l;
-        b->bin.r = parse_and();
+        b->bin.r = parse_xor();
         l = b;
     }
     return l;
@@ -246,12 +347,16 @@ static cypher_ast_t *parse_node_pattern(void) {
                 advance();
                 if (!match(TOK_COLON)) break;
                 cypher_ast_t *v = parse_atom();
+                if (!v) break;
                 cypher_ast_t *e = new_ast(AST_MAP_ENTRY);
                 e->pair.l = k; e->pair.r = v;
                 if (!map) map = map_tail = e;
                 else { map_tail->next = e; map_tail = e; }
+            } else if (cur() == TOK_COMMA) {
+                advance();
+            } else {
+                break;
             }
-            match(TOK_COMMA);
         }
         expect(TOK_RBRACE);
         /* append map to end of props chain */
@@ -270,6 +375,8 @@ static cypher_ast_t *parse_node_pattern(void) {
 static cypher_ast_t *parse_rel_detail(void) {
     if (!match(TOK_LBRACKET)) return NULL;
     cypher_ast_t *r = new_ast(AST_REL_PAT);
+    r->rel.varlen_min = 1;
+    r->rel.varlen_max = 1;
     /* variable */
     if (cur() == TOK_IDENT) {
         r->rel.name = new_ast(AST_IDENT);
@@ -284,6 +391,43 @@ static cypher_ast_t *parse_rel_detail(void) {
             lab->next = r->rel.labels;
             r->rel.labels = lab;
             advance();
+        }
+    }
+    /* type union: :T1|T2 */
+    while (match(TOK_PIPE)) {
+        match(TOK_COLON);
+        if (cur() == TOK_IDENT) {
+            cypher_ast_t *lab = new_ast(AST_LABEL);
+            strcpy(lab->str, toks[ti].str);
+            lab->next = r->rel.labels;
+            r->rel.labels = lab;
+            advance();
+        }
+    }
+    /* variable-length: *min..max */
+    if (match(TOK_STAR)) {
+        r->rel.varlen_min = 0;
+        r->rel.varlen_max = -1;
+        if (cur() == TOK_INTEGER) {
+            r->rel.varlen_min = toks[ti].ival;
+            r->rel.varlen_max = toks[ti].ival;
+            advance();
+            if (cur() == TOK_DOTDOT) {
+                advance();
+                r->rel.varlen_max = -1;
+                if (cur() == TOK_INTEGER) {
+                    r->rel.varlen_max = toks[ti].ival;
+                    advance();
+                }
+            }
+        } else if (cur() == TOK_DOTDOT) {
+            advance();
+            r->rel.varlen_min = 0;
+            r->rel.varlen_max = -1;
+            if (cur() == TOK_INTEGER) {
+                r->rel.varlen_max = toks[ti].ival;
+                advance();
+            }
         }
     }
     expect(TOK_RBRACKET);
@@ -365,7 +509,7 @@ static cypher_ast_t *parse_match(void) {
 
 static cypher_ast_t *parse_return(void) {
     if (!match(TOK_RETURN)) return NULL;
-    match(TOK_DISTINCT);
+    int distinct = match(TOK_DISTINCT);
 
     cypher_ast_t *r = new_ast(AST_RETURN);
 
@@ -446,6 +590,7 @@ static cypher_ast_t *parse_return(void) {
     r->list.n = ncols;
     r->list.items = malloc(sizeof(cypher_ast_t *) * (size_t)(ncols + 1));
     for (int i = 0; i < ncols; i++) r->list.items[i] = cols[i];
+    r->rel.dir = distinct;
     return r;
 }
 
@@ -522,6 +667,59 @@ static cypher_ast_t *parse_merge(void) {
     cypher_ast_t *m = new_ast(AST_MERGE);
     m->bin.l = p;
     return m;
+}
+
+static cypher_ast_t *parse_unwind(void) {
+    if (!match(TOK_UNWIND)) return NULL;
+    cypher_ast_t *expr = parse_expression();
+    if (!expect(TOK_AS)) return NULL;  // consume AS
+    cypher_ast_t *var = new_ast(AST_IDENT);
+    if (cur() == TOK_IDENT) { strcpy(var->str, toks[ti].str); advance(); }
+    else return NULL;
+    
+    cypher_ast_t *u = new_ast(AST_UNWIND);
+    u->bin.l = expr;
+    u->bin.r = var;
+    return u;
+}
+
+// CASE expression parser
+static cypher_ast_t *parse_case(void) {
+    if (!match(TOK_CASE)) return NULL;
+    
+    cypher_ast_t *case_node = new_ast(AST_CASE);
+    cypher_ast_t *head = NULL, *tail = NULL;
+    
+    // Parse WHEN/THEN pairs
+    while (cur() == TOK_WHEN) {
+        advance(); // consume WHEN
+        cypher_ast_t *cond = parse_expression();
+        if (!expect(TOK_THEN)) { cypher_ast_free(cond); break; }
+        cypher_ast_t *result = parse_expression();
+        
+        cypher_ast_t *when = new_ast(AST_BINARY);
+        when->bin.op = TOK_WHEN;
+        when->bin.l = cond;
+        when->bin.r = result;
+        
+        when->next = NULL;
+        if (!head) head = tail = when;
+        else { tail = tail->next = when; }
+    }
+    
+    // Parse optional ELSE
+    cypher_ast_t *else_result = NULL;
+    if (match(TOK_ELSE)) {
+        else_result = parse_expression();
+    }
+    
+    if (!expect(TOK_END)) {
+        // cleanup
+    }
+    
+    case_node->bin.l = head;  // linked list of WHEN/THEN
+    case_node->bin.r = else_result;
+    return case_node;
 }
 
 static cypher_ast_t *parse_with(void) {
@@ -601,6 +799,23 @@ static cypher_ast_t *parse_with(void) {
     return w;
 }
 
+static cypher_ast_t *parse_remove(void) {
+    if (!match(TOK_REMOVE)) return NULL;
+    cypher_ast_t *s = new_ast(AST_REMOVE);
+    cypher_ast_t *items[64]; int n = 0;
+    do {
+        if (match(TOK_COMMA)) continue;
+        cypher_ast_t *expr = parse_atom();
+        if (!expr) break;
+        expr = parse_postfix(expr);
+        items[n++] = expr;
+    } while (cur() == TOK_COMMA);
+    s->list.n = n;
+    s->list.items = malloc(sizeof(cypher_ast_t *) * (size_t)(n + 1));
+    for (int i = 0; i < n; i++) s->list.items[i] = items[i];
+    return s;
+}
+
 static cypher_ast_t *parse_clause(void) {
     switch (cur()) {
     case TOK_MATCH:  return parse_match();
@@ -611,8 +826,21 @@ static cypher_ast_t *parse_clause(void) {
     case TOK_DELETE: return parse_delete();
     case TOK_DETACH: return parse_delete();
     case TOK_MERGE:  return parse_merge();
+    case TOK_UNWIND: return parse_unwind();
     case TOK_WITH:   return parse_with();
+    case TOK_REMOVE: return parse_remove();
     default: return NULL;
+    }
+}
+
+static int is_clause_start(int tok) {
+    switch (tok) {
+    case TOK_MATCH: case TOK_OPTIONAL: case TOK_RETURN:
+    case TOK_CREATE: case TOK_SET: case TOK_DELETE: case TOK_DETACH:
+    case TOK_MERGE: case TOK_UNWIND: case TOK_WITH:
+    case TOK_EOF: case TOK_SEMI:
+        return 1;
+    default: return 0;
     }
 }
 
@@ -627,10 +855,8 @@ cypher_ast_t *cypher_parse(cypher_token_t *tokens, int n, const char **error) {
         if (cur() == TOK_EOF) break;
         cypher_ast_t *cl = parse_clause();
         if (!cl) {
-            if (!*error) *error = "unrecognized clause";
-            /* error recovery: skip to next semicolon and continue */
-            while (cur() != TOK_SEMI && cur() != TOK_EOF) advance();
-            if (cur() == TOK_SEMI) advance();
+            if (!*error) *error = "unexpected token before clause";
+            while (cur() != TOK_EOF && !is_clause_start(cur())) advance();
             continue;
         }
         if (!head) head = tail = cl;
@@ -649,7 +875,7 @@ void cypher_ast_free(cypher_ast_t *a) {
         break;
     case AST_NOT:
     case AST_UNARY:
-        cypher_ast_free(a->bin.l);
+        cypher_ast_free(a->una.a);
         break;
     case AST_PROP:
         cypher_ast_free(a->prop.e);
@@ -671,7 +897,13 @@ void cypher_ast_free(cypher_ast_t *a) {
         break;
     case AST_CREATE:
     case AST_MERGE:
+    case AST_UNWIND:
         cypher_ast_free(a->bin.l);
+        cypher_ast_free(a->bin.r);
+        break;
+    case AST_CASE:
+        cypher_ast_free(a->bin.l);
+        cypher_ast_free(a->bin.r);
         break;
     case AST_RETURN:
         for (int i = 0; i < a->list.n; i++) cypher_ast_free(a->list.items[i]);
@@ -706,6 +938,7 @@ void cypher_ast_free(cypher_ast_t *a) {
         cypher_ast_free(a->bin.l);
         break;
     case AST_LIST:
+    case AST_REMOVE:
         for (int i = 0; i < a->list.n; i++) cypher_ast_free(a->list.items[i]);
         free(a->list.items);
         break;

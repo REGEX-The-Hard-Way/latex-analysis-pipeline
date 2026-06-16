@@ -55,7 +55,7 @@ static int run_scan_query(const char *query) {
 
     const char *label = NULL;
     const char *contains = NULL;
-    int limit = 200;
+    int limit = MAX_ROWS;
 
     /* find MATCH label */
     cypher_ast_t *match_cl = NULL;

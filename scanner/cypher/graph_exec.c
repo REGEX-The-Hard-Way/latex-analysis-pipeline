@@ -18,6 +18,30 @@
 #define FSM_TMPDIR "/tmp/cypher_fsm"
 #define MAX_FSM_SRC  (64 * 1024)
 
+/* qsort context for ORDER BY */
+static const char **gs_sort_rows;
+static int gs_sort_ncols;
+static int gs_sort_ocol[16];
+static int gs_sort_desc[16];
+static int gs_sort_nkeys;
+
+static int result_cmp(const void *va, const void *vb) {
+    const char **a = *(const char ***)va;
+    const char **b = *(const char ***)vb;
+    for (int k = 0; k < gs_sort_nkeys; k++) {
+        const char *sa = a[gs_sort_ocol[k]];
+        const char *sb = b[gs_sort_ocol[k]];
+        int cmp;
+        if (!sa && !sb) continue;
+        if (!sa) return gs_sort_desc[k] ? 1 : -1;
+        if (!sb) return gs_sort_desc[k] ? -1 : 1;
+        cmp = strcasecmp(sa, sb);
+        if (gs_sort_desc[k]) cmp = -cmp;
+        if (cmp != 0) return cmp;
+    }
+    return 0;
+}
+
 /* ---------- Phase 4: Goto-based fallback executor ---------- */
 
 static int fsm_match_label(cypher_fsm_ctx_t *ctx, uint32_t nid,
@@ -59,18 +83,34 @@ static int fsm_match_props(cypher_fsm_ctx_t *ctx, uint32_t nid,
 }
 
 static double fsm_eval_value(cypher_fsm_ctx_t *ctx, uint32_t nid,
+                               cypher_ast_t *e);
+static int fsm_eval_where(cypher_fsm_ctx_t *ctx, uint32_t nid,
+                           cypher_ast_t *e);
+
+static double fsm_eval_value(cypher_fsm_ctx_t *ctx, uint32_t nid,
                               cypher_ast_t *e) {
     graph_store_t *gs = ctx->gs;
     if (!e) return 0.0;
     if (e->type == AST_INTEGER) return (double)e->ival;
     if (e->type == AST_FLOAT)   return e->fval;
+    if (e->type == AST_BOOL)    return (double)e->ival;
     if (e->type == AST_PROP) {
         double v = gs_prop_num(gs, nid, e->prop.n->str);
         if (v == 0.0) v = (double)gs_prop_int(gs, nid, e->prop.n->str);
         return v;
     }
+    if (e->type == AST_UNARY) {
+        double v = fsm_eval_value(ctx, nid, e->una.a);
+        if (e->una.op == '-') return -v;
+        return v;
+    }
     if (e->type == AST_BINARY) {
         int op = e->bin.op;
+        if (op == TOK_LBRACKET) {
+            /* list indexing: just return 0 for now */
+            (void)fsm_eval_value(ctx, nid, e->bin.r);
+            return fsm_eval_value(ctx, nid, e->bin.l);
+        }
         double lv = fsm_eval_value(ctx, nid, e->bin.l);
         double rv = fsm_eval_value(ctx, nid, e->bin.r);
         if (op == TOK_PLUS)  return lv + rv;
@@ -78,6 +118,21 @@ static double fsm_eval_value(cypher_fsm_ctx_t *ctx, uint32_t nid,
         if (op == TOK_STAR)  return lv * rv;
         if (op == TOK_SLASH) return rv != 0.0 ? lv / rv : 0.0;
         if (op == TOK_PCT)   return (long)lv % (long)rv;
+        if (op == '^') {
+            double r = 1.0;
+            for (long i = 0; i < (long)rv; i++) r *= lv;
+            return r;
+        }
+    }
+    if (e->type == AST_CASE) {
+        for (cypher_ast_t *w = e->bin.l; w; w = w->next) {
+            if (w->type == AST_BINARY && w->bin.op == TOK_WHEN) {
+                if (fsm_eval_where(ctx, nid, w->bin.l))
+                    return fsm_eval_value(ctx, nid, w->bin.r);
+            }
+        }
+        if (e->bin.r) return fsm_eval_value(ctx, nid, e->bin.r);
+        return 0.0;
     }
     return 0.0;
 }
@@ -94,6 +149,9 @@ static int fsm_eval_where(cypher_fsm_ctx_t *ctx, uint32_t nid,
         if (op == TOK_OR)
             return fsm_eval_where(ctx, nid, e->bin.l)
                 || fsm_eval_where(ctx, nid, e->bin.r);
+        if (op == TOK_XOR)
+            return fsm_eval_where(ctx, nid, e->bin.l)
+                ^ fsm_eval_where(ctx, nid, e->bin.r);
         if (e->bin.l && e->bin.r && (op == TOK_EQ || op == TOK_NEQ
             || op == TOK_LT || op == TOK_GT || op == TOK_LE || op == TOK_GE)) {
             if (e->bin.l->type == AST_PROP) {
@@ -112,10 +170,13 @@ static int fsm_eval_where(cypher_fsm_ctx_t *ctx, uint32_t nid,
                     if (op == TOK_NEQ) return !v || !!strcmp(v, e->bin.r->str);
                     return 1;
                 }
-                if (e->bin.r->type == AST_INTEGER || e->bin.r->type == AST_FLOAT) {
+                if (e->bin.r->type == AST_INTEGER || e->bin.r->type == AST_FLOAT
+                    || e->bin.r->type == AST_BOOL) {
                     double lv = gs_prop_num(gs, nid, e->bin.l->prop.n->str);
                     if (lv == 0.0) lv = (double)gs_prop_int(gs, nid, e->bin.l->prop.n->str);
-                    double rv = e->bin.r->type == AST_INTEGER ? (double)e->bin.r->ival : e->bin.r->fval;
+                    double rv = e->bin.r->type == AST_INTEGER ? (double)e->bin.r->ival
+                              : e->bin.r->type == AST_BOOL ? (double)e->bin.r->ival
+                              : e->bin.r->fval;
                     if (op == TOK_EQ) return lv == rv;
                     if (op == TOK_NEQ) return lv != rv;
                     if (op == TOK_LT) return lv < rv;
@@ -184,6 +245,7 @@ static int fsm_eval_where(cypher_fsm_ctx_t *ctx, uint32_t nid,
             }
         }
     }
+    if (e->type == AST_BOOL) return e->ival != 0;
     if (e->type == AST_NOT) return !fsm_eval_where(ctx, nid, e->bin.l);
     return 1;
 }
@@ -230,7 +292,21 @@ static void fsm_emit_cell(cypher_fsm_ctx_t *ctx, int row, int col,
         snprintf(buf, sizeof(buf), "%d", expr->ival);
     } else if (expr->type == AST_FLOAT) {
         snprintf(buf, sizeof(buf), "%g", expr->fval);
+    } else if (expr->type == AST_BINARY) {
+        double v = fsm_eval_value(ctx, nid, expr);
+        snprintf(buf, sizeof(buf), "%g", v);
+    } else if (expr->type == AST_CASE) {
+        double v = fsm_eval_value(ctx, nid, expr);
+        snprintf(buf, sizeof(buf), "%g", v);
+    } else if (expr->type == AST_UNARY) {
+        double v = fsm_eval_value(ctx, nid, expr);
+        snprintf(buf, sizeof(buf), "%g", v);
     } else if (expr->type == AST_FUNCALL) {
+        /* for aggregates, emit the argument value */
+        if (expr->call.n > 0 && expr->call.args[0]) {
+            fsm_emit_cell(ctx, row, col, nid, expr->call.args[0]);
+            return;
+        }
         snprintf(buf, sizeof(buf), "?");
     } else {
         snprintf(buf, sizeof(buf), "?");
@@ -329,8 +405,8 @@ cypher_result_t *cypher_fsm_exec(cypher_graph_t *g, cypher_ast_t *match_cl,
         cypher_result_t *r2 = cypher_fsm_exec(g, &tmp_match, return_cl);
 
         /* cross-product */
-        for (int ri = 0; ri < r1->nrows && result->nrows < 200; ri++) {
-            for (int rj = 0; rj < r2->nrows && result->nrows < 200; rj++) {
+        for (int ri = 0; ri < r1->nrows && result->nrows < MAX_ROWS; ri++) {
+            for (int rj = 0; rj < r2->nrows && result->nrows < MAX_ROWS; rj++) {
                 cypher_result_add_row_empty(result);
                 for (int ci = 0; ci < r1->ncols; ci++)
                     cypher_result_set_cell(result, result->nrows-1, ci, r1->rows[ri][ci]);
@@ -377,6 +453,8 @@ cypher_result_t *cypher_fsm_exec(cypher_graph_t *g, cypher_ast_t *match_cl,
     cypher_ast_t *hop_props[MAX_HOPS];     /* extracted props per hop node */
     const char   *hop_edge_types[MAX_HOPS];/* edge type per hop */
     int num_hops = 0;
+    int hop_varlen_min[MAX_HOPS];
+    int hop_varlen_max[MAX_HOPS];
 
     if (match_cl && match_cl->bin.l && match_cl->bin.l->type == AST_PATTERN) {
         cypher_ast_t *pat = match_cl->bin.l;
@@ -390,11 +468,14 @@ cypher_result_t *cypher_fsm_exec(cypher_graph_t *g, cypher_ast_t *match_cl,
                 hop_props[num_hops]  = fsm_extract_props(it);
                 num_hops++;
             } else if (it->type == AST_REL_PAT && num_hops > 0) {
-                hop_rels[num_hops - 1] = it;
+                int hi = num_hops - 1;
+                hop_rels[hi] = it;
+                hop_varlen_min[hi] = it->rel.varlen_min;
+                hop_varlen_max[hi] = it->rel.varlen_max;
                 if (it->rel.labels && it->rel.labels->str[0])
-                    hop_edge_types[num_hops - 1] = it->rel.labels->str;
+                    hop_edge_types[hi] = it->rel.labels->str;
                 else
-                    hop_edge_types[num_hops - 1] = NULL;
+                    hop_edge_types[hi] = NULL;
             }
         }
         if (num_hops >= 2) has_edge = 1;
@@ -454,10 +535,12 @@ cypher_result_t *cypher_fsm_exec(cypher_graph_t *g, cypher_ast_t *match_cl,
     uint32_t hop_nids[MAX_HOPS];
     uint32_t hop_ej[MAX_HOPS];
     uint32_t hop_ec[MAX_HOPS];
+    static uint32_t vresults[1024];  /* variable-length path results */
+    static uint32_t vresults_n;
     goto state_scan;
 
 state_scan:
-    if (ci >= ncan || ctx.result->nrows >= 200) goto state_done;
+    if (ci >= ncan || ctx.result->nrows >= MAX_ROWS) goto state_done;
     nid = candidates[ci++];
     goto state_filter;
 
@@ -476,9 +559,55 @@ state_filter:
 state_expand:
     {
         uint32_t src = hop_nids[hop];
-        hop_ec[hop] = gs_edge_count(gs, src);
-        hop_ej[hop] = 0;
-        if (hop_ec[hop] == 0 && optional) goto state_emit_null;
+        int vmin = hop_varlen_min[hop];
+        int vmax = hop_varlen_max[hop];
+
+        if (vmin == 1 && vmax == 1) {
+            /* fixed 1-hop: original behavior */
+            hop_ec[hop] = gs_edge_count(gs, src);
+            hop_ej[hop] = 0;
+            if (hop_ec[hop] == 0 && optional) goto state_emit_null;
+            goto state_expand_loop;
+        }
+
+        /* variable-length: BFS collect reachable nodes within [vmin, vmax] */
+        {
+            static uint32_t vbuf[2048];
+            int head = 0, tail = 1;
+            int result_off[64], result_cnt[64];
+            vbuf[0] = src;
+            result_off[0] = 0; result_cnt[0] = 1;
+
+            for (int d = 1; d <= vmax && head < tail; d++) {
+                int layer_start = tail;
+                while (head < layer_start && tail < 2040) {
+                    uint32_t u = vbuf[head++];
+                    uint32_t ec = gs_edge_count(gs, u);
+                    for (uint32_t ej = 0; ej < ec && tail < 2040; ej++) {
+                        uint32_t d2 = gs_edge_dst(gs, u, ej);
+                        if (d2 == 0xFFFFFFFF) continue;
+                        if (hop_edge_types[hop]) {
+                            uint32_t et = gs_edge_type(gs, u, ej);
+                            if (gs_hash_str(hop_edge_types[hop]) != et) continue;
+                        }
+                        vbuf[tail++] = d2;
+                    }
+                }
+                result_off[d] = layer_start;
+                result_cnt[d] = tail - layer_start;
+            }
+
+            /* collect results: nodes at depth >= vmin and <= vmax */
+            vresults_n = 0;
+            if (vmin == 0) { vresults[vresults_n++] = src; }
+            for (int d = (vmin < 1 ? 1 : vmin); d <= vmax && d < 64; d++) {
+                for (int i = 0; i < result_cnt[d] && vresults_n < 1024; i++)
+                    vresults[vresults_n++] = vbuf[result_off[d] + i];
+            }
+            hop_ec[hop] = vresults_n;
+            hop_ej[hop] = 0;
+            goto state_varlen_loop;
+        }
     }
 state_expand_loop:
     if (hop_ej[hop] >= hop_ec[hop]) {
@@ -502,6 +631,31 @@ state_expand_loop:
             goto state_expand_loop;
         if (hop_props[tgt_idx] && !fsm_match_props(&ctx, dst, hop_props[tgt_idx]))
             goto state_expand_loop;
+
+        hop_nids[tgt_idx] = dst;
+        if (hop + 1 >= num_hops - 1) {
+            goto state_emit_multi;
+        }
+        hop++;
+        goto state_expand;
+    }
+
+state_varlen_loop:
+    if (hop_ej[hop] >= hop_ec[hop]) {
+        if (hop == 0) goto state_scan;
+        hop--;
+        hop_ej[hop]++;
+        goto state_expand_loop;
+    }
+    {
+        uint32_t dst = vresults[hop_ej[hop]++];
+        if (dst == 0xFFFFFFFF) goto state_varlen_loop;
+
+        int tgt_idx = hop + 1;
+        if (hop_labels[tgt_idx] && !fsm_match_label(&ctx, dst, hop_labels[tgt_idx]))
+            goto state_varlen_loop;
+        if (hop_props[tgt_idx] && !fsm_match_props(&ctx, dst, hop_props[tgt_idx]))
+            goto state_varlen_loop;
 
         hop_nids[tgt_idx] = dst;
         if (hop + 1 >= num_hops - 1) {
@@ -563,14 +717,47 @@ state_emit:
 state_done:
     free(candidates);
 
-    /* COUNT(*) aggregation: compress all rows into a single aggregate row */
-    for (int ci = 0; ci < return_cl->list.n; ci++) {
-        cypher_ast_t *col = return_cl->list.items[ci];
-        if (col->col.name->type == AST_FUNCALL && col->col.name->call.func
-            && !strcasecmp(col->col.name->call.func->str, "COUNT")) {
-            char buf[32];
-            snprintf(buf, sizeof(buf), "%d", ctx.result->nrows);
-            /* free all rows, create one aggregate row */
+    /* Aggregation: COUNT(*), SUM, AVG, MIN, MAX — calculate all, then emit */
+    {
+        char agg_vals[16][64];
+        int agg_cols[16], n_agg = 0;
+        for (int ci = 0; ci < return_cl->list.n; ci++) {
+            cypher_ast_t *col = return_cl->list.items[ci];
+            if (col->col.name->type != AST_FUNCALL || !col->col.name->call.func) continue;
+            const char *fnname = col->col.name->call.func->str;
+            int is_count = !strcasecmp(fnname, "COUNT");
+            int is_sum   = !strcasecmp(fnname, "SUM");
+            int is_avg   = !strcasecmp(fnname, "AVG");
+            int is_min   = !strcasecmp(fnname, "MIN");
+            int is_max   = !strcasecmp(fnname, "MAX");
+            if (!is_count && !is_sum && !is_avg && !is_min && !is_max) continue;
+
+            if (is_count) {
+                snprintf(agg_vals[n_agg], sizeof(agg_vals[0]), "%d", ctx.result->nrows);
+            } else {
+                double result = 0;
+                if (is_sum || is_avg) {
+                    for (int ri = 0; ri < ctx.result->nrows; ri++)
+                        result += strtod(ctx.result->rows[ri][ci] ? ctx.result->rows[ri][ci] : "0", NULL);
+                    if (is_avg && ctx.result->nrows > 0) result /= (double)ctx.result->nrows;
+                } else if (is_min) {
+                    result = ctx.result->nrows > 0 ? strtod(ctx.result->rows[0][ci] ? ctx.result->rows[0][ci] : "0", NULL) : 0;
+                    for (int ri = 1; ri < ctx.result->nrows; ri++) {
+                        double v = strtod(ctx.result->rows[ri][ci] ? ctx.result->rows[ri][ci] : "0", NULL);
+                        if (v < result) result = v;
+                    }
+                } else if (is_max) {
+                    result = ctx.result->nrows > 0 ? strtod(ctx.result->rows[0][ci] ? ctx.result->rows[0][ci] : "0", NULL) : 0;
+                    for (int ri = 1; ri < ctx.result->nrows; ri++) {
+                        double v = strtod(ctx.result->rows[ri][ci] ? ctx.result->rows[ri][ci] : "0", NULL);
+                        if (v > result) result = v;
+                    }
+                }
+                snprintf(agg_vals[n_agg], sizeof(agg_vals[0]), "%g", result);
+            }
+            agg_cols[n_agg++] = ci;
+        }
+        if (n_agg > 0) {
             for (int ri = 0; ri < ctx.result->nrows; ri++) {
                 for (int ck = 0; ck < ctx.result->ncols; ck++)
                     free(ctx.result->rows[ri][ck]);
@@ -578,50 +765,41 @@ state_done:
             }
             ctx.result->nrows = 0;
             cypher_result_add_row_empty(ctx.result);
-            cypher_result_set_cell(ctx.result, 0, ci, buf);
-            break;
+            for (int ai = 0; ai < n_agg; ai++)
+                cypher_result_set_cell(ctx.result, 0, agg_cols[ai], agg_vals[ai]);
         }
     }
 
     /* post-processing */
     {
         cypher_ast_t *order = return_cl->bin.r;
-        if (order) {
+        if (order && ctx.result->nrows > 1) {
             int ncols = ctx.result->ncols;
-            for (int i = 0; i < ctx.result->nrows - 1; i++) {
-                for (int j = 0; j < ctx.result->nrows - i - 1; j++) {
-                    int cmp = 0;
-                    for (cypher_ast_t *o = order; o; o = o->next) {
-                        if (o->type != AST_ORDER_ITEM) continue;
-                        const char *key = NULL;
-                        if (o->bin.l && o->bin.l->type == AST_IDENT)
-                            key = o->bin.l->str;
-                        else if (o->bin.l && o->bin.l->type == AST_PROP
-                                 && o->bin.l->prop.n)
-                            key = o->bin.l->prop.n->str;
-                        if (!key) continue;
-                        int col = -1;
-                        for (int ci = 0; ci < ncols; ci++)
-                            if (!strcmp(ctx.result->columns[ci], key)) { col = ci; break; }
-                        if (col < 0) continue;
-                        const char *a = ctx.result->rows[j][col];
-                        const char *b = ctx.result->rows[j+1][col];
-                        if (!a && !b) continue;
-                        if (!a) { cmp = -1; break; }
-                        if (!b) { cmp = 1; break; }
-                        cmp = strcasecmp(a, b);
-                        if (o->bin.op) cmp = -cmp;
-                        if (cmp != 0) break;
-                    }
-                    if (cmp > 0) {
-                        char **tmp = ctx.result->rows[j];
-                        ctx.result->rows[j] = ctx.result->rows[j+1];
-                        ctx.result->rows[j+1] = tmp;
-                    }
-                }
+            int nkeys = 0;
+            for (cypher_ast_t *o = order; o && nkeys < 16; o = o->next) {
+                if (o->type != AST_ORDER_ITEM) continue;
+                const char *key = NULL;
+                if (o->bin.l && o->bin.l->type == AST_IDENT)
+                    key = o->bin.l->str;
+                else if (o->bin.l && o->bin.l->type == AST_PROP && o->bin.l->prop.n)
+                    key = o->bin.l->prop.n->str;
+                if (!key) continue;
+                int col = -1;
+                for (int ci = 0; ci < ncols; ci++)
+                    if (!strcmp(ctx.result->columns[ci], key)) { col = ci; break; }
+                if (col < 0) continue;
+                gs_sort_ocol[nkeys] = col;
+                gs_sort_desc[nkeys] = o->bin.op;
+                nkeys++;
+            }
+            if (nkeys > 0) {
+                gs_sort_ncols = ncols;
+                gs_sort_nkeys = nkeys;
+                qsort(ctx.result->rows, (size_t)ctx.result->nrows,
+                      sizeof(char **), result_cmp);
             }
         }
-        if (return_cl->bin.op == 1) {
+        if (return_cl->rel.dir == 1) {
             int write = 0;
             for (int i = 0; i < ctx.result->nrows; i++) {
                 int dup = 0;

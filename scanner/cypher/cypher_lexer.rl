@@ -5,7 +5,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <strings.h>
 #include "cypher_parser.h"
 
 %%{
@@ -14,51 +13,7 @@
 }%%
 
 static int dispatch_keyword(cypher_token_t *t) {
-    char upper[MAX_STR];
-    int i;
-    for (i = 0; t->str[i]; i++)
-        upper[i] = (t->str[i] >= 'a' && t->str[i] <= 'z') ? t->str[i] - 32 : t->str[i];
-    upper[i] = '\0';
-
-    if (!strcmp(upper, "MATCH"))      return TOK_MATCH;
-    if (!strcmp(upper, "RETURN"))     return TOK_RETURN;
-    if (!strcmp(upper, "WHERE"))      return TOK_WHERE;
-    if (!strcmp(upper, "CREATE"))     return TOK_CREATE;
-    if (!strcmp(upper, "DELETE"))     return TOK_DELETE;
-    if (!strcmp(upper, "SET"))        return TOK_SET;
-    if (!strcmp(upper, "MERGE"))      return TOK_MERGE;
-    if (!strcmp(upper, "ORDER"))      return TOK_ORDER;
-    if (!strcmp(upper, "BY"))         return TOK_BY;
-    if (!strcmp(upper, "LIMIT"))      return TOK_LIMIT;
-    if (!strcmp(upper, "SKIP"))       return TOK_SKIP;
-    if (!strcmp(upper, "AND"))        return TOK_AND;
-    if (!strcmp(upper, "OR"))         return TOK_OR;
-    if (!strcmp(upper, "NOT"))        return TOK_NOT;
-    if (!strcmp(upper, "XOR"))        return TOK_XOR;
-    if (!strcmp(upper, "IN"))         return TOK_IN;
-    if (!strcmp(upper, "IS"))         return TOK_IS;
-    if (!strcmp(upper, "AS"))         return TOK_AS;
-    if (!strcmp(upper, "DISTINCT"))   return TOK_DISTINCT;
-    if (!strcmp(upper, "OPTIONAL"))   return TOK_OPTIONAL;
-    if (!strcmp(upper, "DETACH"))     return TOK_DETACH;
-    if (!strcmp(upper, "CONTAINS"))   return TOK_CONTAINS;
-    if (!strcmp(upper, "STARTS"))     return TOK_STARTS;
-    if (!strcmp(upper, "ENDS"))       return TOK_ENDS;
-    if (!strcmp(upper, "WITH"))       return TOK_WITH;
-    if (!strcmp(upper, "ON"))         return TOK_ON;
-    if (!strcmp(upper, "CASE"))       return TOK_CASE;
-    if (!strcmp(upper, "WHEN"))       return TOK_WHEN;
-    if (!strcmp(upper, "THEN"))       return TOK_THEN;
-    if (!strcmp(upper, "ELSE"))       return TOK_ELSE;
-    if (!strcmp(upper, "END"))        return TOK_END;
-    if (!strcmp(upper, "DESC"))       return TOK_DESC;
-    if (!strcmp(upper, "ASC"))        return TOK_ASC;
-    if (!strcmp(upper, "COUNT"))      return TOK_COUNT;
-    if (!strcmp(upper, "EXISTS"))     return TOK_EXISTS;
-    if (!strcmp(upper, "REMOVE"))     return TOK_REMOVE;
-    if (!strcmp(upper, "TRUE"))       { t->ival = 1; return TOK_BOOL; }
-    if (!strcmp(upper, "FALSE"))      { t->ival = 0; return TOK_BOOL; }
-    if (!strcmp(upper, "NULL"))       return TOK_NULL;
+    (void)t;
     return TOK_IDENT;
 }
 
@@ -76,15 +31,51 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
         id_char = letter | dgt | '_';
         id = letter id_char*;
 
+        KW_MATCH    = [Mm][Aa][Tt][Cc][Hh];
+        KW_RETURN   = [Rr][Ee][Tt][Uu][Rr][Nn];
+        KW_WHERE    = [Ww][Hh][Ee][Rr][Ee];
+        KW_CREATE   = [Cc][Rr][Ee][Aa][Tt][Ee];
+        KW_DELETE   = [Dd][Ee][Ll][Ee][Tt][Ee];
+        KW_SET      = [Ss][Ee][Tt];
+        KW_MERGE    = [Mm][Ee][Rr][Gg][Ee];
+        KW_UNWIND   = [Uu][Nn][Ww][Ii][Nn][Dd];
+        KW_ORDER    = [Oo][Rr][Dd][Ee][Rr];
+        KW_BY       = [Bb][Yy];
+        KW_LIMIT    = [Ll][Ii][Mm][Ii][Tt];
+        KW_SKIP     = [Ss][Kk][Ii][Pp];
+        KW_AND      = [Aa][Nn][Dd];
+        KW_OR       = [Oo][Rr];
+        KW_NOT      = [Nn][Oo][Tt];
+        KW_XOR      = [Xx][Oo][Rr];
+        KW_IN       = [Ii][Nn];
+        KW_IS       = [Ii][Ss];
+        KW_AS       = [Aa][Ss];
+        KW_DISTINCT = [Dd][Ii][Ss][Tt][Ii][Nn][Cc][Tt];
+        KW_OPTIONAL = [Oo][Pp][Tt][Ii][Oo][Nn][Aa][Ll];
+        KW_DETACH   = [Dd][Ee][Tt][Aa][Cc][Hh];
+        KW_CONTAINS = [Cc][Oo][Nn][Tt][Aa][Ii][Nn][Ss];
+        KW_STARTS   = [Ss][Tt][Aa][Rr][Tt][Ss];
+        KW_ENDS     = [Ee][Nn][Dd][Ss];
+        KW_WITH     = [Ww][Ii][Tt][Hh];
+        KW_ON       = [Oo][Nn];
+        KW_CASE     = [Cc][Aa][Ss][Ee];
+        KW_WHEN     = [Ww][Hh][Ee][Nn];
+        KW_THEN     = [Tt][Hh][Ee][Nn];
+        KW_ELSE     = [Ee][Ll][Ss][Ee];
+        KW_END      = [Ee][Nn][Dd];
+        KW_DESC     = [Dd][Ee][Ss][Cc];
+        KW_ASC      = [Aa][Ss][Cc];
+        KW_COUNT    = [Cc][Oo][Uu][Nn][Tt];
+        KW_EXISTS   = [Ee][Xx][Ii][Ss][Tt][Ss];
+        KW_REMOVE   = [Rr][Ee][Mm][Oo][Vv][Ee];
+        KW_TRUE     = [Tt][Rr][Uu][Ee];
+        KW_FALSE    = [Ff][Aa][Ll][Ss][Ee];
+        KW_NULL     = [Nn][Uu][Ll][Ll];
+
         main := |*
             wsp+ => { /* skip */ };
 
-            newline => {
-                if (tok_count < max_tokens) {
-                    tokens[tok_count].type = TOK_SEMI;
-                    tok_count++;
-                }
-            };
+            newline => { /* skip, consumed like whitespace */ };
 
             ';' => {
                 if (tok_count < max_tokens) {
@@ -96,6 +87,13 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
             ',' => {
                 if (tok_count < max_tokens) {
                     tokens[tok_count].type = TOK_COMMA;
+                    tok_count++;
+                }
+            };
+
+            '..' => {
+                if (tok_count < max_tokens) {
+                    tokens[tok_count].type = TOK_DOTDOT;
                     tok_count++;
                 }
             };
@@ -201,17 +199,6 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
             '+' => {
                 if (tok_count < max_tokens) {
                     tokens[tok_count].type = TOK_PLUS;
-                    tok_count++;
-                }
-            };
-
-            '-' '--' => {
-                if (tok_count < max_tokens) {
-                    tokens[tok_count].type = TOK_MINUS;
-                    tok_count++;
-                }
-                if (tok_count < max_tokens) {
-                    tokens[tok_count].type = TOK_DASH;
                     tok_count++;
                 }
             };
@@ -328,6 +315,47 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
                     tok_count++;
                 }
             };
+
+            KW_MATCH    => { tokens[tok_count].type = TOK_MATCH;    tok_count++; };
+            KW_RETURN   => { tokens[tok_count].type = TOK_RETURN;   tok_count++; };
+            KW_WHERE    => { tokens[tok_count].type = TOK_WHERE;    tok_count++; };
+            KW_CREATE   => { tokens[tok_count].type = TOK_CREATE;   tok_count++; };
+            KW_DELETE   => { tokens[tok_count].type = TOK_DELETE;   tok_count++; };
+            KW_SET      => { tokens[tok_count].type = TOK_SET;      tok_count++; };
+            KW_MERGE    => { tokens[tok_count].type = TOK_MERGE;    tok_count++; };
+            KW_UNWIND   => { tokens[tok_count].type = TOK_UNWIND;   tok_count++; };
+            KW_ORDER    => { tokens[tok_count].type = TOK_ORDER;    tok_count++; };
+            KW_BY       => { tokens[tok_count].type = TOK_BY;       tok_count++; };
+            KW_LIMIT    => { tokens[tok_count].type = TOK_LIMIT;    tok_count++; };
+            KW_SKIP     => { tokens[tok_count].type = TOK_SKIP;     tok_count++; };
+            KW_AND      => { tokens[tok_count].type = TOK_AND;      tok_count++; };
+            KW_OR       => { tokens[tok_count].type = TOK_OR;       tok_count++; };
+            KW_NOT      => { tokens[tok_count].type = TOK_NOT;      tok_count++; };
+            KW_XOR      => { tokens[tok_count].type = TOK_XOR;      tok_count++; };
+            KW_IN       => { tokens[tok_count].type = TOK_IN;       tok_count++; };
+            KW_IS       => { tokens[tok_count].type = TOK_IS;       tok_count++; };
+            KW_AS       => { tokens[tok_count].type = TOK_AS;       tok_count++; };
+            KW_DISTINCT => { tokens[tok_count].type = TOK_DISTINCT; tok_count++; };
+            KW_OPTIONAL => { tokens[tok_count].type = TOK_OPTIONAL; tok_count++; };
+            KW_DETACH   => { tokens[tok_count].type = TOK_DETACH;   tok_count++; };
+            KW_CONTAINS => { tokens[tok_count].type = TOK_CONTAINS; tok_count++; };
+            KW_STARTS   => { tokens[tok_count].type = TOK_STARTS;   tok_count++; };
+            KW_ENDS     => { tokens[tok_count].type = TOK_ENDS;     tok_count++; };
+            KW_WITH     => { tokens[tok_count].type = TOK_WITH;     tok_count++; };
+            KW_ON       => { tokens[tok_count].type = TOK_ON;       tok_count++; };
+            KW_CASE     => { tokens[tok_count].type = TOK_CASE;     tok_count++; };
+            KW_WHEN     => { tokens[tok_count].type = TOK_WHEN;     tok_count++; };
+            KW_THEN     => { tokens[tok_count].type = TOK_THEN;     tok_count++; };
+            KW_ELSE     => { tokens[tok_count].type = TOK_ELSE;     tok_count++; };
+            KW_END      => { tokens[tok_count].type = TOK_END;      tok_count++; };
+            KW_DESC     => { tokens[tok_count].type = TOK_DESC;     tok_count++; };
+            KW_ASC      => { tokens[tok_count].type = TOK_ASC;      tok_count++; };
+            KW_COUNT    => { tokens[tok_count].type = TOK_COUNT;    tok_count++; };
+            KW_EXISTS   => { tokens[tok_count].type = TOK_EXISTS;   tok_count++; };
+            KW_REMOVE   => { tokens[tok_count].type = TOK_REMOVE;   tok_count++; };
+            KW_TRUE     => { tokens[tok_count].type = TOK_BOOL; tokens[tok_count].ival = 1; tok_count++; };
+            KW_FALSE    => { tokens[tok_count].type = TOK_BOOL; tokens[tok_count].ival = 0; tok_count++; };
+            KW_NULL     => { tokens[tok_count].type = TOK_NULL;     tok_count++; };
 
             id => {
                 if (tok_count < max_tokens) {
