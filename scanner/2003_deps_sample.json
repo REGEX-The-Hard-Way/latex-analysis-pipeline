@@ -1,0 +1,764 @@
+{ "analyzed_at": "2026-06-16T03:22:23+00:00", "pdflatex_available": false, "files": [
+  {
+    "file": "0301001.tex",
+    "docclass": "article
+article",
+    "packages": "amsmath,amsfonts,amssymb,latexsym,cite romp34,amsmath,amsfonts,amssymb,latexsym,cite",
+    "newcommands": 93,
+    "labels": 0,
+    "refs": 0,
+    "cites": 16,
+    "includes_count": 0,
+    "missing_images": "",
+    "missing_inputs": "",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301002.tex",
+    "docclass": "article",
+    "packages": "color psfig",
+    "newcommands": 49,
+    "labels": 12,
+    "refs": 10,
+    "cites": 42,
+    "includes_count": 0,
+    "missing_images": "",
+    "missing_inputs": "",
+    "missing_bibs": "univ",
+    "bibstyle": "ssg"
+  }
+,
+  {
+    "file": "0301003.tex",
+    "docclass": "",
+    "packages": "",
+    "newcommands": 5,
+    "labels": 0,
+    "refs": 0,
+    "cites": 15,
+    "includes_count": 0,
+    "missing_images": "",
+    "missing_inputs": "",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301004.tex",
+    "docclass": "article",
+    "packages": "cite epsfig",
+    "newcommands": 2,
+    "labels": 0,
+    "refs": 0,
+    "cites": 18,
+    "includes_count": 0,
+    "missing_images": "",
+    "missing_inputs": "",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301005.tex",
+    "docclass": "article",
+    "packages": "amssymb colordvi latexsym lscape slashed,cite",
+    "newcommands": 26,
+    "labels": 61,
+    "refs": 38,
+    "cites": 33,
+    "includes_count": 0,
+    "missing_images": "",
+    "missing_inputs": "",
+    "missing_bibs": "refd5conf,refLectParis",
+    "bibstyle": "Oviedo"
+  }
+,
+  {
+    "file": "0301006.tex",
+    "docclass": "",
+    "packages": "",
+    "newcommands": 160,
+    "labels": 0,
+    "refs": 0,
+    "cites": 1,
+    "includes_count": 0,
+    "missing_images": "",
+    "missing_inputs": "",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301007.tex",
+    "docclass": "article",
+    "packages": "a4wide amsmath epsfig",
+    "newcommands": 16,
+    "labels": 30,
+    "refs": 21,
+    "cites": 13,
+    "includes_count": 0,
+    "missing_images": "",
+    "missing_inputs": "",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301008.tex_cleaned.tex",
+    "docclass": "revtex4",
+    "packages": "bm dcolumn graphicx",
+    "newcommands": 20,
+    "labels": 55,
+    "refs": 49,
+    "cites": 78,
+    "includes_count": 0,
+    "missing_images": "",
+    "missing_inputs": "",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301009.tex",
+    "docclass": "",
+    "packages": "",
+    "newcommands": 87,
+    "labels": 28,
+    "refs": 1,
+    "cites": 68,
+    "includes_count": 0,
+    "missing_images": "",
+    "missing_inputs": "",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301010.tex",
+    "docclass": "",
+    "packages": "",
+    "newcommands": 15,
+    "labels": 41,
+    "refs": 20,
+    "cites": 81,
+    "includes_count": 0,
+    "missing_images": "",
+    "missing_inputs": "",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301011.tex",
+    "docclass": "",
+    "packages": "",
+    "newcommands": 105,
+    "labels": 24,
+    "refs": 20,
+    "cites": 49,
+    "includes_count": 0,
+    "missing_images": "",
+    "missing_inputs": "",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301012.tex",
+    "docclass": "article",
+    "packages": "",
+    "newcommands": 3,
+    "labels": 10,
+    "refs": 8,
+    "cites": 31,
+    "includes_count": 0,
+    "missing_images": "",
+    "missing_inputs": "",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301013.tex",
+    "docclass": "revtex4
+revtex4",
+    "packages": "amscd amsfonts amssymb amsthm epsfig graphicx",
+    "newcommands": 38,
+    "labels": 45,
+    "refs": 23,
+    "cites": 53,
+    "includes_count": 1,
+    "missing_images": "qcd1bfig.eps",
+    "missing_inputs": "psfig.sty",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301014.tex",
+    "docclass": "article",
+    "packages": "amsfonts amsmath amssymb graphicx",
+    "newcommands": 3,
+    "labels": 0,
+    "refs": 0,
+    "cites": 33,
+    "includes_count": 0,
+    "missing_images": "",
+    "missing_inputs": "",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301015.tex",
+    "docclass": "article",
+    "packages": "amsmath,amssymb,amsopn,amsthm,times,cite",
+    "newcommands": 27,
+    "labels": 24,
+    "refs": 4,
+    "cites": 41,
+    "includes_count": 0,
+    "missing_images": "",
+    "missing_inputs": "",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301016.tex",
+    "docclass": "article",
+    "packages": "amsfonts epsfig graphicx sc3conf",
+    "newcommands": 84,
+    "labels": 23,
+    "refs": 19,
+    "cites": 16,
+    "includes_count": 0,
+    "missing_images": "",
+    "missing_inputs": "",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301017.tex",
+    "docclass": "article",
+    "packages": "amssymb graphicx latexsym longtable",
+    "newcommands": 11,
+    "labels": 18,
+    "refs": 12,
+    "cites": 49,
+    "includes_count": 2,
+    "missing_images": "e10-dynkin.eps e11-dynkin.eps",
+    "missing_inputs": "",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301018.tex",
+    "docclass": "article
+article",
+    "packages": "",
+    "newcommands": 0,
+    "labels": 36,
+    "refs": 22,
+    "cites": 54,
+    "includes_count": 0,
+    "missing_images": "",
+    "missing_inputs": "",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301019.tex",
+    "docclass": "article",
+    "packages": "amsmath ascmac epsf",
+    "newcommands": 4,
+    "labels": 64,
+    "refs": 30,
+    "cites": 24,
+    "includes_count": 0,
+    "missing_images": "",
+    "missing_inputs": "",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301020.tex",
+    "docclass": "article",
+    "packages": "amssymb fortschritte",
+    "newcommands": 77,
+    "labels": 8,
+    "refs": 1,
+    "cites": 29,
+    "includes_count": 0,
+    "missing_images": "",
+    "missing_inputs": "",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301021.tex",
+    "docclass": "",
+    "packages": "",
+    "newcommands": 36,
+    "labels": 10,
+    "refs": 8,
+    "cites": 35,
+    "includes_count": 0,
+    "missing_images": "",
+    "missing_inputs": "",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301022.tex",
+    "docclass": "article",
+    "packages": "curves graphicx latexsym psfrag",
+    "newcommands": 207,
+    "labels": 40,
+    "refs": 11,
+    "cites": 24,
+    "includes_count": 0,
+    "missing_images": "",
+    "missing_inputs": "",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301023.tex",
+    "docclass": "",
+    "packages": "",
+    "newcommands": 28,
+    "labels": 16,
+    "refs": 7,
+    "cites": 24,
+    "includes_count": 0,
+    "missing_images": "",
+    "missing_inputs": "title2.tex",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301024.tex",
+    "docclass": "iopart",
+    "packages": "epsf,amssymb iopams",
+    "newcommands": 1,
+    "labels": 6,
+    "refs": 5,
+    "cites": 17,
+    "includes_count": 0,
+    "missing_images": "",
+    "missing_inputs": "",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301025.tex",
+    "docclass": "",
+    "packages": "",
+    "newcommands": 6,
+    "labels": 15,
+    "refs": 13,
+    "cites": 25,
+    "includes_count": 0,
+    "missing_images": "",
+    "missing_inputs": "",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301026.tex",
+    "docclass": "article",
+    "packages": "amsbsy amsfonts epsfig latexsym",
+    "newcommands": 17,
+    "labels": 80,
+    "refs": 59,
+    "cites": 55,
+    "includes_count": 3,
+    "missing_images": "boltnewN.eps nutboltN.eps SchnewN.eps",
+    "missing_inputs": "",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301027.tex",
+    "docclass": "article",
+    "packages": "",
+    "newcommands": 97,
+    "labels": 13,
+    "refs": 10,
+    "cites": 30,
+    "includes_count": 0,
+    "missing_images": "",
+    "missing_inputs": "epsf.sty",
+    "missing_bibs": "",
+    "bibstyle": "unsrt
+unsrt"
+  }
+,
+  {
+    "file": "0301028.tex",
+    "docclass": "article",
+    "packages": "a4wide, amssymb, latexsym, epsfig",
+    "newcommands": 190,
+    "labels": 19,
+    "refs": 13,
+    "cites": 15,
+    "includes_count": 0,
+    "missing_images": "",
+    "missing_inputs": "",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301029.tex",
+    "docclass": "",
+    "packages": "",
+    "newcommands": 1,
+    "labels": 0,
+    "refs": 0,
+    "cites": 0,
+    "includes_count": 0,
+    "missing_images": "",
+    "missing_inputs": "",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301030.tex",
+    "docclass": "JHEP3",
+    "packages": "",
+    "newcommands": 0,
+    "labels": 0,
+    "refs": 0,
+    "cites": 29,
+    "includes_count": 0,
+    "missing_images": "",
+    "missing_inputs": "",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301031.tex",
+    "docclass": "revtex4
+revtex4
+revtex4",
+    "packages": "",
+    "newcommands": 17,
+    "labels": 31,
+    "refs": 23,
+    "cites": 8,
+    "includes_count": 0,
+    "missing_images": "",
+    "missing_inputs": "",
+    "missing_bibs": "",
+    "bibstyle": "apsrev"
+  }
+,
+  {
+    "file": "0301032.tex",
+    "docclass": "",
+    "packages": "",
+    "newcommands": 90,
+    "labels": 27,
+    "refs": 26,
+    "cites": 29,
+    "includes_count": 0,
+    "missing_images": "",
+    "missing_inputs": "",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301033.tex",
+    "docclass": "article
+article",
+    "packages": "amsfonts amsmath amssymb",
+    "newcommands": 26,
+    "labels": 67,
+    "refs": 42,
+    "cites": 34,
+    "includes_count": 0,
+    "missing_images": "",
+    "missing_inputs": "",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301034.tex",
+    "docclass": "",
+    "packages": "",
+    "newcommands": 11,
+    "labels": 6,
+    "refs": 6,
+    "cites": 19,
+    "includes_count": 0,
+    "missing_images": "",
+    "missing_inputs": "tcilatex",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301035.tex",
+    "docclass": "",
+    "packages": "",
+    "newcommands": 110,
+    "labels": 51,
+    "refs": 1,
+    "cites": 48,
+    "includes_count": 0,
+    "missing_images": "",
+    "missing_inputs": "",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301036.tex",
+    "docclass": "article",
+    "packages": "amssymb,epsfig,amsmath,euscript,array cite graphics psfrag",
+    "newcommands": 183,
+    "labels": 52,
+    "refs": 1,
+    "cites": 52,
+    "includes_count": 0,
+    "missing_images": "",
+    "missing_inputs": "",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301037.tex",
+    "docclass": "iopart",
+    "packages": "iopams xy",
+    "newcommands": 69,
+    "labels": 0,
+    "refs": 0,
+    "cites": 0,
+    "includes_count": 0,
+    "missing_images": "",
+    "missing_inputs": "",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301038.tex",
+    "docclass": "",
+    "packages": "",
+    "newcommands": 15,
+    "labels": 0,
+    "refs": 0,
+    "cites": 0,
+    "includes_count": 0,
+    "missing_images": "",
+    "missing_inputs": "",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301039.tex",
+    "docclass": "article",
+    "packages": "amsfonts amsmath amssymb amsthm graphicx hyperref latexsym showkeys srcltx",
+    "newcommands": 102,
+    "labels": 11,
+    "refs": 0,
+    "cites": 19,
+    "includes_count": 0,
+    "missing_images": "",
+    "missing_inputs": "",
+    "missing_bibs": "E:/Physics/Bibliography/master2",
+    "bibstyle": "utphys"
+  }
+,
+  {
+    "file": "0301040.tex",
+    "docclass": "article",
+    "packages": "amsfonts amsmath cite graphicx",
+    "newcommands": 41,
+    "labels": 109,
+    "refs": 15,
+    "cites": 61,
+    "includes_count": 1,
+    "missing_images": "auto.eps",
+    "missing_inputs": "",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301041.tex",
+    "docclass": "revtex4",
+    "packages": "bm dcolumn graphicx",
+    "newcommands": 0,
+    "labels": 10,
+    "refs": 10,
+    "cites": 10,
+    "includes_count": 0,
+    "missing_images": "",
+    "missing_inputs": "",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301042.tex",
+    "docclass": "revtex4
+revtex4
+revtex
+revtex4
+revtex4",
+    "packages": "epsfig",
+    "newcommands": 96,
+    "labels": 90,
+    "refs": 37,
+    "cites": 60,
+    "includes_count": 3,
+    "missing_images": "KTRG phase spectrum",
+    "missing_inputs": "",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301043.tex",
+    "docclass": "",
+    "packages": "",
+    "newcommands": 1,
+    "labels": 165,
+    "refs": 82,
+    "cites": 18,
+    "includes_count": 0,
+    "missing_images": "",
+    "missing_inputs": "",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301044.tex_cleaned.tex",
+    "docclass": "kluwer
+article",
+    "packages": "wrapfig,graphicx",
+    "newcommands": 31,
+    "labels": 14,
+    "refs": 11,
+    "cites": 14,
+    "includes_count": 1,
+    "missing_images": "press.ps",
+    "missing_inputs": "",
+    "missing_bibs": "short",
+    "bibstyle": "klunum"
+  }
+,
+  {
+    "file": "0301045.tex",
+    "docclass": "article",
+    "packages": "graphicx",
+    "newcommands": 61,
+    "labels": 19,
+    "refs": 14,
+    "cites": 8,
+    "includes_count": 3,
+    "missing_images": "fig1.eps fig2.eps fig3.eps",
+    "missing_inputs": "",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301046.tex",
+    "docclass": "revtex4
+revtex4",
+    "packages": "bm graphicx",
+    "newcommands": 0,
+    "labels": 49,
+    "refs": 39,
+    "cites": 46,
+    "includes_count": 11,
+    "missing_images": "ds_c_1.eps ds_c_2.eps ds_c_3.eps ds_d.eps ds_hyperb.eps g1_ds.eps g2_ds.eps g3_ds.eps hyp.eps range_m.eps range_q.eps",
+    "missing_inputs": "",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301047.tex",
+    "docclass": "article",
+    "packages": "amsmath amssymb,graphicx epsfig",
+    "newcommands": 23,
+    "labels": 53,
+    "refs": 45,
+    "cites": 22,
+    "includes_count": 0,
+    "missing_images": "",
+    "missing_inputs": "",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301048.tex",
+    "docclass": "article",
+    "packages": "graphicx showkeys type1cm",
+    "newcommands": 80,
+    "labels": 40,
+    "refs": 26,
+    "cites": 53,
+    "includes_count": 2,
+    "missing_images": "f1 f2",
+    "missing_inputs": "",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301049.tex",
+    "docclass": "",
+    "packages": "",
+    "newcommands": 40,
+    "labels": 59,
+    "refs": 48,
+    "cites": 28,
+    "includes_count": 0,
+    "missing_images": "",
+    "missing_inputs": "",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+,
+  {
+    "file": "0301050.tex",
+    "docclass": "iopart",
+    "packages": "",
+    "newcommands": 384,
+    "labels": 0,
+    "refs": 1,
+    "cites": 21,
+    "includes_count": 0,
+    "missing_images": "",
+    "missing_inputs": "iopart1@ptsize.clo",
+    "missing_bibs": "",
+    "bibstyle": ""
+  }
+]}

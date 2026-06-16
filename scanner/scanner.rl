@@ -115,22 +115,45 @@ static int g_in_math = 0;
 
   # Math relations
   math_rel   = '=' | '\\lt' | '\\gt' | '\\leq' | '\\geq' | '\\le' | '\\ge'
+             | '\\leqslant' | '\\geqslant'
              | '\\equiv' | '\\approx' | '\\sim' | '\\propto'
              | '\\simeq' | '\\cong' | '\\neq' | '\\ne' | '<' | '>'
-             | '\\ll' | '\\gg' | '\\perp' | '\\parallel' ;
+             | '\\ll' | '\\gg' | '\\perp' | '\\parallel'
+             | '\\not\\equiv' ;
 
   # Math functions
-  math_fn    = '\\sin' | '\\cos' | '\\tan' | '\\log' | '\\ln' | '\\exp'
+  math_fn    = '\\sin' | '\\cos' | '\\tan' | '\\csc' | '\\sec' | '\\cot'
+             | '\\arcsin' | '\\arccos' | '\\arctan' | '\\arccsc' | '\\arcsec' | '\\arccot'
+             | '\\sinh' | '\\cosh' | '\\tanh'
+             | '\\arsinh' | '\\arcosh' | '\\artanh'
+             | '\\arcsinh' | '\\arccosh' | '\\arctanh'
+             | '\\log' | '\\ln' | '\\exp'
              | '\\lim' | '\\sum' | '\\prod' | '\\int' | '\\oint'
              | '\\max' | '\\min' | '\\sup' | '\\inf' | '\\det'
-             | '\\gcd' | '\\lcm';
+             | '\\gcd' | '\\lcm' | '\\deg'
+             | '\\dim' | '\\hom' | '\\ker' | '\\Pr' ;
 
-  # Greek letters (lowercase)
+  # Greek letters (all variants, lowercase + uppercase)
   math_greek = '\\alpha' | '\\beta' | '\\gamma' | '\\delta' | '\\epsilon'
-             | '\\zeta' | '\\eta' | '\\theta' | '\\iota' | '\\kappa'
-             | '\\lambda' | '\\mu' | '\\nu' | '\\xi' | '\\pi'
-             | '\\rho' | '\\sigma' | '\\tau' | '\\upsilon' | '\\phi'
-             | '\\chi' | '\\psi' | '\\omega' ;
+             | '\\varepsilon' | '\\zeta' | '\\eta' | '\\theta' | '\\vartheta'
+             | '\\iota' | '\\kappa' | '\\lambda' | '\\mu' | '\\nu' | '\\xi'
+             | '\\pi' | '\\varpi' | '\\rho' | '\\varrho' | '\\sigma' | '\\varsigma'
+             | '\\tau' | '\\upsilon' | '\\phi' | '\\varphi'
+             | '\\chi' | '\\psi' | '\\omega' | '\\omicron'
+             | '\\Gamma' | '\\Delta' | '\\Theta' | '\\Lambda' | '\\Xi' | '\\Pi'
+             | '\\Sigma' | '\\Upsilon' | '\\Phi' | '\\Psi' | '\\Omega' ;
+
+  # Special math symbols
+  math_sym   = '\\partial' | '\\infty' | '\\emptyset' | '\\varnothing'
+             | '\\nabla' | '\\triangle' | '\\angle' | '\\square'
+             | '\\hbar' | '\\ell' | '\\wp' | '\\Im' | '\\Re'
+             | '\\forall' | '\\exists' | '\\nexists' | '\\neg' | '\\lnot'
+             | '\\in' | '\\notin' | '\\ni' | '\\subset' | '\\supset'
+             | '\\subseteq' | '\\supseteq' | '\\to' | '\\rightarrow'
+             | '\\leftarrow' | '\\leftrightarrow' | '\\Rightarrow' | '\\Leftarrow'
+             | '\\mapsto' | '\\longmapsto' | '\\longrightarrow'
+             | '\\cdots' | '\\vdots' | '\\ddots'
+             | '\\therefore' | '\\because' | '\\diamond' ;
 
   # Math numbers
   math_num   = digit+ ;
@@ -167,6 +190,12 @@ main :=|*
   author             => { EMIT_BLOCK("author",7,1); };
   affiliation 		=> { EMIT("affiliation"); };
   usepackage             => { EMIT("usepackage"); };
+  includegraphics        => { EMIT("includegraphics"); };
+  bibliography           => { EMIT("bibliography"); };
+  bibliographystyle      => { EMIT("bibliographystyle"); };
+  include_cmd            => { EMIT("include"); };
+  input_cmd              => { EMIT("input"); };
+  documentclass          => { EMIT("documentclass"); };
   title => { EMIT("title"); };
   email => { EMIT("email"); };
   address => { EMIT("address"); };
@@ -184,6 +213,7 @@ main :=|*
   math_rel            => { if (g_in_math) EMIT("math_rel"); };
   math_fn             => { if (g_in_math) EMIT("math_fn"); };
   math_greek          => { if (g_in_math) EMIT("math_greek"); };
+  math_sym            => { if (g_in_math) EMIT("math_sym"); };
   math_num            => { if (g_in_math) EMIT("math_num"); };
   math_var            => { if (g_in_math) EMIT("math_var"); };
   comment            => { EMIT("comment");};
