@@ -8,7 +8,7 @@
 
 #define MAX_STR    256
 #define MAX_TOKENS 1024
-#define MAX_ROWS   200
+#define MAX_ROWS   10000
 
 typedef enum {
     TOK_EOF = 0,
@@ -27,6 +27,9 @@ typedef enum {
     TOK_ON, TOK_CASE, TOK_WHEN, TOK_THEN, TOK_ELSE, TOK_END,
     TOK_DESC, TOK_ASC, TOK_COUNT, TOK_EXISTS, TOK_REMOVE, TOK_UNION,
     TOK_DOTDOT,
+    /* extended grammar */
+    TOK_CALL, TOK_YIELD, TOK_ALL, TOK_ANY, TOK_NONE, TOK_SINGLE,
+    TOK_PLUSEQ,
 } cypher_tok_type_t;
 
 typedef struct {
@@ -46,7 +49,8 @@ typedef enum {
     AST_IDENT, AST_STRING, AST_INTEGER, AST_FLOAT, AST_BOOL, AST_NULL,
     AST_BINARY, AST_UNARY, AST_NOT, AST_PROP, AST_LABEL,
     AST_ORDER_ITEM, AST_COLUMN, AST_FUNCALL,
-    AST_LIMIT, AST_SKIP, AST_WITH,     AST_LIST, AST_REMOVE
+    AST_LIMIT, AST_SKIP, AST_WITH, AST_LIST, AST_REMOVE,
+    AST_CALL, AST_UNION, AST_YIELD
 } cypher_ast_type_t;
 
 typedef struct cypher_ast {

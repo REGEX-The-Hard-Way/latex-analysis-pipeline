@@ -22,15 +22,10 @@ Generated 2026-06-12 from a full project audit. Last updated 2026-06-13.
 
 ## 1. Orphaned / Old Source Files
 
-### `include/old/newcommand.c` (1400+ lines)
-- **Status:** Archived original from upstream `allofphysicsgraph/latex-in-arxiv`.
-- **Why dead:** The active implementation is `include/macro_expander.c` (907 lines), which is a complete rewrite with proper TeX token-level expansion (`\def`, `\edef`, `\xdef`, `\let`, `\expandafter`, `\aftergroup`, `\noexpand`).
-- **Action:** Keep as `include/old/` for historical reference, or move to a git tag.
+### `include/old/newcommand.c` — REMOVED
+- **Status:** Deleted. The active implementation is `scanner/newcommand.c`.
 
-### `scanner/latex_macro.rl` (156 lines)
-- **Status:** Incomplete Ragel-based macro expander.
-- **Why dead:** All action blocks are empty stubs (`action collect_keyword { }`, `action store_macro { }`, etc.). The machine definition is purely structural with no actual behavior. The active macro expander is `include/macro_expander.c` in C.
-- **Action:** Delete `scanner/latex_macro.rl`.
+### `scanner/latex_macro.rl` — DELETED
 
 ### `sandbox/macro_statechart.rl` (202 lines)
 - **Status:** Experimental Ragel statechart-based macro expander.
@@ -190,7 +185,7 @@ macro_expander:
 ## 10. Recommended Cleanup Order
 
 ### Immediate (safe deletes — zero risk):
-- [ ] Delete `scanner/latex_macro.rl` (empty stub)
+- [x] Deleted `scanner/latex_macro.rl` (empty stub)
 - [ ] Delete `sandbox/macro_statechart.rl` (incomplete)
 - [ ] Delete `sandbox/macro_expander.c` (duplicate of include/)
 - [ ] Delete `scanner/expand_macros.sh` (duplicate)
@@ -211,7 +206,7 @@ macro_expander:
 - [ ] Fix `docs/ARCHITECTURE.md` file paths (say `include/macro_expander.c`, not root-level or `.cpp`)
 
 ### Medium-term (decisions needed):
-- [ ] Decide fate of `include/old/` — archive branch or delete
+- [x] Deleted `include/old/newcommand.c`
 - [ ] Populate `examples/` with real files or remove directory
 - [ ] Move `sandbox/pyproject.toml` to root, or create root-level pyproject.toml
 - [ ] Remove unused globals from `include/macro_expander.c` (g_parsed_defs etc.)

@@ -11,10 +11,10 @@ sent_split:
 	ragel -m -G2 sent_split.rl
 	$(CC) -DTEST -O2  sent_split.c -o sent_split.out
 
-macro_expander:
-	$(CC) -O2 -I../include -DMACRO_EXPANDER_STANDALONE ../include/macro_expander.c ../include/regex_util.c -o macro_expander.out -lm
+newcommand:
+	$(CC) -O2 newcommand.c -o newcommand.out
 
-build_macros: macro_expander
+build_macros: newcommand
 
 cypher_repl:
 	$(MAKE) -C cypher all
@@ -27,4 +27,4 @@ get_sample_data:
 	bash pre-process-dataset.sh
 
 clean:
-	rm -f scanner.out sent_split.out scanner.c sent_split.c macro_expander.out
+	rm -f scanner.out sent_split.out scanner.c sent_split.c newcommand.out

@@ -81,7 +81,7 @@ make get_sample_data
 | `murmur3.c` | MurmurHash3 for token/filename hashing |
 | `json_escape.c/h` | JSON escaping for sidecar output |
 | `file_mmap.c/h` | Memory-mapped file I/O |
-| `latex_macro.rl` | Experimental Ragel macro parser |
+
 | `sound1.tex` | Test fixture (single equation with label) |
 | `test_context.tex` | Context-aware math test |
 | `2003/` | 1019 arXiv hep-th papers for benchmarking |

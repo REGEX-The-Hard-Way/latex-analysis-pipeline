@@ -264,10 +264,13 @@ static void fsm_emit_cell(cypher_fsm_ctx_t *ctx, int row, int col,
                      pi < gs->prop_count && pi < gs->nodes[nid].props_off + gs->nodes[nid].prop_count
                      && off < 480; pi++) {
                     char *vbuf = gs->val_data + gs->props[pi].val_off;
-                    if (vbuf[0] != 0) continue;
                     if (!first) off += snprintf(buf + off, sizeof(buf) - off, ", ");
                     first = 0;
-                    if (off < 480) off += snprintf(buf + off, sizeof(buf) - off, "%s", vbuf + 1);
+                    if (vbuf[0] == 0) {
+                        if (off < 480) off += snprintf(buf + off, sizeof(buf) - off, "%s", vbuf + 1);
+                    } else if (vbuf[0] == 1) {
+                        if (off < 480) off += snprintf(buf + off, sizeof(buf) - off, "%s", vbuf + 1);
+                    }
                 }
             }
             if (off < 500) snprintf(buf + off, sizeof(buf) - off, ")");
@@ -336,6 +339,20 @@ static cypher_ast_t *fsm_extract_props(cypher_ast_t *node_pat) {
         p = nxt;
     }
     return props;
+}
+
+/* extract the first variable name referenced in a WHERE expression */
+static const char *fsm_first_var(cypher_ast_t *e) {
+    if (!e) return NULL;
+    if (e->type == AST_PROP && e->prop.e && e->prop.e->type == AST_IDENT)
+        return e->prop.e->str;
+    if (e->type == AST_NOT) return fsm_first_var(e->bin.l);
+    if (e->type == AST_BINARY) {
+        const char *k = fsm_first_var(e->bin.l);
+        if (k) return k;
+        return fsm_first_var(e->bin.r);
+    }
+    return NULL;
 }
 
 /* extract the first property key referenced in a WHERE expression */
@@ -552,7 +569,18 @@ state_scan:
 state_filter:
     if (labels && !fsm_match_label(&ctx, nid, labels)) goto state_scan;
     if (props && !fsm_match_props(&ctx, nid, props)) goto state_scan;
-    if (where && !fsm_eval_where(&ctx, nid, where)) goto state_scan;
+    /* WHERE: evaluate against source if source variable referenced;
+       for edge queries, target references are deferred to expand loop */
+    if (where) {
+        int eval_where = 1;
+        if (has_edge && hop_nodes[0] && hop_nodes[0]->node.name) {
+            const char *src_var = hop_nodes[0]->node.name->str;
+            const char *wvar = fsm_first_var(where);
+            /* if WHERE property references a different variable, defer */
+            if (wvar && src_var && strcmp(wvar, src_var)) eval_where = 0;
+        }
+        if (eval_where && !fsm_eval_where(&ctx, nid, where)) goto state_scan;
+    }
     if (has_edge) {
         hop = 0;
         hop_nids[0] = nid;
@@ -636,6 +664,13 @@ state_expand_loop:
             goto state_expand_loop;
         if (hop_props[tgt_idx] && !fsm_match_props(&ctx, dst, hop_props[tgt_idx]))
             goto state_expand_loop;
+        /* evaluate WHERE against target only if it references target variable */
+        if (where) {
+            const char *src_var = hop_nodes[0] && hop_nodes[0]->node.name ? hop_nodes[0]->node.name->str : NULL;
+            const char *wvar = fsm_first_var(where);
+            if (!wvar || !src_var || strcmp(wvar, src_var))
+                if (!fsm_eval_where(&ctx, dst, where)) goto state_expand_loop;
+        }
 
         hop_nids[tgt_idx] = dst;
         if (hop + 1 >= num_hops - 1) {
@@ -661,6 +696,12 @@ state_varlen_loop:
             goto state_varlen_loop;
         if (hop_props[tgt_idx] && !fsm_match_props(&ctx, dst, hop_props[tgt_idx]))
             goto state_varlen_loop;
+        if (where) {
+            const char *src_var = hop_nodes[0] && hop_nodes[0]->node.name ? hop_nodes[0]->node.name->str : NULL;
+            const char *wvar = fsm_first_var(where);
+            if (!wvar || !src_var || strcmp(wvar, src_var))
+                if (!fsm_eval_where(&ctx, dst, where)) goto state_varlen_loop;
+        }
 
         hop_nids[tgt_idx] = dst;
         if (hop + 1 >= num_hops - 1) {

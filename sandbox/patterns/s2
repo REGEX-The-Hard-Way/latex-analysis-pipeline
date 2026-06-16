@@ -1,0 +1,3 @@
+s/main:\s*\n\s*=/  main:=/g
+s/\}\s*\n\%\%/\}\%\%/g
+s/ int main(.*)/\nint main\1/g

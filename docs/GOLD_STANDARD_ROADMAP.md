@@ -44,12 +44,12 @@ Current overall grade: **C+ → B-**. The path to A+ is defined below.
 ### 0.2 Eliminate Dead Code
 
 As identified in `docs/DEAD_CODE_REPORT.md`:
-- Delete empty stub files: `scanner/latex_macro.rl`, `sandbox/macro_statechart.rl`
+- Delete empty stub files: `sandbox/macro_statechart.rl`
 - Delete duplicates: `sandbox/macro_expander.c`, `scanner/expand_macros.sh`, `sandbox/expand_macros.sh`, `scanner/build_multi_analyzer.sh`
 - Delete broken/abandoned: `sandbox/read_tok.py`, `sandbox/resolve_ref_labels.py`
 - Delete `docs/issues/` directory (26 upstream mirror files)
 - Remove unused code: commented-out `main()` in `murmur3.c`, `EMIT` macro in `scanner.rl` if unused, dead globals in `macro_expander.c`
-- Decision: archive `include/old/` branch or delete
+- [x] Deleted `include/old/newcommand.c` (spacing corruption in "expand-then-recompile" mode)
 
 ### 0.3 Fix Makefile
 

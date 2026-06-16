@@ -103,6 +103,29 @@ void cypher_result_free(cypher_result_t *r) {
 }
 /* ---- mutations ---- */
 
+static double eval_const_expr(cypher_ast_t *e) {
+    if (!e) return 0.0;
+    if (e->type == AST_INTEGER) return (double)e->ival;
+    if (e->type == AST_FLOAT)   return e->fval;
+    if (e->type == AST_UNARY) {
+        double v = eval_const_expr(e->una.a);
+        return e->una.op == '-' ? -v : v;
+    }
+    if (e->type == AST_BINARY) {
+        double l = eval_const_expr(e->bin.l);
+        double r = eval_const_expr(e->bin.r);
+        switch (e->bin.op) {
+            case '+': case TOK_PLUS:  return l + r;
+            case '-': case TOK_MINUS: return l - r;
+            case '*': case TOK_STAR:  return l * r;
+            case '/': case TOK_SLASH: return r != 0 ? l / r : 0;
+            case '%': case TOK_PCT:   return (long)l % (long)r;
+            default: return 0.0;
+        }
+    }
+    return 0.0;
+}
+
 static void apply_set(cypher_graph_t *g, cypher_ast_t *set) {
     graph_store_t *gs = g->gs;
     for (int i = 0; i < set->list.n; i++) {
@@ -140,6 +163,10 @@ static void apply_set(cypher_graph_t *g, cypher_ast_t *set) {
                 double v = rhs->una.op == '-' ? -(double)rhs->una.a->ival : (double)rhs->una.a->ival;
                 gs_set_prop_num(gs, nid, key, v);
             }
+            else if (rhs->type == AST_UNARY || rhs->type == AST_BINARY) {
+                double v = eval_const_expr(rhs);
+                gs_set_prop_num(gs, nid, key, v);
+            }
         }
     }
 }
@@ -151,22 +178,38 @@ static void apply_delete(cypher_graph_t *g, cypher_ast_t *del) {
     while (exprs) {
         if (exprs->type == AST_IDENT) {
             uint32_t nid = (uint32_t)var_get(g, exprs->str);
-            if (nid == 0xFFFFFFFF || nid >= gs->node_count) { exprs = exprs->next; continue; }
-            if (detach) {
-                for (uint32_t e = 0; e < gs->edge_count; e++) {
-                    if (gs->edges[e].dst == nid) {
-                        gs->edges[e].dst = 0xFFFFFFFF;
+            if (nid != 0xFFFFFFFF && nid < gs->node_count) {
+                if (detach) {
+                    for (uint32_t e = 0; e < gs->edge_count; e++) {
+                        if (gs->edges[e].dst == nid) gs->edges[e].dst = 0xFFFFFFFF;
                     }
+                    while (gs->edge_heads[nid] != 0xFFFFFFFF)
+                        gs->edge_heads[nid] = gs->edges[gs->edge_heads[nid]].next;
+                    gs->nodes[nid].edge_count = 0;
                 }
-                while (gs->edge_heads[nid] != 0xFFFFFFFF) {
-                    gs->edge_heads[nid] = gs->edges[gs->edge_heads[nid]].next;
-                }
-                gs->nodes[nid].edge_count = 0;
+                gs->nodes[nid].label_mask = 0;
+                gs->nodes[nid].props_off = 0xFFFFFFFF;
             }
-            gs->nodes[nid].label_mask = 0;
-            gs->nodes[nid].props_off = 0xFFFFFFFF;
         }
         exprs = exprs->next;
+    }
+    /* also process comma-separated expressions stored in bin.r */
+    for (cypher_ast_t *e = del->bin.r; e; e = e->next) {
+        if (e->type == AST_IDENT) {
+            uint32_t nid = (uint32_t)var_get(g, e->str);
+            if (nid != 0xFFFFFFFF && nid < gs->node_count) {
+                if (detach) {
+                    for (uint32_t ei = 0; ei < gs->edge_count; ei++) {
+                        if (gs->edges[ei].dst == nid) gs->edges[ei].dst = 0xFFFFFFFF;
+                    }
+                    while (gs->edge_heads[nid] != 0xFFFFFFFF)
+                        gs->edge_heads[nid] = gs->edges[gs->edge_heads[nid]].next;
+                    gs->nodes[nid].edge_count = 0;
+                }
+                gs->nodes[nid].label_mask = 0;
+                gs->nodes[nid].props_off = 0xFFFFFFFF;
+            }
+        }
     }
 }
 
@@ -566,6 +609,7 @@ int cypher_graph_load_sidecar(cypher_graph_t *g, const char *filename) {
 
         gs_set_label(gs, nid, "Token");
         if (type[0]) gs_set_label(gs, nid, type);
+        if (type[0]) gs_add_prop_str(gs, nid, "type", type);
 
         gs_add_prop_num(gs, nid, "token_id", (double)token_id);
         gs_add_prop_num(gs, nid, "parent_id", (double)parent_id);

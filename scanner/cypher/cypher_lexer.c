@@ -32,7 +32,7 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 	int tok_count = 0;
 	
 	
-#line 374 "cypher_lexer.rl"
+#line 393 "cypher_lexer.rl"
 
 	
 
@@ -43,7 +43,7 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 		te = 0;
 	}
 	
-#line 376 "cypher_lexer.rl"
+#line 395 "cypher_lexer.rl"
 
 
 #line 41 "cypher_lexer.c"
@@ -71,24 +71,24 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 			goto st_case_14;
 			case 15:
 			goto st_case_15;
+			case 16:
+			goto st_case_16;
 			case 5:
 			goto st_case_5;
 			case 6:
 			goto st_case_6;
-			case 16:
-			goto st_case_16;
 			case 17:
 			goto st_case_17;
-			case 7:
-			goto st_case_7;
 			case 18:
 			goto st_case_18;
+			case 7:
+			goto st_case_7;
 			case 19:
 			goto st_case_19;
-			case 8:
-			goto st_case_8;
 			case 20:
 			goto st_case_20;
+			case 8:
+			goto st_case_8;
 			case 21:
 			goto st_case_21;
 			case 22:
@@ -383,14 +383,50 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 			goto st_case_166;
 			case 167:
 			goto st_case_167;
+			case 168:
+			goto st_case_168;
+			case 169:
+			goto st_case_169;
+			case 170:
+			goto st_case_170;
+			case 171:
+			goto st_case_171;
+			case 172:
+			goto st_case_172;
+			case 173:
+			goto st_case_173;
+			case 174:
+			goto st_case_174;
+			case 175:
+			goto st_case_175;
+			case 176:
+			goto st_case_176;
+			case 177:
+			goto st_case_177;
+			case 178:
+			goto st_case_178;
+			case 179:
+			goto st_case_179;
+			case 180:
+			goto st_case_180;
+			case 181:
+			goto st_case_181;
+			case 182:
+			goto st_case_182;
+			case 183:
+			goto st_case_183;
+			case 184:
+			goto st_case_184;
+			case 185:
+			goto st_case_185;
 			case 9:
 			goto st_case_9;
 		}
 		_ctr2:
 			{
-#line 273 "cypher_lexer.rl"
+#line 286 "cypher_lexer.rl"
 			{te = p+1;{
-#line 273 "cypher_lexer.rl"
+#line 286 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_STRING;
@@ -403,14 +439,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 397 "cypher_lexer.c"
+#line 433 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr5:
 			{
-#line 284 "cypher_lexer.rl"
+#line 297 "cypher_lexer.rl"
 			{te = p+1;{
-#line 284 "cypher_lexer.rl"
+#line 297 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_STRING;
@@ -423,15 +459,15 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 416 "cypher_lexer.c"
+#line 452 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr7:
 			{
-#line 227 "cypher_lexer.rl"
+#line 240 "cypher_lexer.rl"
 			{p = ((te))-1;
 				{
-#line 227 "cypher_lexer.rl"
+#line 240 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_SLASH;
@@ -440,26 +476,26 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 432 "cypher_lexer.c"
+#line 468 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr10:
 			{
-#line 372 "cypher_lexer.rl"
+#line 391 "cypher_lexer.rl"
 			{te = p+1;{
-#line 372 "cypher_lexer.rl"
+#line 391 "cypher_lexer.rl"
 					/* skip block comment */ }
 			}}
 		
-#line 442 "cypher_lexer.c"
+#line 478 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr11:
 			{
-#line 311 "cypher_lexer.rl"
+#line 324 "cypher_lexer.rl"
 			{p = ((te))-1;
 				{
-#line 311 "cypher_lexer.rl"
+#line 324 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_INTEGER;
@@ -469,14 +505,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 459 "cypher_lexer.c"
+#line 495 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr15:
 			{
-#line 262 "cypher_lexer.rl"
+#line 275 "cypher_lexer.rl"
 			{te = p+1;{
-#line 262 "cypher_lexer.rl"
+#line 275 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_IDENT;
@@ -489,25 +525,25 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 478 "cypher_lexer.c"
+#line 514 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr18:
 			{
-#line 78 "cypher_lexer.rl"
+#line 84 "cypher_lexer.rl"
 			{te = p+1;{
-#line 78 "cypher_lexer.rl"
+#line 84 "cypher_lexer.rl"
 					/* skip, consumed like whitespace */ }
 			}}
 		
-#line 488 "cypher_lexer.c"
+#line 524 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr20:
 			{
-#line 248 "cypher_lexer.rl"
+#line 261 "cypher_lexer.rl"
 			{te = p+1;{
-#line 248 "cypher_lexer.rl"
+#line 261 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_DOLLAR;
@@ -516,14 +552,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 503 "cypher_lexer.c"
+#line 539 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr21:
 			{
-#line 234 "cypher_lexer.rl"
+#line 247 "cypher_lexer.rl"
 			{te = p+1;{
-#line 234 "cypher_lexer.rl"
+#line 247 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_PCT;
@@ -532,14 +568,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 518 "cypher_lexer.c"
+#line 554 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr22:
 			{
-#line 115 "cypher_lexer.rl"
+#line 121 "cypher_lexer.rl"
 			{te = p+1;{
-#line 115 "cypher_lexer.rl"
+#line 121 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_LPAREN;
@@ -548,14 +584,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 533 "cypher_lexer.c"
+#line 569 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr23:
 			{
-#line 122 "cypher_lexer.rl"
+#line 128 "cypher_lexer.rl"
 			{te = p+1;{
-#line 122 "cypher_lexer.rl"
+#line 128 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_RPAREN;
@@ -564,14 +600,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 548 "cypher_lexer.c"
+#line 584 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr24:
 			{
-#line 220 "cypher_lexer.rl"
+#line 233 "cypher_lexer.rl"
 			{te = p+1;{
-#line 220 "cypher_lexer.rl"
+#line 233 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_STAR;
@@ -580,30 +616,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 563 "cypher_lexer.c"
-
-		goto _st10;
-		_ctr25:
-			{
-#line 199 "cypher_lexer.rl"
-			{te = p+1;{
-#line 199 "cypher_lexer.rl"
-					
-					if (tok_count < max_tokens) {
-						tokens[tok_count].type = TOK_PLUS;
-						tok_count++;
-					}
-				}
-			}}
-		
-#line 578 "cypher_lexer.c"
+#line 599 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr26:
 			{
-#line 87 "cypher_lexer.rl"
+#line 93 "cypher_lexer.rl"
 			{te = p+1;{
-#line 87 "cypher_lexer.rl"
+#line 93 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_COMMA;
@@ -612,14 +632,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 593 "cypher_lexer.c"
+#line 614 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr32:
 			{
-#line 108 "cypher_lexer.rl"
+#line 114 "cypher_lexer.rl"
 			{te = p+1;{
-#line 108 "cypher_lexer.rl"
+#line 114 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_COLON;
@@ -628,14 +648,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 608 "cypher_lexer.c"
+#line 629 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr33:
 			{
-#line 80 "cypher_lexer.rl"
+#line 86 "cypher_lexer.rl"
 			{te = p+1;{
-#line 80 "cypher_lexer.rl"
+#line 86 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_SEMI;
@@ -644,14 +664,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 623 "cypher_lexer.c"
+#line 644 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr35:
 			{
-#line 157 "cypher_lexer.rl"
+#line 163 "cypher_lexer.rl"
 			{te = p+1;{
-#line 157 "cypher_lexer.rl"
+#line 163 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_EQ;
@@ -660,14 +680,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 638 "cypher_lexer.c"
+#line 659 "cypher_lexer.c"
 
 		goto _st10;
-		_ctr55:
+		_ctr56:
 			{
-#line 129 "cypher_lexer.rl"
+#line 135 "cypher_lexer.rl"
 			{te = p+1;{
-#line 129 "cypher_lexer.rl"
+#line 135 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_LBRACKET;
@@ -676,14 +696,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 653 "cypher_lexer.c"
+#line 674 "cypher_lexer.c"
 
 		goto _st10;
-		_ctr56:
+		_ctr57:
 			{
-#line 136 "cypher_lexer.rl"
+#line 142 "cypher_lexer.rl"
 			{te = p+1;{
-#line 136 "cypher_lexer.rl"
+#line 142 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_RBRACKET;
@@ -692,14 +712,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 668 "cypher_lexer.c"
+#line 689 "cypher_lexer.c"
 
 		goto _st10;
-		_ctr57:
+		_ctr58:
 			{
-#line 241 "cypher_lexer.rl"
+#line 254 "cypher_lexer.rl"
 			{te = p+1;{
-#line 241 "cypher_lexer.rl"
+#line 254 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_CARET;
@@ -708,14 +728,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 683 "cypher_lexer.c"
+#line 704 "cypher_lexer.c"
 
 		goto _st10;
-		_ctr58:
+		_ctr59:
 			{
-#line 143 "cypher_lexer.rl"
+#line 149 "cypher_lexer.rl"
 			{te = p+1;{
-#line 143 "cypher_lexer.rl"
+#line 149 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_LBRACE;
@@ -724,14 +744,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 698 "cypher_lexer.c"
+#line 719 "cypher_lexer.c"
 
 		goto _st10;
-		_ctr59:
+		_ctr60:
 			{
-#line 255 "cypher_lexer.rl"
+#line 268 "cypher_lexer.rl"
 			{te = p+1;{
-#line 255 "cypher_lexer.rl"
+#line 268 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_PIPE;
@@ -740,14 +760,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 713 "cypher_lexer.c"
+#line 734 "cypher_lexer.c"
 
 		goto _st10;
-		_ctr60:
+		_ctr61:
 			{
-#line 150 "cypher_lexer.rl"
+#line 156 "cypher_lexer.rl"
 			{te = p+1;{
-#line 150 "cypher_lexer.rl"
+#line 156 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_RBRACE;
@@ -756,36 +776,68 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 728 "cypher_lexer.c"
-
-		goto _st10;
-		_ctr61:
-			{
-#line 76 "cypher_lexer.rl"
-			{te = p;p = p - 1;{
-#line 76 "cypher_lexer.rl"
-					/* skip */ }
-			}}
-		
-#line 738 "cypher_lexer.c"
+#line 749 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr62:
 			{
-#line 78 "cypher_lexer.rl"
+#line 82 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 78 "cypher_lexer.rl"
-					/* skip, consumed like whitespace */ }
+#line 82 "cypher_lexer.rl"
+					/* skip */ }
 			}}
 		
-#line 748 "cypher_lexer.c"
+#line 759 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr63:
 			{
-#line 206 "cypher_lexer.rl"
+#line 84 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 206 "cypher_lexer.rl"
+#line 84 "cypher_lexer.rl"
+					/* skip, consumed like whitespace */ }
+			}}
+		
+#line 769 "cypher_lexer.c"
+
+		goto _st10;
+		_ctr64:
+			{
+#line 212 "cypher_lexer.rl"
+			{te = p;p = p - 1;{
+#line 212 "cypher_lexer.rl"
+					
+					if (tok_count < max_tokens) {
+						tokens[tok_count].type = TOK_PLUS;
+						tok_count++;
+					}
+				}
+			}}
+		
+#line 784 "cypher_lexer.c"
+
+		goto _st10;
+		_ctr65:
+			{
+#line 177 "cypher_lexer.rl"
+			{te = p+1;{
+#line 177 "cypher_lexer.rl"
+					
+					if (tok_count < max_tokens) {
+						tokens[tok_count].type = TOK_PLUSEQ;
+						tok_count++;
+					}
+				}
+			}}
+		
+#line 799 "cypher_lexer.c"
+
+		goto _st10;
+		_ctr66:
+			{
+#line 219 "cypher_lexer.rl"
+			{te = p;p = p - 1;{
+#line 219 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_MINUS;
@@ -794,14 +846,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 763 "cypher_lexer.c"
+#line 814 "cypher_lexer.c"
 
 		goto _st10;
-		_ctr64:
+		_ctr67:
 			{
-#line 213 "cypher_lexer.rl"
+#line 226 "cypher_lexer.rl"
 			{te = p+1;{
-#line 213 "cypher_lexer.rl"
+#line 226 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_DASH;
@@ -810,14 +862,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 778 "cypher_lexer.c"
+#line 829 "cypher_lexer.c"
 
 		goto _st10;
-		_ctr65:
+		_ctr68:
 			{
-#line 101 "cypher_lexer.rl"
+#line 107 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 101 "cypher_lexer.rl"
+#line 107 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_DOT;
@@ -826,14 +878,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 793 "cypher_lexer.c"
+#line 844 "cypher_lexer.c"
 
 		goto _st10;
-		_ctr66:
+		_ctr69:
 			{
-#line 94 "cypher_lexer.rl"
+#line 100 "cypher_lexer.rl"
 			{te = p+1;{
-#line 94 "cypher_lexer.rl"
+#line 100 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_DOTDOT;
@@ -842,14 +894,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 808 "cypher_lexer.c"
+#line 859 "cypher_lexer.c"
 
 		goto _st10;
-		_ctr67:
+		_ctr70:
 			{
-#line 227 "cypher_lexer.rl"
+#line 240 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 227 "cypher_lexer.rl"
+#line 240 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_SLASH;
@@ -858,25 +910,25 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 823 "cypher_lexer.c"
+#line 874 "cypher_lexer.c"
 
 		goto _st10;
-		_ctr69:
+		_ctr72:
 			{
-#line 371 "cypher_lexer.rl"
+#line 390 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 371 "cypher_lexer.rl"
+#line 390 "cypher_lexer.rl"
 					/* skip line comment */ }
 			}}
 		
-#line 833 "cypher_lexer.c"
+#line 884 "cypher_lexer.c"
 
 		goto _st10;
-		_ctr70:
+		_ctr73:
 			{
-#line 311 "cypher_lexer.rl"
+#line 324 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 311 "cypher_lexer.rl"
+#line 324 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_INTEGER;
@@ -886,14 +938,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 849 "cypher_lexer.c"
+#line 900 "cypher_lexer.c"
 
 		goto _st10;
-		_ctr73:
+		_ctr76:
 			{
-#line 303 "cypher_lexer.rl"
+#line 316 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 303 "cypher_lexer.rl"
+#line 316 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_FLOAT;
@@ -903,14 +955,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 865 "cypher_lexer.c"
+#line 916 "cypher_lexer.c"
 
 		goto _st10;
-		_ctr74:
+		_ctr77:
 			{
-#line 295 "cypher_lexer.rl"
+#line 308 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 295 "cypher_lexer.rl"
+#line 308 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_INTEGER;
@@ -920,14 +972,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 881 "cypher_lexer.c"
+#line 932 "cypher_lexer.c"
 
 		goto _st10;
-		_ctr75:
+		_ctr78:
 			{
-#line 185 "cypher_lexer.rl"
+#line 198 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 185 "cypher_lexer.rl"
+#line 198 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_LT;
@@ -936,14 +988,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 896 "cypher_lexer.c"
+#line 947 "cypher_lexer.c"
 
 		goto _st10;
-		_ctr76:
+		_ctr79:
 			{
-#line 171 "cypher_lexer.rl"
+#line 184 "cypher_lexer.rl"
 			{te = p+1;{
-#line 171 "cypher_lexer.rl"
+#line 184 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_LE;
@@ -952,14 +1004,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 911 "cypher_lexer.c"
+#line 962 "cypher_lexer.c"
 
 		goto _st10;
-		_ctr77:
+		_ctr80:
 			{
-#line 164 "cypher_lexer.rl"
+#line 170 "cypher_lexer.rl"
 			{te = p+1;{
-#line 164 "cypher_lexer.rl"
+#line 170 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_NEQ;
@@ -968,14 +1020,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 926 "cypher_lexer.c"
+#line 977 "cypher_lexer.c"
 
 		goto _st10;
-		_ctr78:
+		_ctr81:
 			{
-#line 192 "cypher_lexer.rl"
+#line 205 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 192 "cypher_lexer.rl"
+#line 205 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_GT;
@@ -984,14 +1036,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 941 "cypher_lexer.c"
+#line 992 "cypher_lexer.c"
 
 		goto _st10;
-		_ctr79:
+		_ctr82:
 			{
-#line 178 "cypher_lexer.rl"
+#line 191 "cypher_lexer.rl"
 			{te = p+1;{
-#line 178 "cypher_lexer.rl"
+#line 191 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						tokens[tok_count].type = TOK_GE;
@@ -1000,14 +1052,14 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 956 "cypher_lexer.c"
+#line 1007 "cypher_lexer.c"
 
 		goto _st10;
-		_ctr80:
+		_ctr83:
 			{
-#line 360 "cypher_lexer.rl"
+#line 379 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 360 "cypher_lexer.rl"
+#line 379 "cypher_lexer.rl"
 					
 					if (tok_count < max_tokens) {
 						int l = (int)(te - ts);
@@ -1020,447 +1072,513 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				}
 			}}
 		
-#line 975 "cypher_lexer.c"
+#line 1026 "cypher_lexer.c"
 
 		goto _st10;
-		_ctr84:
+		_ctr88:
 			{
-#line 331 "cypher_lexer.rl"
+#line 374 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 331 "cypher_lexer.rl"
+#line 374 "cypher_lexer.rl"
+					tokens[tok_count].type = TOK_ALL;      tok_count++; }
+			}}
+		
+#line 1036 "cypher_lexer.c"
+
+		goto _st10;
+		_ctr91:
+			{
+#line 344 "cypher_lexer.rl"
+			{te = p;p = p - 1;{
+#line 344 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_AND;      tok_count++; }
 			}}
 		
-#line 985 "cypher_lexer.c"
+#line 1046 "cypher_lexer.c"
 
 		goto _st10;
-		_ctr85:
+		_ctr92:
 			{
-#line 337 "cypher_lexer.rl"
+#line 375 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 337 "cypher_lexer.rl"
+#line 375 "cypher_lexer.rl"
+					tokens[tok_count].type = TOK_ANY;      tok_count++; }
+			}}
+		
+#line 1056 "cypher_lexer.c"
+
+		goto _st10;
+		_ctr93:
+			{
+#line 350 "cypher_lexer.rl"
+			{te = p;p = p - 1;{
+#line 350 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_AS;       tok_count++; }
 			}}
 		
-#line 995 "cypher_lexer.c"
-
-		goto _st10;
-		_ctr87:
-			{
-#line 352 "cypher_lexer.rl"
-			{te = p;p = p - 1;{
-#line 352 "cypher_lexer.rl"
-					tokens[tok_count].type = TOK_ASC;      tok_count++; }
-			}}
-		
-#line 1005 "cypher_lexer.c"
-
-		goto _st10;
-		_ctr89:
-			{
-#line 328 "cypher_lexer.rl"
-			{te = p;p = p - 1;{
-#line 328 "cypher_lexer.rl"
-					tokens[tok_count].type = TOK_BY;       tok_count++; }
-			}}
-		
-#line 1015 "cypher_lexer.c"
+#line 1066 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr95:
 			{
-#line 346 "cypher_lexer.rl"
+#line 365 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 346 "cypher_lexer.rl"
-					tokens[tok_count].type = TOK_CASE;     tok_count++; }
+#line 365 "cypher_lexer.rl"
+					tokens[tok_count].type = TOK_ASC;      tok_count++; }
 			}}
 		
-#line 1025 "cypher_lexer.c"
+#line 1076 "cypher_lexer.c"
 
 		goto _st10;
-		_ctr103:
+		_ctr97:
 			{
 #line 341 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
 #line 341 "cypher_lexer.rl"
-					tokens[tok_count].type = TOK_CONTAINS; tok_count++; }
+					tokens[tok_count].type = TOK_BY;       tok_count++; }
 			}}
 		
-#line 1035 "cypher_lexer.c"
+#line 1086 "cypher_lexer.c"
+
+		goto _st10;
+		_ctr104:
+			{
+#line 372 "cypher_lexer.rl"
+			{te = p;p = p - 1;{
+#line 372 "cypher_lexer.rl"
+					tokens[tok_count].type = TOK_CALL;     tok_count++; }
+			}}
+		
+#line 1096 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr106:
 			{
-#line 353 "cypher_lexer.rl"
+#line 359 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 353 "cypher_lexer.rl"
+#line 359 "cypher_lexer.rl"
+					tokens[tok_count].type = TOK_CASE;     tok_count++; }
+			}}
+		
+#line 1106 "cypher_lexer.c"
+
+		goto _st10;
+		_ctr114:
+			{
+#line 354 "cypher_lexer.rl"
+			{te = p;p = p - 1;{
+#line 354 "cypher_lexer.rl"
+					tokens[tok_count].type = TOK_CONTAINS; tok_count++; }
+			}}
+		
+#line 1116 "cypher_lexer.c"
+
+		goto _st10;
+		_ctr117:
+			{
+#line 366 "cypher_lexer.rl"
+			{te = p;p = p - 1;{
+#line 366 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_COUNT;    tok_count++; }
 			}}
 		
-#line 1045 "cypher_lexer.c"
-
-		goto _st10;
-		_ctr111:
-			{
-#line 322 "cypher_lexer.rl"
-			{te = p;p = p - 1;{
-#line 322 "cypher_lexer.rl"
-					tokens[tok_count].type = TOK_CREATE;   tok_count++; }
-			}}
-		
-#line 1055 "cypher_lexer.c"
-
-		goto _st10;
-		_ctr120:
-			{
-#line 323 "cypher_lexer.rl"
-			{te = p;p = p - 1;{
-#line 323 "cypher_lexer.rl"
-					tokens[tok_count].type = TOK_DELETE;   tok_count++; }
-			}}
-		
-#line 1065 "cypher_lexer.c"
+#line 1126 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr122:
 			{
-#line 351 "cypher_lexer.rl"
+#line 335 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 351 "cypher_lexer.rl"
-					tokens[tok_count].type = TOK_DESC;     tok_count++; }
+#line 335 "cypher_lexer.rl"
+					tokens[tok_count].type = TOK_CREATE;   tok_count++; }
 			}}
 		
-#line 1075 "cypher_lexer.c"
+#line 1136 "cypher_lexer.c"
 
 		goto _st10;
-		_ctr126:
+		_ctr131:
 			{
-#line 340 "cypher_lexer.rl"
+#line 336 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 340 "cypher_lexer.rl"
-					tokens[tok_count].type = TOK_DETACH;   tok_count++; }
+#line 336 "cypher_lexer.rl"
+					tokens[tok_count].type = TOK_DELETE;   tok_count++; }
 			}}
 		
-#line 1085 "cypher_lexer.c"
+#line 1146 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr133:
 			{
-#line 338 "cypher_lexer.rl"
+#line 364 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 338 "cypher_lexer.rl"
+#line 364 "cypher_lexer.rl"
+					tokens[tok_count].type = TOK_DESC;     tok_count++; }
+			}}
+		
+#line 1156 "cypher_lexer.c"
+
+		goto _st10;
+		_ctr137:
+			{
+#line 353 "cypher_lexer.rl"
+			{te = p;p = p - 1;{
+#line 353 "cypher_lexer.rl"
+					tokens[tok_count].type = TOK_DETACH;   tok_count++; }
+			}}
+		
+#line 1166 "cypher_lexer.c"
+
+		goto _st10;
+		_ctr144:
+			{
+#line 351 "cypher_lexer.rl"
+			{te = p;p = p - 1;{
+#line 351 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_DISTINCT; tok_count++; }
 			}}
 		
-#line 1095 "cypher_lexer.c"
+#line 1176 "cypher_lexer.c"
 
 		goto _st10;
-		_ctr139:
+		_ctr150:
 			{
-#line 349 "cypher_lexer.rl"
+#line 362 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 349 "cypher_lexer.rl"
+#line 362 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_ELSE;     tok_count++; }
 			}}
 		
-#line 1105 "cypher_lexer.c"
+#line 1186 "cypher_lexer.c"
 
 		goto _st10;
-		_ctr141:
+		_ctr152:
 			{
-#line 350 "cypher_lexer.rl"
+#line 363 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 350 "cypher_lexer.rl"
+#line 363 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_END;      tok_count++; }
 			}}
 		
-#line 1115 "cypher_lexer.c"
+#line 1196 "cypher_lexer.c"
 
 		goto _st10;
-		_ctr143:
+		_ctr154:
 			{
-#line 343 "cypher_lexer.rl"
+#line 356 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 343 "cypher_lexer.rl"
+#line 356 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_ENDS;     tok_count++; }
 			}}
 		
-#line 1125 "cypher_lexer.c"
+#line 1206 "cypher_lexer.c"
 
 		goto _st10;
-		_ctr148:
+		_ctr159:
 			{
-#line 354 "cypher_lexer.rl"
+#line 367 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 354 "cypher_lexer.rl"
+#line 367 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_EXISTS;   tok_count++; }
 			}}
 		
-#line 1135 "cypher_lexer.c"
+#line 1216 "cypher_lexer.c"
 
 		goto _st10;
-		_ctr153:
+		_ctr164:
 			{
-#line 357 "cypher_lexer.rl"
+#line 370 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 357 "cypher_lexer.rl"
+#line 370 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_BOOL; tokens[tok_count].ival = 0; tok_count++; }
 			}}
 		
-#line 1145 "cypher_lexer.c"
+#line 1226 "cypher_lexer.c"
 
 		goto _st10;
-		_ctr156:
+		_ctr167:
 			{
-#line 335 "cypher_lexer.rl"
+#line 348 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 335 "cypher_lexer.rl"
+#line 348 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_IN;       tok_count++; }
 			}}
 		
-#line 1155 "cypher_lexer.c"
-
-		goto _st10;
-		_ctr157:
-			{
-#line 336 "cypher_lexer.rl"
-			{te = p;p = p - 1;{
-#line 336 "cypher_lexer.rl"
-					tokens[tok_count].type = TOK_IS;       tok_count++; }
-			}}
-		
-#line 1165 "cypher_lexer.c"
-
-		goto _st10;
-		_ctr162:
-			{
-#line 329 "cypher_lexer.rl"
-			{te = p;p = p - 1;{
-#line 329 "cypher_lexer.rl"
-					tokens[tok_count].type = TOK_LIMIT;    tok_count++; }
-			}}
-		
-#line 1175 "cypher_lexer.c"
+#line 1236 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr168:
 			{
-#line 319 "cypher_lexer.rl"
+#line 349 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 319 "cypher_lexer.rl"
-					tokens[tok_count].type = TOK_MATCH;    tok_count++; }
+#line 349 "cypher_lexer.rl"
+					tokens[tok_count].type = TOK_IS;       tok_count++; }
 			}}
 		
-#line 1185 "cypher_lexer.c"
+#line 1246 "cypher_lexer.c"
 
 		goto _st10;
-		_ctr172:
+		_ctr173:
 			{
-#line 325 "cypher_lexer.rl"
+#line 342 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 325 "cypher_lexer.rl"
-					tokens[tok_count].type = TOK_MERGE;    tok_count++; }
+#line 342 "cypher_lexer.rl"
+					tokens[tok_count].type = TOK_LIMIT;    tok_count++; }
 			}}
 		
-#line 1195 "cypher_lexer.c"
-
-		goto _st10;
-		_ctr176:
-			{
-#line 333 "cypher_lexer.rl"
-			{te = p;p = p - 1;{
-#line 333 "cypher_lexer.rl"
-					tokens[tok_count].type = TOK_NOT;      tok_count++; }
-			}}
-		
-#line 1205 "cypher_lexer.c"
+#line 1256 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr179:
 			{
-#line 358 "cypher_lexer.rl"
+#line 332 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 358 "cypher_lexer.rl"
-					tokens[tok_count].type = TOK_NULL;     tok_count++; }
+#line 332 "cypher_lexer.rl"
+					tokens[tok_count].type = TOK_MATCH;    tok_count++; }
 			}}
 		
-#line 1215 "cypher_lexer.c"
+#line 1266 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr183:
 			{
-#line 345 "cypher_lexer.rl"
+#line 338 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 345 "cypher_lexer.rl"
-					tokens[tok_count].type = TOK_ON;       tok_count++; }
+#line 338 "cypher_lexer.rl"
+					tokens[tok_count].type = TOK_MERGE;    tok_count++; }
 			}}
 		
-#line 1225 "cypher_lexer.c"
+#line 1276 "cypher_lexer.c"
+
+		goto _st10;
+		_ctr189:
+			{
+#line 376 "cypher_lexer.rl"
+			{te = p;p = p - 1;{
+#line 376 "cypher_lexer.rl"
+					tokens[tok_count].type = TOK_NONE;     tok_count++; }
+			}}
+		
+#line 1286 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr190:
 			{
-#line 339 "cypher_lexer.rl"
+#line 346 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 339 "cypher_lexer.rl"
+#line 346 "cypher_lexer.rl"
+					tokens[tok_count].type = TOK_NOT;      tok_count++; }
+			}}
+		
+#line 1296 "cypher_lexer.c"
+
+		goto _st10;
+		_ctr193:
+			{
+#line 371 "cypher_lexer.rl"
+			{te = p;p = p - 1;{
+#line 371 "cypher_lexer.rl"
+					tokens[tok_count].type = TOK_NULL;     tok_count++; }
+			}}
+		
+#line 1306 "cypher_lexer.c"
+
+		goto _st10;
+		_ctr197:
+			{
+#line 358 "cypher_lexer.rl"
+			{te = p;p = p - 1;{
+#line 358 "cypher_lexer.rl"
+					tokens[tok_count].type = TOK_ON;       tok_count++; }
+			}}
+		
+#line 1316 "cypher_lexer.c"
+
+		goto _st10;
+		_ctr204:
+			{
+#line 352 "cypher_lexer.rl"
+			{te = p;p = p - 1;{
+#line 352 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_OPTIONAL; tok_count++; }
 			}}
 		
-#line 1235 "cypher_lexer.c"
+#line 1326 "cypher_lexer.c"
 
 		goto _st10;
-		_ctr191:
+		_ctr205:
 			{
-#line 332 "cypher_lexer.rl"
+#line 345 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 332 "cypher_lexer.rl"
+#line 345 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_OR;       tok_count++; }
 			}}
 		
-#line 1245 "cypher_lexer.c"
+#line 1336 "cypher_lexer.c"
 
 		goto _st10;
-		_ctr195:
+		_ctr209:
 			{
-#line 327 "cypher_lexer.rl"
+#line 340 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 327 "cypher_lexer.rl"
+#line 340 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_ORDER;    tok_count++; }
 			}}
 		
-#line 1255 "cypher_lexer.c"
+#line 1346 "cypher_lexer.c"
 
 		goto _st10;
-		_ctr202:
+		_ctr216:
 			{
-#line 355 "cypher_lexer.rl"
+#line 368 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 355 "cypher_lexer.rl"
+#line 368 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_REMOVE;   tok_count++; }
 			}}
 		
-#line 1265 "cypher_lexer.c"
+#line 1356 "cypher_lexer.c"
 
 		goto _st10;
-		_ctr206:
+		_ctr220:
 			{
-#line 320 "cypher_lexer.rl"
+#line 333 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 320 "cypher_lexer.rl"
+#line 333 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_RETURN;   tok_count++; }
 			}}
 		
-#line 1275 "cypher_lexer.c"
+#line 1366 "cypher_lexer.c"
 
 		goto _st10;
-		_ctr211:
+		_ctr226:
 			{
-#line 324 "cypher_lexer.rl"
+#line 337 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 324 "cypher_lexer.rl"
+#line 337 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_SET;      tok_count++; }
 			}}
 		
-#line 1285 "cypher_lexer.c"
+#line 1376 "cypher_lexer.c"
 
 		goto _st10;
-		_ctr214:
+		_ctr231:
 			{
-#line 330 "cypher_lexer.rl"
+#line 377 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 330 "cypher_lexer.rl"
+#line 377 "cypher_lexer.rl"
+					tokens[tok_count].type = TOK_SINGLE;   tok_count++; }
+			}}
+		
+#line 1386 "cypher_lexer.c"
+
+		goto _st10;
+		_ctr234:
+			{
+#line 343 "cypher_lexer.rl"
+			{te = p;p = p - 1;{
+#line 343 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_SKIP;     tok_count++; }
 			}}
 		
-#line 1295 "cypher_lexer.c"
-
-		goto _st10;
-		_ctr219:
-			{
-#line 342 "cypher_lexer.rl"
-			{te = p;p = p - 1;{
-#line 342 "cypher_lexer.rl"
-					tokens[tok_count].type = TOK_STARTS;   tok_count++; }
-			}}
-		
-#line 1305 "cypher_lexer.c"
-
-		goto _st10;
-		_ctr224:
-			{
-#line 348 "cypher_lexer.rl"
-			{te = p;p = p - 1;{
-#line 348 "cypher_lexer.rl"
-					tokens[tok_count].type = TOK_THEN;     tok_count++; }
-			}}
-		
-#line 1315 "cypher_lexer.c"
-
-		goto _st10;
-		_ctr227:
-			{
-#line 356 "cypher_lexer.rl"
-			{te = p;p = p - 1;{
-#line 356 "cypher_lexer.rl"
-					tokens[tok_count].type = TOK_BOOL; tokens[tok_count].ival = 1; tok_count++; }
-			}}
-		
-#line 1325 "cypher_lexer.c"
-
-		goto _st10;
-		_ctr233:
-			{
-#line 326 "cypher_lexer.rl"
-			{te = p;p = p - 1;{
-#line 326 "cypher_lexer.rl"
-					tokens[tok_count].type = TOK_UNWIND;   tok_count++; }
-			}}
-		
-#line 1335 "cypher_lexer.c"
+#line 1396 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr239:
 			{
-#line 347 "cypher_lexer.rl"
+#line 355 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 347 "cypher_lexer.rl"
-					tokens[tok_count].type = TOK_WHEN;     tok_count++; }
+#line 355 "cypher_lexer.rl"
+					tokens[tok_count].type = TOK_STARTS;   tok_count++; }
 			}}
 		
-#line 1345 "cypher_lexer.c"
-
-		goto _st10;
-		_ctr241:
-			{
-#line 321 "cypher_lexer.rl"
-			{te = p;p = p - 1;{
-#line 321 "cypher_lexer.rl"
-					tokens[tok_count].type = TOK_WHERE;    tok_count++; }
-			}}
-		
-#line 1355 "cypher_lexer.c"
+#line 1406 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr244:
 			{
-#line 344 "cypher_lexer.rl"
+#line 361 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
-#line 344 "cypher_lexer.rl"
-					tokens[tok_count].type = TOK_WITH;     tok_count++; }
+#line 361 "cypher_lexer.rl"
+					tokens[tok_count].type = TOK_THEN;     tok_count++; }
 			}}
 		
-#line 1365 "cypher_lexer.c"
+#line 1416 "cypher_lexer.c"
 
 		goto _st10;
 		_ctr247:
 			{
+#line 369 "cypher_lexer.rl"
+			{te = p;p = p - 1;{
+#line 369 "cypher_lexer.rl"
+					tokens[tok_count].type = TOK_BOOL; tokens[tok_count].ival = 1; tok_count++; }
+			}}
+		
+#line 1426 "cypher_lexer.c"
+
+		goto _st10;
+		_ctr253:
+			{
+#line 339 "cypher_lexer.rl"
+			{te = p;p = p - 1;{
+#line 339 "cypher_lexer.rl"
+					tokens[tok_count].type = TOK_UNWIND;   tok_count++; }
+			}}
+		
+#line 1436 "cypher_lexer.c"
+
+		goto _st10;
+		_ctr259:
+			{
+#line 360 "cypher_lexer.rl"
+			{te = p;p = p - 1;{
+#line 360 "cypher_lexer.rl"
+					tokens[tok_count].type = TOK_WHEN;     tok_count++; }
+			}}
+		
+#line 1446 "cypher_lexer.c"
+
+		goto _st10;
+		_ctr261:
+			{
 #line 334 "cypher_lexer.rl"
 			{te = p;p = p - 1;{
 #line 334 "cypher_lexer.rl"
+					tokens[tok_count].type = TOK_WHERE;    tok_count++; }
+			}}
+		
+#line 1456 "cypher_lexer.c"
+
+		goto _st10;
+		_ctr264:
+			{
+#line 357 "cypher_lexer.rl"
+			{te = p;p = p - 1;{
+#line 357 "cypher_lexer.rl"
+					tokens[tok_count].type = TOK_WITH;     tok_count++; }
+			}}
+		
+#line 1466 "cypher_lexer.c"
+
+		goto _st10;
+		_ctr267:
+			{
+#line 347 "cypher_lexer.rl"
+			{te = p;p = p - 1;{
+#line 347 "cypher_lexer.rl"
 					tokens[tok_count].type = TOK_XOR;      tok_count++; }
 			}}
 		
-#line 1375 "cypher_lexer.c"
+#line 1476 "cypher_lexer.c"
+
+		goto _st10;
+		_ctr272:
+			{
+#line 373 "cypher_lexer.rl"
+			{te = p;p = p - 1;{
+#line 373 "cypher_lexer.rl"
+					tokens[tok_count].type = TOK_YIELD;    tok_count++; }
+			}}
+		
+#line 1486 "cypher_lexer.c"
 
 		goto _st10;
 		_st10:
@@ -1470,7 +1588,7 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 #line 1 "NONE"
 			{ts = 0;}}
 		
-#line 1384 "cypher_lexer.c"
+#line 1495 "cypher_lexer.c"
 
 		p+= 1;
 		st_case_10:
@@ -1478,7 +1596,7 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 #line 1 "NONE"
 			{ts = p;}}
 		
-#line 1391 "cypher_lexer.c"
+#line 1502 "cypher_lexer.c"
 
 		switch( ( (*( p))) ) {
 			case 9: {
@@ -1515,16 +1633,16 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				goto _ctr24;
 			}
 			case 43: {
-				goto _ctr25;
+				goto _st13;
 			}
 			case 44: {
 				goto _ctr26;
 			}
 			case 45: {
-				goto _st13;
+				goto _st14;
 			}
 			case 46: {
-				goto _st14;
+				goto _st15;
 			}
 			case 47: {
 				goto _ctr29;
@@ -1539,136 +1657,142 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				goto _ctr33;
 			}
 			case 60: {
-				goto _st21;
+				goto _st22;
 			}
 			case 61: {
 				goto _ctr35;
 			}
 			case 62: {
-				goto _st22;
-			}
-			case 65: {
 				goto _st23;
 			}
+			case 65: {
+				goto _st24;
+			}
 			case 66: {
-				goto _st29;
+				goto _st33;
 			}
 			case 67: {
-				goto _st31;
+				goto _st35;
 			}
 			case 68: {
-				goto _st50;
+				goto _st56;
 			}
 			case 69: {
-				goto _st69;
+				goto _st75;
 			}
 			case 70: {
-				goto _st81;
+				goto _st87;
 			}
 			case 73: {
-				goto _st86;
+				goto _st92;
 			}
 			case 76: {
-				goto _st89;
+				goto _st95;
 			}
 			case 77: {
-				goto _st94;
+				goto _st100;
 			}
 			case 78: {
-				goto _st103;
-			}
-			case 79: {
 				goto _st109;
 			}
+			case 79: {
+				goto _st117;
+			}
 			case 82: {
-				goto _st122;
+				goto _st130;
 			}
 			case 83: {
-				goto _st132;
+				goto _st140;
 			}
 			case 84: {
-				goto _st143;
-			}
-			case 85: {
-				goto _st150;
-			}
-			case 87: {
 				goto _st156;
 			}
+			case 85: {
+				goto _st163;
+			}
+			case 87: {
+				goto _st169;
+			}
 			case 88: {
-				goto _st165;
+				goto _st178;
+			}
+			case 89: {
+				goto _st181;
 			}
 			case 91: {
-				goto _ctr55;
-			}
-			case 93: {
 				goto _ctr56;
 			}
-			case 94: {
+			case 93: {
 				goto _ctr57;
+			}
+			case 94: {
+				goto _ctr58;
 			}
 			case 96: {
 				goto _st9;
 			}
 			case 97: {
-				goto _st23;
+				goto _st24;
 			}
 			case 98: {
-				goto _st29;
+				goto _st33;
 			}
 			case 99: {
-				goto _st31;
+				goto _st35;
 			}
 			case 100: {
-				goto _st50;
+				goto _st56;
 			}
 			case 101: {
-				goto _st69;
+				goto _st75;
 			}
 			case 102: {
-				goto _st81;
+				goto _st87;
 			}
 			case 105: {
-				goto _st86;
+				goto _st92;
 			}
 			case 108: {
-				goto _st89;
+				goto _st95;
 			}
 			case 109: {
-				goto _st94;
+				goto _st100;
 			}
 			case 110: {
-				goto _st103;
-			}
-			case 111: {
 				goto _st109;
 			}
+			case 111: {
+				goto _st117;
+			}
 			case 114: {
-				goto _st122;
+				goto _st130;
 			}
 			case 115: {
-				goto _st132;
+				goto _st140;
 			}
 			case 116: {
-				goto _st143;
-			}
-			case 117: {
-				goto _st150;
-			}
-			case 119: {
 				goto _st156;
 			}
+			case 117: {
+				goto _st163;
+			}
+			case 119: {
+				goto _st169;
+			}
 			case 120: {
-				goto _st165;
+				goto _st178;
+			}
+			case 121: {
+				goto _st181;
 			}
 			case 123: {
-				goto _ctr58;
-			}
-			case 124: {
 				goto _ctr59;
 			}
-			case 125: {
+			case 124: {
 				goto _ctr60;
+			}
+			case 125: {
+				goto _ctr61;
 			}
 		}
 		if ( ( (*( p))) < 71 ) {
@@ -1677,10 +1801,10 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 103 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
 		goto _st0;
 		_st0:
@@ -1701,7 +1825,7 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				goto _st11;
 			}
 		}
-		goto _ctr61;
+		goto _ctr62;
 		_st12:
 		if ( p == eof )
 			goto _out12;
@@ -1710,7 +1834,7 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 		if ( ( (*( p))) == 10 ) {
 			goto _ctr18;
 		}
-		goto _ctr62;
+		goto _ctr63;
 		_st1:
 		if ( p == eof )
 			goto _out1;
@@ -1756,41 +1880,50 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 			goto _out13;
 		p+= 1;
 		st_case_13:
-		if ( ( (*( p))) == 45 ) {
-			goto _ctr64;
+		if ( ( (*( p))) == 61 ) {
+			goto _ctr65;
 		}
-		goto _ctr63;
+		goto _ctr64;
 		_st14:
 		if ( p == eof )
 			goto _out14;
 		p+= 1;
 		st_case_14:
-		if ( ( (*( p))) == 46 ) {
-			goto _ctr66;
+		if ( ( (*( p))) == 45 ) {
+			goto _ctr67;
 		}
-		goto _ctr65;
-		_ctr29:
-			{
-#line 1 "NONE"
-			{te = p+1;}}
-		
-#line 1686 "cypher_lexer.c"
-
-		goto _st15;
+		goto _ctr66;
 		_st15:
 		if ( p == eof )
 			goto _out15;
 		p+= 1;
 		st_case_15:
+		if ( ( (*( p))) == 46 ) {
+			goto _ctr69;
+		}
+		goto _ctr68;
+		_ctr29:
+			{
+#line 1 "NONE"
+			{te = p+1;}}
+		
+#line 1812 "cypher_lexer.c"
+
+		goto _st16;
+		_st16:
+		if ( p == eof )
+			goto _out16;
+		p+= 1;
+		st_case_16:
 		switch( ( (*( p))) ) {
 			case 42: {
 				goto _st5;
 			}
 			case 47: {
-				goto _st16;
+				goto _st17;
 			}
 		}
-		goto _ctr67;
+		goto _ctr70;
 		_st5:
 		if ( p == eof )
 			goto _out5;
@@ -1814,28 +1947,28 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 			}
 		}
 		goto _st5;
-		_st16:
-		if ( p == eof )
-			goto _out16;
-		p+= 1;
-		st_case_16:
-		if ( ( (*( p))) == 10 ) {
-			goto _ctr69;
-		}
-		goto _st16;
-		_ctr30:
-			{
-#line 1 "NONE"
-			{te = p+1;}}
-		
-#line 1739 "cypher_lexer.c"
-
-		goto _st17;
 		_st17:
 		if ( p == eof )
 			goto _out17;
 		p+= 1;
 		st_case_17:
+		if ( ( (*( p))) == 10 ) {
+			goto _ctr72;
+		}
+		goto _st17;
+		_ctr30:
+			{
+#line 1 "NONE"
+			{te = p+1;}}
+		
+#line 1865 "cypher_lexer.c"
+
+		goto _st18;
+		_st18:
+		if ( p == eof )
+			goto _out18;
+		p+= 1;
+		st_case_18:
 		switch( ( (*( p))) ) {
 			case 46: {
 				goto _st7;
@@ -1847,45 +1980,45 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 		if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
 			goto _ctr31;
 		}
-		goto _ctr70;
+		goto _ctr73;
 		_st7:
 		if ( p == eof )
 			goto _out7;
 		p+= 1;
 		st_case_7:
 		if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-			goto _st18;
+			goto _st19;
 		}
 		goto _ctr11;
-		_st18:
-		if ( p == eof )
-			goto _out18;
-		p+= 1;
-		st_case_18:
-		if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-			goto _st18;
-		}
-		goto _ctr73;
-		_ctr31:
-			{
-#line 1 "NONE"
-			{te = p+1;}}
-		
-#line 1781 "cypher_lexer.c"
-
-		goto _st19;
 		_st19:
 		if ( p == eof )
 			goto _out19;
 		p+= 1;
 		st_case_19:
+		if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
+			goto _st19;
+		}
+		goto _ctr76;
+		_ctr31:
+			{
+#line 1 "NONE"
+			{te = p+1;}}
+		
+#line 1907 "cypher_lexer.c"
+
+		goto _st20;
+		_st20:
+		if ( p == eof )
+			goto _out20;
+		p+= 1;
+		st_case_20:
 		if ( ( (*( p))) == 46 ) {
 			goto _st7;
 		}
 		if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
 			goto _ctr31;
 		}
-		goto _ctr70;
+		goto _ctr73;
 		_st8:
 		if ( p == eof )
 			goto _out8;
@@ -1893,54 +2026,45 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 		st_case_8:
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st20;
+				goto _st21;
 			}
 		} else if ( ( (*( p))) > 70 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 102 ) {
-				goto _st20;
+				goto _st21;
 			}
 		} else {
-			goto _st20;
+			goto _st21;
 		}
 		goto _ctr11;
-		_st20:
-		if ( p == eof )
-			goto _out20;
-		p+= 1;
-		st_case_20:
-		if ( ( (*( p))) < 65 ) {
-			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st20;
-			}
-		} else if ( ( (*( p))) > 70 ) {
-			if ( 97 <= ( (*( p))) && ( (*( p))) <= 102 ) {
-				goto _st20;
-			}
-		} else {
-			goto _st20;
-		}
-		goto _ctr74;
 		_st21:
 		if ( p == eof )
 			goto _out21;
 		p+= 1;
 		st_case_21:
-		switch( ( (*( p))) ) {
-			case 61: {
-				goto _ctr76;
+		if ( ( (*( p))) < 65 ) {
+			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
+				goto _st21;
 			}
-			case 62: {
-				goto _ctr77;
+		} else if ( ( (*( p))) > 70 ) {
+			if ( 97 <= ( (*( p))) && ( (*( p))) <= 102 ) {
+				goto _st21;
 			}
+		} else {
+			goto _st21;
 		}
-		goto _ctr75;
+		goto _ctr77;
 		_st22:
 		if ( p == eof )
 			goto _out22;
 		p+= 1;
 		st_case_22:
-		if ( ( (*( p))) == 61 ) {
-			goto _ctr79;
+		switch( ( (*( p))) ) {
+			case 61: {
+				goto _ctr79;
+			}
+			case 62: {
+				goto _ctr80;
+			}
 		}
 		goto _ctr78;
 		_st23:
@@ -1948,162 +2072,135 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 			goto _out23;
 		p+= 1;
 		st_case_23:
-		switch( ( (*( p))) ) {
-			case 78: {
-				goto _st25;
-			}
-			case 83: {
-				goto _st27;
-			}
-			case 95: {
-				goto _st24;
-			}
-			case 110: {
-				goto _st25;
-			}
-			case 115: {
-				goto _st27;
-			}
+		if ( ( (*( p))) == 61 ) {
+			goto _ctr82;
 		}
-		if ( ( (*( p))) < 65 ) {
-			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
-			}
-		} else if ( ( (*( p))) > 90 ) {
-			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
-			}
-		} else {
-			goto _st24;
-		}
-		goto _ctr80;
+		goto _ctr81;
 		_st24:
 		if ( p == eof )
 			goto _out24;
 		p+= 1;
 		st_case_24:
-		if ( ( (*( p))) == 95 ) {
-			goto _st24;
+		switch( ( (*( p))) ) {
+			case 76: {
+				goto _st26;
+			}
+			case 78: {
+				goto _st28;
+			}
+			case 83: {
+				goto _st31;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 108: {
+				goto _st26;
+			}
+			case 110: {
+				goto _st28;
+			}
+			case 115: {
+				goto _st31;
+			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st25:
 		if ( p == eof )
 			goto _out25;
 		p+= 1;
 		st_case_25:
-		switch( ( (*( p))) ) {
-			case 68: {
-				goto _st26;
-			}
-			case 95: {
-				goto _st24;
-			}
-			case 100: {
-				goto _st26;
-			}
+		if ( ( (*( p))) == 95 ) {
+			goto _st25;
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st26:
 		if ( p == eof )
 			goto _out26;
 		p+= 1;
 		st_case_26:
-		if ( ( (*( p))) == 95 ) {
-			goto _st24;
+		switch( ( (*( p))) ) {
+			case 76: {
+				goto _st27;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 108: {
+				goto _st27;
+			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr84;
+		goto _ctr83;
 		_st27:
 		if ( p == eof )
 			goto _out27;
 		p+= 1;
 		st_case_27:
-		switch( ( (*( p))) ) {
-			case 67: {
-				goto _st28;
-			}
-			case 95: {
-				goto _st24;
-			}
-			case 99: {
-				goto _st28;
-			}
+		if ( ( (*( p))) == 95 ) {
+			goto _st25;
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr85;
+		goto _ctr88;
 		_st28:
 		if ( p == eof )
 			goto _out28;
 		p+= 1;
 		st_case_28:
-		if ( ( (*( p))) == 95 ) {
-			goto _st24;
-		}
-		if ( ( (*( p))) < 65 ) {
-			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
-			}
-		} else if ( ( (*( p))) > 90 ) {
-			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
-			}
-		} else {
-			goto _st24;
-		}
-		goto _ctr87;
-		_st29:
-		if ( p == eof )
-			goto _out29;
-		p+= 1;
-		st_case_29:
 		switch( ( (*( p))) ) {
+			case 68: {
+				goto _st29;
+			}
 			case 89: {
 				goto _st30;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
+			}
+			case 100: {
+				goto _st29;
 			}
 			case 121: {
 				goto _st30;
@@ -2111,656 +2208,648 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
+		_st29:
+		if ( p == eof )
+			goto _out29;
+		p+= 1;
+		st_case_29:
+		if ( ( (*( p))) == 95 ) {
+			goto _st25;
+		}
+		if ( ( (*( p))) < 65 ) {
+			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
+				goto _st25;
+			}
+		} else if ( ( (*( p))) > 90 ) {
+			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
+				goto _st25;
+			}
+		} else {
+			goto _st25;
+		}
+		goto _ctr91;
 		_st30:
 		if ( p == eof )
 			goto _out30;
 		p+= 1;
 		st_case_30:
 		if ( ( (*( p))) == 95 ) {
-			goto _st24;
+			goto _st25;
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr89;
+		goto _ctr92;
 		_st31:
 		if ( p == eof )
 			goto _out31;
 		p+= 1;
 		st_case_31:
 		switch( ( (*( p))) ) {
-			case 65: {
+			case 67: {
 				goto _st32;
-			}
-			case 79: {
-				goto _st35;
-			}
-			case 82: {
-				goto _st45;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 97: {
+			case 99: {
 				goto _st32;
 			}
-			case 111: {
-				goto _st35;
-			}
-			case 114: {
-				goto _st45;
-			}
 		}
-		if ( ( (*( p))) < 66 ) {
+		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
-			if ( 98 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr93;
 		_st32:
 		if ( p == eof )
 			goto _out32;
 		p+= 1;
 		st_case_32:
-		switch( ( (*( p))) ) {
-			case 83: {
-				goto _st33;
-			}
-			case 95: {
-				goto _st24;
-			}
-			case 115: {
-				goto _st33;
-			}
+		if ( ( (*( p))) == 95 ) {
+			goto _st25;
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr95;
 		_st33:
 		if ( p == eof )
 			goto _out33;
 		p+= 1;
 		st_case_33:
 		switch( ( (*( p))) ) {
-			case 69: {
+			case 89: {
 				goto _st34;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 101: {
+			case 121: {
 				goto _st34;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st34:
 		if ( p == eof )
 			goto _out34;
 		p+= 1;
 		st_case_34:
 		if ( ( (*( p))) == 95 ) {
-			goto _st24;
+			goto _st25;
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr95;
+		goto _ctr97;
 		_st35:
 		if ( p == eof )
 			goto _out35;
 		p+= 1;
 		st_case_35:
 		switch( ( (*( p))) ) {
-			case 78: {
+			case 65: {
 				goto _st36;
 			}
-			case 85: {
-				goto _st42;
+			case 79: {
+				goto _st41;
+			}
+			case 82: {
+				goto _st51;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 110: {
+			case 97: {
 				goto _st36;
 			}
-			case 117: {
-				goto _st42;
+			case 111: {
+				goto _st41;
+			}
+			case 114: {
+				goto _st51;
 			}
 		}
-		if ( ( (*( p))) < 65 ) {
+		if ( ( (*( p))) < 66 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
-			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+			if ( 98 <= ( (*( p))) && ( (*( p))) <= 122 ) {
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st36:
 		if ( p == eof )
 			goto _out36;
 		p+= 1;
 		st_case_36:
 		switch( ( (*( p))) ) {
-			case 84: {
+			case 76: {
 				goto _st37;
+			}
+			case 83: {
+				goto _st39;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 116: {
+			case 108: {
 				goto _st37;
+			}
+			case 115: {
+				goto _st39;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st37:
 		if ( p == eof )
 			goto _out37;
 		p+= 1;
 		st_case_37:
 		switch( ( (*( p))) ) {
-			case 65: {
+			case 76: {
 				goto _st38;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 97: {
+			case 108: {
 				goto _st38;
 			}
 		}
-		if ( ( (*( p))) < 66 ) {
+		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
-			if ( 98 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st38:
 		if ( p == eof )
 			goto _out38;
 		p+= 1;
 		st_case_38:
-		switch( ( (*( p))) ) {
-			case 73: {
-				goto _st39;
-			}
-			case 95: {
-				goto _st24;
-			}
-			case 105: {
-				goto _st39;
-			}
+		if ( ( (*( p))) == 95 ) {
+			goto _st25;
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr104;
 		_st39:
 		if ( p == eof )
 			goto _out39;
 		p+= 1;
 		st_case_39:
 		switch( ( (*( p))) ) {
-			case 78: {
+			case 69: {
 				goto _st40;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 110: {
+			case 101: {
 				goto _st40;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st40:
 		if ( p == eof )
 			goto _out40;
 		p+= 1;
 		st_case_40:
-		switch( ( (*( p))) ) {
-			case 83: {
-				goto _st41;
-			}
-			case 95: {
-				goto _st24;
-			}
-			case 115: {
-				goto _st41;
-			}
+		if ( ( (*( p))) == 95 ) {
+			goto _st25;
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr106;
 		_st41:
 		if ( p == eof )
 			goto _out41;
 		p+= 1;
 		st_case_41:
-		if ( ( (*( p))) == 95 ) {
-			goto _st24;
+		switch( ( (*( p))) ) {
+			case 78: {
+				goto _st42;
+			}
+			case 85: {
+				goto _st48;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 110: {
+				goto _st42;
+			}
+			case 117: {
+				goto _st48;
+			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr103;
+		goto _ctr83;
 		_st42:
 		if ( p == eof )
 			goto _out42;
 		p+= 1;
 		st_case_42:
 		switch( ( (*( p))) ) {
-			case 78: {
+			case 84: {
 				goto _st43;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 110: {
+			case 116: {
 				goto _st43;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st43:
 		if ( p == eof )
 			goto _out43;
 		p+= 1;
 		st_case_43:
 		switch( ( (*( p))) ) {
-			case 84: {
+			case 65: {
 				goto _st44;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 116: {
+			case 97: {
 				goto _st44;
 			}
 		}
-		if ( ( (*( p))) < 65 ) {
+		if ( ( (*( p))) < 66 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
-			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+			if ( 98 <= ( (*( p))) && ( (*( p))) <= 122 ) {
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st44:
 		if ( p == eof )
 			goto _out44;
 		p+= 1;
 		st_case_44:
-		if ( ( (*( p))) == 95 ) {
-			goto _st24;
+		switch( ( (*( p))) ) {
+			case 73: {
+				goto _st45;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 105: {
+				goto _st45;
+			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr106;
+		goto _ctr83;
 		_st45:
 		if ( p == eof )
 			goto _out45;
 		p+= 1;
 		st_case_45:
 		switch( ( (*( p))) ) {
-			case 69: {
+			case 78: {
 				goto _st46;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 101: {
+			case 110: {
 				goto _st46;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st46:
 		if ( p == eof )
 			goto _out46;
 		p+= 1;
 		st_case_46:
 		switch( ( (*( p))) ) {
-			case 65: {
+			case 83: {
 				goto _st47;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 97: {
+			case 115: {
 				goto _st47;
 			}
 		}
-		if ( ( (*( p))) < 66 ) {
+		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
-			if ( 98 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st47:
 		if ( p == eof )
 			goto _out47;
 		p+= 1;
 		st_case_47:
-		switch( ( (*( p))) ) {
-			case 84: {
-				goto _st48;
-			}
-			case 95: {
-				goto _st24;
-			}
-			case 116: {
-				goto _st48;
-			}
+		if ( ( (*( p))) == 95 ) {
+			goto _st25;
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr114;
 		_st48:
 		if ( p == eof )
 			goto _out48;
 		p+= 1;
 		st_case_48:
 		switch( ( (*( p))) ) {
-			case 69: {
+			case 78: {
 				goto _st49;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 101: {
+			case 110: {
 				goto _st49;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st49:
 		if ( p == eof )
 			goto _out49;
 		p+= 1;
 		st_case_49:
-		if ( ( (*( p))) == 95 ) {
-			goto _st24;
+		switch( ( (*( p))) ) {
+			case 84: {
+				goto _st50;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 116: {
+				goto _st50;
+			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr111;
+		goto _ctr83;
 		_st50:
 		if ( p == eof )
 			goto _out50;
 		p+= 1;
 		st_case_50:
-		switch( ( (*( p))) ) {
-			case 69: {
-				goto _st51;
-			}
-			case 73: {
-				goto _st62;
-			}
-			case 95: {
-				goto _st24;
-			}
-			case 101: {
-				goto _st51;
-			}
-			case 105: {
-				goto _st62;
-			}
+		if ( ( (*( p))) == 95 ) {
+			goto _st25;
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr117;
 		_st51:
 		if ( p == eof )
 			goto _out51;
 		p+= 1;
 		st_case_51:
 		switch( ( (*( p))) ) {
-			case 76: {
+			case 69: {
 				goto _st52;
-			}
-			case 83: {
-				goto _st56;
-			}
-			case 84: {
-				goto _st58;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 108: {
+			case 101: {
 				goto _st52;
-			}
-			case 115: {
-				goto _st56;
-			}
-			case 116: {
-				goto _st58;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st52:
 		if ( p == eof )
 			goto _out52;
 		p+= 1;
 		st_case_52:
 		switch( ( (*( p))) ) {
-			case 69: {
+			case 65: {
 				goto _st53;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 101: {
+			case 97: {
 				goto _st53;
 			}
 		}
-		if ( ( (*( p))) < 65 ) {
+		if ( ( (*( p))) < 66 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
-			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+			if ( 98 <= ( (*( p))) && ( (*( p))) <= 122 ) {
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st53:
 		if ( p == eof )
 			goto _out53;
@@ -2771,7 +2860,7 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				goto _st54;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
 			case 116: {
 				goto _st54;
@@ -2779,16 +2868,16 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st54:
 		if ( p == eof )
 			goto _out54;
@@ -2799,7 +2888,7 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				goto _st55;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
 			case 101: {
 				goto _st55;
@@ -2807,756 +2896,774 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st55:
 		if ( p == eof )
 			goto _out55;
 		p+= 1;
 		st_case_55:
 		if ( ( (*( p))) == 95 ) {
-			goto _st24;
+			goto _st25;
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr120;
+		goto _ctr122;
 		_st56:
 		if ( p == eof )
 			goto _out56;
 		p+= 1;
 		st_case_56:
 		switch( ( (*( p))) ) {
-			case 67: {
+			case 69: {
 				goto _st57;
+			}
+			case 73: {
+				goto _st68;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 99: {
+			case 101: {
 				goto _st57;
+			}
+			case 105: {
+				goto _st68;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st57:
 		if ( p == eof )
 			goto _out57;
 		p+= 1;
 		st_case_57:
-		if ( ( (*( p))) == 95 ) {
-			goto _st24;
+		switch( ( (*( p))) ) {
+			case 76: {
+				goto _st58;
+			}
+			case 83: {
+				goto _st62;
+			}
+			case 84: {
+				goto _st64;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 108: {
+				goto _st58;
+			}
+			case 115: {
+				goto _st62;
+			}
+			case 116: {
+				goto _st64;
+			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr122;
+		goto _ctr83;
 		_st58:
 		if ( p == eof )
 			goto _out58;
 		p+= 1;
 		st_case_58:
 		switch( ( (*( p))) ) {
-			case 65: {
+			case 69: {
 				goto _st59;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 97: {
+			case 101: {
 				goto _st59;
 			}
 		}
-		if ( ( (*( p))) < 66 ) {
+		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
-			if ( 98 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st59:
 		if ( p == eof )
 			goto _out59;
 		p+= 1;
 		st_case_59:
 		switch( ( (*( p))) ) {
-			case 67: {
+			case 84: {
 				goto _st60;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 99: {
+			case 116: {
 				goto _st60;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st60:
 		if ( p == eof )
 			goto _out60;
 		p+= 1;
 		st_case_60:
 		switch( ( (*( p))) ) {
-			case 72: {
+			case 69: {
 				goto _st61;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 104: {
+			case 101: {
 				goto _st61;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st61:
 		if ( p == eof )
 			goto _out61;
 		p+= 1;
 		st_case_61:
 		if ( ( (*( p))) == 95 ) {
-			goto _st24;
+			goto _st25;
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr126;
+		goto _ctr131;
 		_st62:
 		if ( p == eof )
 			goto _out62;
 		p+= 1;
 		st_case_62:
 		switch( ( (*( p))) ) {
-			case 83: {
+			case 67: {
 				goto _st63;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 115: {
+			case 99: {
 				goto _st63;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st63:
 		if ( p == eof )
 			goto _out63;
 		p+= 1;
 		st_case_63:
-		switch( ( (*( p))) ) {
-			case 84: {
-				goto _st64;
-			}
-			case 95: {
-				goto _st24;
-			}
-			case 116: {
-				goto _st64;
-			}
+		if ( ( (*( p))) == 95 ) {
+			goto _st25;
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr133;
 		_st64:
 		if ( p == eof )
 			goto _out64;
 		p+= 1;
 		st_case_64:
 		switch( ( (*( p))) ) {
-			case 73: {
+			case 65: {
 				goto _st65;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 105: {
+			case 97: {
 				goto _st65;
 			}
 		}
-		if ( ( (*( p))) < 65 ) {
+		if ( ( (*( p))) < 66 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
-			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+			if ( 98 <= ( (*( p))) && ( (*( p))) <= 122 ) {
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st65:
 		if ( p == eof )
 			goto _out65;
 		p+= 1;
 		st_case_65:
 		switch( ( (*( p))) ) {
-			case 78: {
+			case 67: {
 				goto _st66;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 110: {
+			case 99: {
 				goto _st66;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st66:
 		if ( p == eof )
 			goto _out66;
 		p+= 1;
 		st_case_66:
 		switch( ( (*( p))) ) {
-			case 67: {
+			case 72: {
 				goto _st67;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 99: {
+			case 104: {
 				goto _st67;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st67:
 		if ( p == eof )
 			goto _out67;
 		p+= 1;
 		st_case_67:
-		switch( ( (*( p))) ) {
-			case 84: {
-				goto _st68;
-			}
-			case 95: {
-				goto _st24;
-			}
-			case 116: {
-				goto _st68;
-			}
+		if ( ( (*( p))) == 95 ) {
+			goto _st25;
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr137;
 		_st68:
 		if ( p == eof )
 			goto _out68;
 		p+= 1;
 		st_case_68:
-		if ( ( (*( p))) == 95 ) {
-			goto _st24;
+		switch( ( (*( p))) ) {
+			case 83: {
+				goto _st69;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 115: {
+				goto _st69;
+			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr133;
+		goto _ctr83;
 		_st69:
 		if ( p == eof )
 			goto _out69;
 		p+= 1;
 		st_case_69:
 		switch( ( (*( p))) ) {
-			case 76: {
+			case 84: {
 				goto _st70;
-			}
-			case 78: {
-				goto _st73;
-			}
-			case 88: {
-				goto _st76;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 108: {
+			case 116: {
 				goto _st70;
-			}
-			case 110: {
-				goto _st73;
-			}
-			case 120: {
-				goto _st76;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st70:
 		if ( p == eof )
 			goto _out70;
 		p+= 1;
 		st_case_70:
 		switch( ( (*( p))) ) {
-			case 83: {
+			case 73: {
 				goto _st71;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 115: {
+			case 105: {
 				goto _st71;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st71:
 		if ( p == eof )
 			goto _out71;
 		p+= 1;
 		st_case_71:
 		switch( ( (*( p))) ) {
-			case 69: {
+			case 78: {
 				goto _st72;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 101: {
+			case 110: {
 				goto _st72;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st72:
 		if ( p == eof )
 			goto _out72;
 		p+= 1;
 		st_case_72:
-		if ( ( (*( p))) == 95 ) {
-			goto _st24;
+		switch( ( (*( p))) ) {
+			case 67: {
+				goto _st73;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 99: {
+				goto _st73;
+			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr139;
+		goto _ctr83;
 		_st73:
 		if ( p == eof )
 			goto _out73;
 		p+= 1;
 		st_case_73:
 		switch( ( (*( p))) ) {
-			case 68: {
+			case 84: {
 				goto _st74;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 100: {
+			case 116: {
 				goto _st74;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st74:
 		if ( p == eof )
 			goto _out74;
 		p+= 1;
 		st_case_74:
-		switch( ( (*( p))) ) {
-			case 83: {
-				goto _st75;
-			}
-			case 95: {
-				goto _st24;
-			}
-			case 115: {
-				goto _st75;
-			}
+		if ( ( (*( p))) == 95 ) {
+			goto _st25;
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr141;
+		goto _ctr144;
 		_st75:
 		if ( p == eof )
 			goto _out75;
 		p+= 1;
 		st_case_75:
-		if ( ( (*( p))) == 95 ) {
-			goto _st24;
+		switch( ( (*( p))) ) {
+			case 76: {
+				goto _st76;
+			}
+			case 78: {
+				goto _st79;
+			}
+			case 88: {
+				goto _st82;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 108: {
+				goto _st76;
+			}
+			case 110: {
+				goto _st79;
+			}
+			case 120: {
+				goto _st82;
+			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr143;
+		goto _ctr83;
 		_st76:
 		if ( p == eof )
 			goto _out76;
 		p+= 1;
 		st_case_76:
 		switch( ( (*( p))) ) {
-			case 73: {
+			case 83: {
 				goto _st77;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 105: {
+			case 115: {
 				goto _st77;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st77:
 		if ( p == eof )
 			goto _out77;
 		p+= 1;
 		st_case_77:
 		switch( ( (*( p))) ) {
-			case 83: {
+			case 69: {
 				goto _st78;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 115: {
+			case 101: {
 				goto _st78;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st78:
 		if ( p == eof )
 			goto _out78;
 		p+= 1;
 		st_case_78:
-		switch( ( (*( p))) ) {
-			case 84: {
-				goto _st79;
-			}
-			case 95: {
-				goto _st24;
-			}
-			case 116: {
-				goto _st79;
-			}
+		if ( ( (*( p))) == 95 ) {
+			goto _st25;
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr150;
 		_st79:
 		if ( p == eof )
 			goto _out79;
 		p+= 1;
 		st_case_79:
 		switch( ( (*( p))) ) {
-			case 83: {
+			case 68: {
 				goto _st80;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 115: {
+			case 100: {
 				goto _st80;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st80:
 		if ( p == eof )
 			goto _out80;
 		p+= 1;
 		st_case_80:
-		if ( ( (*( p))) == 95 ) {
-			goto _st24;
+		switch( ( (*( p))) ) {
+			case 83: {
+				goto _st81;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 115: {
+				goto _st81;
+			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr148;
+		goto _ctr152;
 		_st81:
 		if ( p == eof )
 			goto _out81;
 		p+= 1;
 		st_case_81:
-		switch( ( (*( p))) ) {
-			case 65: {
-				goto _st82;
-			}
-			case 95: {
-				goto _st24;
-			}
-			case 97: {
-				goto _st82;
-			}
+		if ( ( (*( p))) == 95 ) {
+			goto _st25;
 		}
-		if ( ( (*( p))) < 66 ) {
+		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
-			if ( 98 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr154;
 		_st82:
 		if ( p == eof )
 			goto _out82;
 		p+= 1;
 		st_case_82:
 		switch( ( (*( p))) ) {
-			case 76: {
+			case 73: {
 				goto _st83;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 108: {
+			case 105: {
 				goto _st83;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st83:
 		if ( p == eof )
 			goto _out83;
@@ -3567,7 +3674,7 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				goto _st84;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
 			case 115: {
 				goto _st84;
@@ -3575,1934 +3682,1940 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st84:
 		if ( p == eof )
 			goto _out84;
 		p+= 1;
 		st_case_84:
 		switch( ( (*( p))) ) {
-			case 69: {
+			case 84: {
 				goto _st85;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 101: {
+			case 116: {
 				goto _st85;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st85:
 		if ( p == eof )
 			goto _out85;
 		p+= 1;
 		st_case_85:
-		if ( ( (*( p))) == 95 ) {
-			goto _st24;
+		switch( ( (*( p))) ) {
+			case 83: {
+				goto _st86;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 115: {
+				goto _st86;
+			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr153;
+		goto _ctr83;
 		_st86:
 		if ( p == eof )
 			goto _out86;
 		p+= 1;
 		st_case_86:
-		switch( ( (*( p))) ) {
-			case 78: {
-				goto _st87;
-			}
-			case 83: {
-				goto _st88;
-			}
-			case 95: {
-				goto _st24;
-			}
-			case 110: {
-				goto _st87;
-			}
-			case 115: {
-				goto _st88;
-			}
+		if ( ( (*( p))) == 95 ) {
+			goto _st25;
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr159;
 		_st87:
 		if ( p == eof )
 			goto _out87;
 		p+= 1;
 		st_case_87:
-		if ( ( (*( p))) == 95 ) {
-			goto _st24;
+		switch( ( (*( p))) ) {
+			case 65: {
+				goto _st88;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 97: {
+				goto _st88;
+			}
 		}
-		if ( ( (*( p))) < 65 ) {
+		if ( ( (*( p))) < 66 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
-			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+			if ( 98 <= ( (*( p))) && ( (*( p))) <= 122 ) {
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr156;
+		goto _ctr83;
 		_st88:
 		if ( p == eof )
 			goto _out88;
 		p+= 1;
 		st_case_88:
-		if ( ( (*( p))) == 95 ) {
-			goto _st24;
+		switch( ( (*( p))) ) {
+			case 76: {
+				goto _st89;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 108: {
+				goto _st89;
+			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr157;
+		goto _ctr83;
 		_st89:
 		if ( p == eof )
 			goto _out89;
 		p+= 1;
 		st_case_89:
 		switch( ( (*( p))) ) {
-			case 73: {
+			case 83: {
 				goto _st90;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 105: {
+			case 115: {
 				goto _st90;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st90:
 		if ( p == eof )
 			goto _out90;
 		p+= 1;
 		st_case_90:
 		switch( ( (*( p))) ) {
-			case 77: {
+			case 69: {
 				goto _st91;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 109: {
+			case 101: {
 				goto _st91;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st91:
 		if ( p == eof )
 			goto _out91;
 		p+= 1;
 		st_case_91:
-		switch( ( (*( p))) ) {
-			case 73: {
-				goto _st92;
-			}
-			case 95: {
-				goto _st24;
-			}
-			case 105: {
-				goto _st92;
-			}
+		if ( ( (*( p))) == 95 ) {
+			goto _st25;
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr164;
 		_st92:
 		if ( p == eof )
 			goto _out92;
 		p+= 1;
 		st_case_92:
 		switch( ( (*( p))) ) {
-			case 84: {
+			case 78: {
 				goto _st93;
+			}
+			case 83: {
+				goto _st94;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 116: {
+			case 110: {
 				goto _st93;
+			}
+			case 115: {
+				goto _st94;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st93:
 		if ( p == eof )
 			goto _out93;
 		p+= 1;
 		st_case_93:
 		if ( ( (*( p))) == 95 ) {
-			goto _st24;
+			goto _st25;
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr162;
+		goto _ctr167;
 		_st94:
 		if ( p == eof )
 			goto _out94;
 		p+= 1;
 		st_case_94:
-		switch( ( (*( p))) ) {
-			case 65: {
-				goto _st95;
-			}
-			case 69: {
-				goto _st99;
-			}
-			case 95: {
-				goto _st24;
-			}
-			case 97: {
-				goto _st95;
-			}
-			case 101: {
-				goto _st99;
-			}
+		if ( ( (*( p))) == 95 ) {
+			goto _st25;
 		}
-		if ( ( (*( p))) < 66 ) {
+		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
-			if ( 98 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr168;
 		_st95:
 		if ( p == eof )
 			goto _out95;
 		p+= 1;
 		st_case_95:
 		switch( ( (*( p))) ) {
-			case 84: {
+			case 73: {
 				goto _st96;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 116: {
+			case 105: {
 				goto _st96;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st96:
 		if ( p == eof )
 			goto _out96;
 		p+= 1;
 		st_case_96:
 		switch( ( (*( p))) ) {
-			case 67: {
+			case 77: {
 				goto _st97;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 99: {
+			case 109: {
 				goto _st97;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st97:
 		if ( p == eof )
 			goto _out97;
 		p+= 1;
 		st_case_97:
 		switch( ( (*( p))) ) {
-			case 72: {
+			case 73: {
 				goto _st98;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 104: {
+			case 105: {
 				goto _st98;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st98:
 		if ( p == eof )
 			goto _out98;
 		p+= 1;
 		st_case_98:
-		if ( ( (*( p))) == 95 ) {
-			goto _st24;
+		switch( ( (*( p))) ) {
+			case 84: {
+				goto _st99;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 116: {
+				goto _st99;
+			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr168;
+		goto _ctr83;
 		_st99:
 		if ( p == eof )
 			goto _out99;
 		p+= 1;
 		st_case_99:
-		switch( ( (*( p))) ) {
-			case 82: {
-				goto _st100;
-			}
-			case 95: {
-				goto _st24;
-			}
-			case 114: {
-				goto _st100;
-			}
+		if ( ( (*( p))) == 95 ) {
+			goto _st25;
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr173;
 		_st100:
 		if ( p == eof )
 			goto _out100;
 		p+= 1;
 		st_case_100:
 		switch( ( (*( p))) ) {
-			case 71: {
+			case 65: {
 				goto _st101;
+			}
+			case 69: {
+				goto _st105;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 103: {
+			case 97: {
 				goto _st101;
 			}
+			case 101: {
+				goto _st105;
+			}
 		}
-		if ( ( (*( p))) < 65 ) {
+		if ( ( (*( p))) < 66 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
-			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+			if ( 98 <= ( (*( p))) && ( (*( p))) <= 122 ) {
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st101:
 		if ( p == eof )
 			goto _out101;
 		p+= 1;
 		st_case_101:
 		switch( ( (*( p))) ) {
-			case 69: {
+			case 84: {
 				goto _st102;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 101: {
+			case 116: {
 				goto _st102;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st102:
 		if ( p == eof )
 			goto _out102;
 		p+= 1;
 		st_case_102:
-		if ( ( (*( p))) == 95 ) {
-			goto _st24;
+		switch( ( (*( p))) ) {
+			case 67: {
+				goto _st103;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 99: {
+				goto _st103;
+			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr172;
+		goto _ctr83;
 		_st103:
 		if ( p == eof )
 			goto _out103;
 		p+= 1;
 		st_case_103:
 		switch( ( (*( p))) ) {
-			case 79: {
+			case 72: {
 				goto _st104;
-			}
-			case 85: {
-				goto _st106;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 111: {
+			case 104: {
 				goto _st104;
-			}
-			case 117: {
-				goto _st106;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st104:
 		if ( p == eof )
 			goto _out104;
 		p+= 1;
 		st_case_104:
-		switch( ( (*( p))) ) {
-			case 84: {
-				goto _st105;
-			}
-			case 95: {
-				goto _st24;
-			}
-			case 116: {
-				goto _st105;
-			}
+		if ( ( (*( p))) == 95 ) {
+			goto _st25;
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr179;
 		_st105:
 		if ( p == eof )
 			goto _out105;
 		p+= 1;
 		st_case_105:
-		if ( ( (*( p))) == 95 ) {
-			goto _st24;
+		switch( ( (*( p))) ) {
+			case 82: {
+				goto _st106;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 114: {
+				goto _st106;
+			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr176;
+		goto _ctr83;
 		_st106:
 		if ( p == eof )
 			goto _out106;
 		p+= 1;
 		st_case_106:
 		switch( ( (*( p))) ) {
-			case 76: {
+			case 71: {
 				goto _st107;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 108: {
+			case 103: {
 				goto _st107;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st107:
 		if ( p == eof )
 			goto _out107;
 		p+= 1;
 		st_case_107:
 		switch( ( (*( p))) ) {
-			case 76: {
+			case 69: {
 				goto _st108;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 108: {
+			case 101: {
 				goto _st108;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st108:
 		if ( p == eof )
 			goto _out108;
 		p+= 1;
 		st_case_108:
 		if ( ( (*( p))) == 95 ) {
-			goto _st24;
+			goto _st25;
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr179;
+		goto _ctr183;
 		_st109:
 		if ( p == eof )
 			goto _out109;
 		p+= 1;
 		st_case_109:
 		switch( ( (*( p))) ) {
-			case 78: {
+			case 79: {
 				goto _st110;
 			}
-			case 80: {
-				goto _st111;
-			}
-			case 82: {
-				goto _st118;
+			case 85: {
+				goto _st114;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 110: {
+			case 111: {
 				goto _st110;
 			}
-			case 112: {
-				goto _st111;
-			}
-			case 114: {
-				goto _st118;
+			case 117: {
+				goto _st114;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st110:
 		if ( p == eof )
 			goto _out110;
 		p+= 1;
 		st_case_110:
-		if ( ( (*( p))) == 95 ) {
-			goto _st24;
+		switch( ( (*( p))) ) {
+			case 78: {
+				goto _st111;
+			}
+			case 84: {
+				goto _st113;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 110: {
+				goto _st111;
+			}
+			case 116: {
+				goto _st113;
+			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr183;
+		goto _ctr83;
 		_st111:
 		if ( p == eof )
 			goto _out111;
 		p+= 1;
 		st_case_111:
 		switch( ( (*( p))) ) {
-			case 84: {
+			case 69: {
 				goto _st112;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 116: {
+			case 101: {
 				goto _st112;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st112:
 		if ( p == eof )
 			goto _out112;
 		p+= 1;
 		st_case_112:
-		switch( ( (*( p))) ) {
-			case 73: {
-				goto _st113;
-			}
-			case 95: {
-				goto _st24;
-			}
-			case 105: {
-				goto _st113;
-			}
+		if ( ( (*( p))) == 95 ) {
+			goto _st25;
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr189;
 		_st113:
 		if ( p == eof )
 			goto _out113;
 		p+= 1;
 		st_case_113:
-		switch( ( (*( p))) ) {
-			case 79: {
-				goto _st114;
-			}
-			case 95: {
-				goto _st24;
-			}
-			case 111: {
-				goto _st114;
-			}
+		if ( ( (*( p))) == 95 ) {
+			goto _st25;
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr190;
 		_st114:
 		if ( p == eof )
 			goto _out114;
 		p+= 1;
 		st_case_114:
 		switch( ( (*( p))) ) {
-			case 78: {
+			case 76: {
 				goto _st115;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 110: {
+			case 108: {
 				goto _st115;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st115:
 		if ( p == eof )
 			goto _out115;
 		p+= 1;
 		st_case_115:
 		switch( ( (*( p))) ) {
-			case 65: {
+			case 76: {
 				goto _st116;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 97: {
+			case 108: {
 				goto _st116;
 			}
 		}
-		if ( ( (*( p))) < 66 ) {
+		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
-			if ( 98 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st116:
 		if ( p == eof )
 			goto _out116;
 		p+= 1;
 		st_case_116:
-		switch( ( (*( p))) ) {
-			case 76: {
-				goto _st117;
-			}
-			case 95: {
-				goto _st24;
-			}
-			case 108: {
-				goto _st117;
-			}
+		if ( ( (*( p))) == 95 ) {
+			goto _st25;
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr193;
 		_st117:
 		if ( p == eof )
 			goto _out117;
 		p+= 1;
 		st_case_117:
-		if ( ( (*( p))) == 95 ) {
-			goto _st24;
+		switch( ( (*( p))) ) {
+			case 78: {
+				goto _st118;
+			}
+			case 80: {
+				goto _st119;
+			}
+			case 82: {
+				goto _st126;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 110: {
+				goto _st118;
+			}
+			case 112: {
+				goto _st119;
+			}
+			case 114: {
+				goto _st126;
+			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr190;
+		goto _ctr83;
 		_st118:
 		if ( p == eof )
 			goto _out118;
 		p+= 1;
 		st_case_118:
-		switch( ( (*( p))) ) {
-			case 68: {
-				goto _st119;
-			}
-			case 95: {
-				goto _st24;
-			}
-			case 100: {
-				goto _st119;
-			}
+		if ( ( (*( p))) == 95 ) {
+			goto _st25;
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr191;
+		goto _ctr197;
 		_st119:
 		if ( p == eof )
 			goto _out119;
 		p+= 1;
 		st_case_119:
 		switch( ( (*( p))) ) {
-			case 69: {
+			case 84: {
 				goto _st120;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 101: {
+			case 116: {
 				goto _st120;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st120:
 		if ( p == eof )
 			goto _out120;
 		p+= 1;
 		st_case_120:
 		switch( ( (*( p))) ) {
-			case 82: {
+			case 73: {
 				goto _st121;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 114: {
+			case 105: {
 				goto _st121;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st121:
 		if ( p == eof )
 			goto _out121;
 		p+= 1;
 		st_case_121:
-		if ( ( (*( p))) == 95 ) {
-			goto _st24;
+		switch( ( (*( p))) ) {
+			case 79: {
+				goto _st122;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 111: {
+				goto _st122;
+			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr195;
+		goto _ctr83;
 		_st122:
 		if ( p == eof )
 			goto _out122;
 		p+= 1;
 		st_case_122:
 		switch( ( (*( p))) ) {
-			case 69: {
+			case 78: {
 				goto _st123;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 101: {
+			case 110: {
 				goto _st123;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st123:
 		if ( p == eof )
 			goto _out123;
 		p+= 1;
 		st_case_123:
 		switch( ( (*( p))) ) {
-			case 77: {
+			case 65: {
 				goto _st124;
-			}
-			case 84: {
-				goto _st128;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 109: {
+			case 97: {
 				goto _st124;
 			}
-			case 116: {
-				goto _st128;
-			}
 		}
-		if ( ( (*( p))) < 65 ) {
+		if ( ( (*( p))) < 66 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
-			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+			if ( 98 <= ( (*( p))) && ( (*( p))) <= 122 ) {
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st124:
 		if ( p == eof )
 			goto _out124;
 		p+= 1;
 		st_case_124:
 		switch( ( (*( p))) ) {
-			case 79: {
+			case 76: {
 				goto _st125;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 111: {
+			case 108: {
 				goto _st125;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st125:
 		if ( p == eof )
 			goto _out125;
 		p+= 1;
 		st_case_125:
-		switch( ( (*( p))) ) {
-			case 86: {
-				goto _st126;
-			}
-			case 95: {
-				goto _st24;
-			}
-			case 118: {
-				goto _st126;
-			}
+		if ( ( (*( p))) == 95 ) {
+			goto _st25;
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr204;
 		_st126:
 		if ( p == eof )
 			goto _out126;
 		p+= 1;
 		st_case_126:
 		switch( ( (*( p))) ) {
-			case 69: {
+			case 68: {
 				goto _st127;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 101: {
+			case 100: {
 				goto _st127;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr205;
 		_st127:
 		if ( p == eof )
 			goto _out127;
 		p+= 1;
 		st_case_127:
-		if ( ( (*( p))) == 95 ) {
-			goto _st24;
+		switch( ( (*( p))) ) {
+			case 69: {
+				goto _st128;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 101: {
+				goto _st128;
+			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr202;
+		goto _ctr83;
 		_st128:
 		if ( p == eof )
 			goto _out128;
 		p+= 1;
 		st_case_128:
 		switch( ( (*( p))) ) {
-			case 85: {
+			case 82: {
 				goto _st129;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 117: {
+			case 114: {
 				goto _st129;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st129:
 		if ( p == eof )
 			goto _out129;
 		p+= 1;
 		st_case_129:
-		switch( ( (*( p))) ) {
-			case 82: {
-				goto _st130;
-			}
-			case 95: {
-				goto _st24;
-			}
-			case 114: {
-				goto _st130;
-			}
+		if ( ( (*( p))) == 95 ) {
+			goto _st25;
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr209;
 		_st130:
 		if ( p == eof )
 			goto _out130;
 		p+= 1;
 		st_case_130:
 		switch( ( (*( p))) ) {
-			case 78: {
+			case 69: {
 				goto _st131;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 110: {
+			case 101: {
 				goto _st131;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st131:
 		if ( p == eof )
 			goto _out131;
 		p+= 1;
 		st_case_131:
-		if ( ( (*( p))) == 95 ) {
-			goto _st24;
+		switch( ( (*( p))) ) {
+			case 77: {
+				goto _st132;
+			}
+			case 84: {
+				goto _st136;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 109: {
+				goto _st132;
+			}
+			case 116: {
+				goto _st136;
+			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr206;
+		goto _ctr83;
 		_st132:
 		if ( p == eof )
 			goto _out132;
 		p+= 1;
 		st_case_132:
 		switch( ( (*( p))) ) {
-			case 69: {
+			case 79: {
 				goto _st133;
-			}
-			case 75: {
-				goto _st135;
-			}
-			case 84: {
-				goto _st138;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 101: {
+			case 111: {
 				goto _st133;
-			}
-			case 107: {
-				goto _st135;
-			}
-			case 116: {
-				goto _st138;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st133:
 		if ( p == eof )
 			goto _out133;
 		p+= 1;
 		st_case_133:
 		switch( ( (*( p))) ) {
-			case 84: {
+			case 86: {
 				goto _st134;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 116: {
+			case 118: {
 				goto _st134;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st134:
 		if ( p == eof )
 			goto _out134;
 		p+= 1;
 		st_case_134:
-		if ( ( (*( p))) == 95 ) {
-			goto _st24;
+		switch( ( (*( p))) ) {
+			case 69: {
+				goto _st135;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 101: {
+				goto _st135;
+			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr211;
+		goto _ctr83;
 		_st135:
 		if ( p == eof )
 			goto _out135;
 		p+= 1;
 		st_case_135:
-		switch( ( (*( p))) ) {
-			case 73: {
-				goto _st136;
-			}
-			case 95: {
-				goto _st24;
-			}
-			case 105: {
-				goto _st136;
-			}
+		if ( ( (*( p))) == 95 ) {
+			goto _st25;
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr216;
 		_st136:
 		if ( p == eof )
 			goto _out136;
 		p+= 1;
 		st_case_136:
 		switch( ( (*( p))) ) {
-			case 80: {
+			case 85: {
 				goto _st137;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 112: {
+			case 117: {
 				goto _st137;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st137:
 		if ( p == eof )
 			goto _out137;
 		p+= 1;
 		st_case_137:
-		if ( ( (*( p))) == 95 ) {
-			goto _st24;
+		switch( ( (*( p))) ) {
+			case 82: {
+				goto _st138;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 114: {
+				goto _st138;
+			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr214;
+		goto _ctr83;
 		_st138:
 		if ( p == eof )
 			goto _out138;
 		p+= 1;
 		st_case_138:
 		switch( ( (*( p))) ) {
-			case 65: {
+			case 78: {
 				goto _st139;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 97: {
+			case 110: {
 				goto _st139;
 			}
 		}
-		if ( ( (*( p))) < 66 ) {
+		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
-			if ( 98 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st139:
 		if ( p == eof )
 			goto _out139;
 		p+= 1;
 		st_case_139:
-		switch( ( (*( p))) ) {
-			case 82: {
-				goto _st140;
-			}
-			case 95: {
-				goto _st24;
-			}
-			case 114: {
-				goto _st140;
-			}
+		if ( ( (*( p))) == 95 ) {
+			goto _st25;
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr220;
 		_st140:
 		if ( p == eof )
 			goto _out140;
 		p+= 1;
 		st_case_140:
 		switch( ( (*( p))) ) {
-			case 84: {
+			case 69: {
 				goto _st141;
+			}
+			case 73: {
+				goto _st143;
+			}
+			case 75: {
+				goto _st148;
+			}
+			case 84: {
+				goto _st151;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
+			}
+			case 101: {
+				goto _st141;
+			}
+			case 105: {
+				goto _st143;
+			}
+			case 107: {
+				goto _st148;
 			}
 			case 116: {
-				goto _st141;
+				goto _st151;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st141:
 		if ( p == eof )
 			goto _out141;
 		p+= 1;
 		st_case_141:
 		switch( ( (*( p))) ) {
-			case 83: {
+			case 84: {
 				goto _st142;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 115: {
+			case 116: {
 				goto _st142;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st142:
 		if ( p == eof )
 			goto _out142;
 		p+= 1;
 		st_case_142:
 		if ( ( (*( p))) == 95 ) {
-			goto _st24;
+			goto _st25;
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr219;
+		goto _ctr226;
 		_st143:
 		if ( p == eof )
 			goto _out143;
 		p+= 1;
 		st_case_143:
 		switch( ( (*( p))) ) {
-			case 72: {
+			case 78: {
 				goto _st144;
-			}
-			case 82: {
-				goto _st147;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 104: {
+			case 110: {
 				goto _st144;
-			}
-			case 114: {
-				goto _st147;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st144:
 		if ( p == eof )
 			goto _out144;
 		p+= 1;
 		st_case_144:
 		switch( ( (*( p))) ) {
-			case 69: {
+			case 71: {
 				goto _st145;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 101: {
+			case 103: {
 				goto _st145;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st145:
 		if ( p == eof )
 			goto _out145;
 		p+= 1;
 		st_case_145:
 		switch( ( (*( p))) ) {
-			case 78: {
+			case 76: {
 				goto _st146;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 110: {
+			case 108: {
 				goto _st146;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st146:
 		if ( p == eof )
 			goto _out146;
 		p+= 1;
 		st_case_146:
-		if ( ( (*( p))) == 95 ) {
-			goto _st24;
+		switch( ( (*( p))) ) {
+			case 69: {
+				goto _st147;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 101: {
+				goto _st147;
+			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr224;
+		goto _ctr83;
 		_st147:
 		if ( p == eof )
 			goto _out147;
 		p+= 1;
 		st_case_147:
-		switch( ( (*( p))) ) {
-			case 85: {
-				goto _st148;
-			}
-			case 95: {
-				goto _st24;
-			}
-			case 117: {
-				goto _st148;
-			}
+		if ( ( (*( p))) == 95 ) {
+			goto _st25;
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr231;
 		_st148:
 		if ( p == eof )
 			goto _out148;
 		p+= 1;
 		st_case_148:
 		switch( ( (*( p))) ) {
-			case 69: {
+			case 73: {
 				goto _st149;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 101: {
+			case 105: {
 				goto _st149;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st149:
 		if ( p == eof )
 			goto _out149;
 		p+= 1;
 		st_case_149:
-		if ( ( (*( p))) == 95 ) {
-			goto _st24;
+		switch( ( (*( p))) ) {
+			case 80: {
+				goto _st150;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 112: {
+				goto _st150;
+			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr227;
+		goto _ctr83;
 		_st150:
 		if ( p == eof )
 			goto _out150;
 		p+= 1;
 		st_case_150:
-		switch( ( (*( p))) ) {
-			case 78: {
-				goto _st151;
-			}
-			case 95: {
-				goto _st24;
-			}
-			case 110: {
-				goto _st151;
-			}
+		if ( ( (*( p))) == 95 ) {
+			goto _st25;
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr234;
 		_st151:
 		if ( p == eof )
 			goto _out151;
 		p+= 1;
 		st_case_151:
 		switch( ( (*( p))) ) {
-			case 87: {
+			case 65: {
 				goto _st152;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 119: {
+			case 97: {
 				goto _st152;
 			}
 		}
-		if ( ( (*( p))) < 65 ) {
+		if ( ( (*( p))) < 66 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
-			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+			if ( 98 <= ( (*( p))) && ( (*( p))) <= 122 ) {
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st152:
 		if ( p == eof )
 			goto _out152;
 		p+= 1;
 		st_case_152:
 		switch( ( (*( p))) ) {
-			case 73: {
+			case 82: {
 				goto _st153;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 105: {
+			case 114: {
 				goto _st153;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st153:
 		if ( p == eof )
 			goto _out153;
 		p+= 1;
 		st_case_153:
 		switch( ( (*( p))) ) {
-			case 78: {
+			case 84: {
 				goto _st154;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 110: {
+			case 116: {
 				goto _st154;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st154:
 		if ( p == eof )
 			goto _out154;
 		p+= 1;
 		st_case_154:
 		switch( ( (*( p))) ) {
-			case 68: {
+			case 83: {
 				goto _st155;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 100: {
+			case 115: {
 				goto _st155;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st155:
 		if ( p == eof )
 			goto _out155;
 		p+= 1;
 		st_case_155:
 		if ( ( (*( p))) == 95 ) {
-			goto _st24;
+			goto _st25;
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr233;
+		goto _ctr239;
 		_st156:
 		if ( p == eof )
 			goto _out156;
@@ -5512,31 +5625,31 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 			case 72: {
 				goto _st157;
 			}
-			case 73: {
-				goto _st162;
+			case 82: {
+				goto _st160;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
 			case 104: {
 				goto _st157;
 			}
-			case 105: {
-				goto _st162;
+			case 114: {
+				goto _st160;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st157:
 		if ( p == eof )
 			goto _out157;
@@ -5547,7 +5660,7 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 				goto _st158;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
 			case 101: {
 				goto _st158;
@@ -5555,16 +5668,16 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st158:
 		if ( p == eof )
 			goto _out158;
@@ -5574,251 +5687,729 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 			case 78: {
 				goto _st159;
 			}
-			case 82: {
-				goto _st160;
-			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
 			case 110: {
 				goto _st159;
 			}
-			case 114: {
-				goto _st160;
-			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st159:
 		if ( p == eof )
 			goto _out159;
 		p+= 1;
 		st_case_159:
 		if ( ( (*( p))) == 95 ) {
-			goto _st24;
+			goto _st25;
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr239;
+		goto _ctr244;
 		_st160:
 		if ( p == eof )
 			goto _out160;
 		p+= 1;
 		st_case_160:
 		switch( ( (*( p))) ) {
-			case 69: {
+			case 85: {
 				goto _st161;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 101: {
+			case 117: {
 				goto _st161;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st161:
 		if ( p == eof )
 			goto _out161;
 		p+= 1;
 		st_case_161:
-		if ( ( (*( p))) == 95 ) {
-			goto _st24;
+		switch( ( (*( p))) ) {
+			case 69: {
+				goto _st162;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 101: {
+				goto _st162;
+			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr241;
+		goto _ctr83;
 		_st162:
 		if ( p == eof )
 			goto _out162;
 		p+= 1;
 		st_case_162:
-		switch( ( (*( p))) ) {
-			case 84: {
-				goto _st163;
-			}
-			case 95: {
-				goto _st24;
-			}
-			case 116: {
-				goto _st163;
-			}
+		if ( ( (*( p))) == 95 ) {
+			goto _st25;
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr247;
 		_st163:
 		if ( p == eof )
 			goto _out163;
 		p+= 1;
 		st_case_163:
 		switch( ( (*( p))) ) {
-			case 72: {
+			case 78: {
 				goto _st164;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 104: {
+			case 110: {
 				goto _st164;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st164:
 		if ( p == eof )
 			goto _out164;
 		p+= 1;
 		st_case_164:
-		if ( ( (*( p))) == 95 ) {
-			goto _st24;
+		switch( ( (*( p))) ) {
+			case 87: {
+				goto _st165;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 119: {
+				goto _st165;
+			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr244;
+		goto _ctr83;
 		_st165:
 		if ( p == eof )
 			goto _out165;
 		p+= 1;
 		st_case_165:
 		switch( ( (*( p))) ) {
-			case 79: {
+			case 73: {
 				goto _st166;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 111: {
+			case 105: {
 				goto _st166;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st166:
 		if ( p == eof )
 			goto _out166;
 		p+= 1;
 		st_case_166:
 		switch( ( (*( p))) ) {
-			case 82: {
+			case 78: {
 				goto _st167;
 			}
 			case 95: {
-				goto _st24;
+				goto _st25;
 			}
-			case 114: {
+			case 110: {
 				goto _st167;
 			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr80;
+		goto _ctr83;
 		_st167:
 		if ( p == eof )
 			goto _out167;
 		p+= 1;
 		st_case_167:
-		if ( ( (*( p))) == 95 ) {
-			goto _st24;
+		switch( ( (*( p))) ) {
+			case 68: {
+				goto _st168;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 100: {
+				goto _st168;
+			}
 		}
 		if ( ( (*( p))) < 65 ) {
 			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else if ( ( (*( p))) > 90 ) {
 			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
-				goto _st24;
+				goto _st25;
 			}
 		} else {
-			goto _st24;
+			goto _st25;
 		}
-		goto _ctr247;
+		goto _ctr83;
+		_st168:
+		if ( p == eof )
+			goto _out168;
+		p+= 1;
+		st_case_168:
+		if ( ( (*( p))) == 95 ) {
+			goto _st25;
+		}
+		if ( ( (*( p))) < 65 ) {
+			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
+				goto _st25;
+			}
+		} else if ( ( (*( p))) > 90 ) {
+			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
+				goto _st25;
+			}
+		} else {
+			goto _st25;
+		}
+		goto _ctr253;
+		_st169:
+		if ( p == eof )
+			goto _out169;
+		p+= 1;
+		st_case_169:
+		switch( ( (*( p))) ) {
+			case 72: {
+				goto _st170;
+			}
+			case 73: {
+				goto _st175;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 104: {
+				goto _st170;
+			}
+			case 105: {
+				goto _st175;
+			}
+		}
+		if ( ( (*( p))) < 65 ) {
+			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
+				goto _st25;
+			}
+		} else if ( ( (*( p))) > 90 ) {
+			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
+				goto _st25;
+			}
+		} else {
+			goto _st25;
+		}
+		goto _ctr83;
+		_st170:
+		if ( p == eof )
+			goto _out170;
+		p+= 1;
+		st_case_170:
+		switch( ( (*( p))) ) {
+			case 69: {
+				goto _st171;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 101: {
+				goto _st171;
+			}
+		}
+		if ( ( (*( p))) < 65 ) {
+			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
+				goto _st25;
+			}
+		} else if ( ( (*( p))) > 90 ) {
+			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
+				goto _st25;
+			}
+		} else {
+			goto _st25;
+		}
+		goto _ctr83;
+		_st171:
+		if ( p == eof )
+			goto _out171;
+		p+= 1;
+		st_case_171:
+		switch( ( (*( p))) ) {
+			case 78: {
+				goto _st172;
+			}
+			case 82: {
+				goto _st173;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 110: {
+				goto _st172;
+			}
+			case 114: {
+				goto _st173;
+			}
+		}
+		if ( ( (*( p))) < 65 ) {
+			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
+				goto _st25;
+			}
+		} else if ( ( (*( p))) > 90 ) {
+			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
+				goto _st25;
+			}
+		} else {
+			goto _st25;
+		}
+		goto _ctr83;
+		_st172:
+		if ( p == eof )
+			goto _out172;
+		p+= 1;
+		st_case_172:
+		if ( ( (*( p))) == 95 ) {
+			goto _st25;
+		}
+		if ( ( (*( p))) < 65 ) {
+			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
+				goto _st25;
+			}
+		} else if ( ( (*( p))) > 90 ) {
+			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
+				goto _st25;
+			}
+		} else {
+			goto _st25;
+		}
+		goto _ctr259;
+		_st173:
+		if ( p == eof )
+			goto _out173;
+		p+= 1;
+		st_case_173:
+		switch( ( (*( p))) ) {
+			case 69: {
+				goto _st174;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 101: {
+				goto _st174;
+			}
+		}
+		if ( ( (*( p))) < 65 ) {
+			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
+				goto _st25;
+			}
+		} else if ( ( (*( p))) > 90 ) {
+			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
+				goto _st25;
+			}
+		} else {
+			goto _st25;
+		}
+		goto _ctr83;
+		_st174:
+		if ( p == eof )
+			goto _out174;
+		p+= 1;
+		st_case_174:
+		if ( ( (*( p))) == 95 ) {
+			goto _st25;
+		}
+		if ( ( (*( p))) < 65 ) {
+			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
+				goto _st25;
+			}
+		} else if ( ( (*( p))) > 90 ) {
+			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
+				goto _st25;
+			}
+		} else {
+			goto _st25;
+		}
+		goto _ctr261;
+		_st175:
+		if ( p == eof )
+			goto _out175;
+		p+= 1;
+		st_case_175:
+		switch( ( (*( p))) ) {
+			case 84: {
+				goto _st176;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 116: {
+				goto _st176;
+			}
+		}
+		if ( ( (*( p))) < 65 ) {
+			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
+				goto _st25;
+			}
+		} else if ( ( (*( p))) > 90 ) {
+			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
+				goto _st25;
+			}
+		} else {
+			goto _st25;
+		}
+		goto _ctr83;
+		_st176:
+		if ( p == eof )
+			goto _out176;
+		p+= 1;
+		st_case_176:
+		switch( ( (*( p))) ) {
+			case 72: {
+				goto _st177;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 104: {
+				goto _st177;
+			}
+		}
+		if ( ( (*( p))) < 65 ) {
+			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
+				goto _st25;
+			}
+		} else if ( ( (*( p))) > 90 ) {
+			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
+				goto _st25;
+			}
+		} else {
+			goto _st25;
+		}
+		goto _ctr83;
+		_st177:
+		if ( p == eof )
+			goto _out177;
+		p+= 1;
+		st_case_177:
+		if ( ( (*( p))) == 95 ) {
+			goto _st25;
+		}
+		if ( ( (*( p))) < 65 ) {
+			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
+				goto _st25;
+			}
+		} else if ( ( (*( p))) > 90 ) {
+			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
+				goto _st25;
+			}
+		} else {
+			goto _st25;
+		}
+		goto _ctr264;
+		_st178:
+		if ( p == eof )
+			goto _out178;
+		p+= 1;
+		st_case_178:
+		switch( ( (*( p))) ) {
+			case 79: {
+				goto _st179;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 111: {
+				goto _st179;
+			}
+		}
+		if ( ( (*( p))) < 65 ) {
+			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
+				goto _st25;
+			}
+		} else if ( ( (*( p))) > 90 ) {
+			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
+				goto _st25;
+			}
+		} else {
+			goto _st25;
+		}
+		goto _ctr83;
+		_st179:
+		if ( p == eof )
+			goto _out179;
+		p+= 1;
+		st_case_179:
+		switch( ( (*( p))) ) {
+			case 82: {
+				goto _st180;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 114: {
+				goto _st180;
+			}
+		}
+		if ( ( (*( p))) < 65 ) {
+			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
+				goto _st25;
+			}
+		} else if ( ( (*( p))) > 90 ) {
+			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
+				goto _st25;
+			}
+		} else {
+			goto _st25;
+		}
+		goto _ctr83;
+		_st180:
+		if ( p == eof )
+			goto _out180;
+		p+= 1;
+		st_case_180:
+		if ( ( (*( p))) == 95 ) {
+			goto _st25;
+		}
+		if ( ( (*( p))) < 65 ) {
+			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
+				goto _st25;
+			}
+		} else if ( ( (*( p))) > 90 ) {
+			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
+				goto _st25;
+			}
+		} else {
+			goto _st25;
+		}
+		goto _ctr267;
+		_st181:
+		if ( p == eof )
+			goto _out181;
+		p+= 1;
+		st_case_181:
+		switch( ( (*( p))) ) {
+			case 73: {
+				goto _st182;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 105: {
+				goto _st182;
+			}
+		}
+		if ( ( (*( p))) < 65 ) {
+			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
+				goto _st25;
+			}
+		} else if ( ( (*( p))) > 90 ) {
+			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
+				goto _st25;
+			}
+		} else {
+			goto _st25;
+		}
+		goto _ctr83;
+		_st182:
+		if ( p == eof )
+			goto _out182;
+		p+= 1;
+		st_case_182:
+		switch( ( (*( p))) ) {
+			case 69: {
+				goto _st183;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 101: {
+				goto _st183;
+			}
+		}
+		if ( ( (*( p))) < 65 ) {
+			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
+				goto _st25;
+			}
+		} else if ( ( (*( p))) > 90 ) {
+			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
+				goto _st25;
+			}
+		} else {
+			goto _st25;
+		}
+		goto _ctr83;
+		_st183:
+		if ( p == eof )
+			goto _out183;
+		p+= 1;
+		st_case_183:
+		switch( ( (*( p))) ) {
+			case 76: {
+				goto _st184;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 108: {
+				goto _st184;
+			}
+		}
+		if ( ( (*( p))) < 65 ) {
+			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
+				goto _st25;
+			}
+		} else if ( ( (*( p))) > 90 ) {
+			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
+				goto _st25;
+			}
+		} else {
+			goto _st25;
+		}
+		goto _ctr83;
+		_st184:
+		if ( p == eof )
+			goto _out184;
+		p+= 1;
+		st_case_184:
+		switch( ( (*( p))) ) {
+			case 68: {
+				goto _st185;
+			}
+			case 95: {
+				goto _st25;
+			}
+			case 100: {
+				goto _st185;
+			}
+		}
+		if ( ( (*( p))) < 65 ) {
+			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
+				goto _st25;
+			}
+		} else if ( ( (*( p))) > 90 ) {
+			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
+				goto _st25;
+			}
+		} else {
+			goto _st25;
+		}
+		goto _ctr83;
+		_st185:
+		if ( p == eof )
+			goto _out185;
+		p+= 1;
+		st_case_185:
+		if ( ( (*( p))) == 95 ) {
+			goto _st25;
+		}
+		if ( ( (*( p))) < 65 ) {
+			if ( 48 <= ( (*( p))) && ( (*( p))) <= 57 ) {
+				goto _st25;
+			}
+		} else if ( ( (*( p))) > 90 ) {
+			if ( 97 <= ( (*( p))) && ( (*( p))) <= 122 ) {
+				goto _st25;
+			}
+		} else {
+			goto _st25;
+		}
+		goto _ctr272;
 		_st9:
 		if ( p == eof )
 			goto _out9;
@@ -5839,15 +6430,15 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 		_out13: cs = 13; goto _out; 
 		_out14: cs = 14; goto _out; 
 		_out15: cs = 15; goto _out; 
+		_out16: cs = 16; goto _out; 
 		_out5: cs = 5; goto _out; 
 		_out6: cs = 6; goto _out; 
-		_out16: cs = 16; goto _out; 
 		_out17: cs = 17; goto _out; 
-		_out7: cs = 7; goto _out; 
 		_out18: cs = 18; goto _out; 
+		_out7: cs = 7; goto _out; 
 		_out19: cs = 19; goto _out; 
-		_out8: cs = 8; goto _out; 
 		_out20: cs = 20; goto _out; 
+		_out8: cs = 8; goto _out; 
 		_out21: cs = 21; goto _out; 
 		_out22: cs = 22; goto _out; 
 		_out23: cs = 23; goto _out; 
@@ -5995,11 +6586,29 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
 		_out165: cs = 165; goto _out; 
 		_out166: cs = 166; goto _out; 
 		_out167: cs = 167; goto _out; 
+		_out168: cs = 168; goto _out; 
+		_out169: cs = 169; goto _out; 
+		_out170: cs = 170; goto _out; 
+		_out171: cs = 171; goto _out; 
+		_out172: cs = 172; goto _out; 
+		_out173: cs = 173; goto _out; 
+		_out174: cs = 174; goto _out; 
+		_out175: cs = 175; goto _out; 
+		_out176: cs = 176; goto _out; 
+		_out177: cs = 177; goto _out; 
+		_out178: cs = 178; goto _out; 
+		_out179: cs = 179; goto _out; 
+		_out180: cs = 180; goto _out; 
+		_out181: cs = 181; goto _out; 
+		_out182: cs = 182; goto _out; 
+		_out183: cs = 183; goto _out; 
+		_out184: cs = 184; goto _out; 
+		_out185: cs = 185; goto _out; 
 		_out9: cs = 9; goto _out; 
 		_out: {}
 	}
 	
-#line 377 "cypher_lexer.rl"
+#line 396 "cypher_lexer.rl"
 
 	
 	return tok_count;

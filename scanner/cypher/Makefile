@@ -11,6 +11,7 @@ all: $(TARGET)
 cypher_lexer.c: cypher_lexer.rl
 	$(RAGEL) -m -G2 cypher_lexer.rl
 
+
 graph_scan.c: graph_scan.rl
 	$(RAGEL) -m -G2 graph_scan.rl
 

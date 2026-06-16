@@ -71,6 +71,12 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
         KW_TRUE     = [Tt][Rr][Uu][Ee];
         KW_FALSE    = [Ff][Aa][Ll][Ss][Ee];
         KW_NULL     = [Nn][Uu][Ll][Ll];
+        KW_CALL     = [Cc][Aa][Ll][Ll];
+        KW_YIELD    = [Yy][Ii][Ee][Ll][Dd];
+        KW_ALL      = [Aa][Ll][Ll];
+        KW_ANY      = [Aa][Nn][Yy];
+        KW_NONE     = [Nn][Oo][Nn][Ee];
+        KW_SINGLE   = [Ss][Ii][Nn][Gg][Ll][Ee];
 
         main := |*
             wsp+ => { /* skip */ };
@@ -164,6 +170,13 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
             '<>' => {
                 if (tok_count < max_tokens) {
                     tokens[tok_count].type = TOK_NEQ;
+                    tok_count++;
+                }
+            };
+
+            '+=' => {
+                if (tok_count < max_tokens) {
+                    tokens[tok_count].type = TOK_PLUSEQ;
                     tok_count++;
                 }
             };
@@ -356,6 +369,12 @@ int cypher_lex(const char *in, int len, cypher_token_t *tokens, int max_tokens) 
             KW_TRUE     => { tokens[tok_count].type = TOK_BOOL; tokens[tok_count].ival = 1; tok_count++; };
             KW_FALSE    => { tokens[tok_count].type = TOK_BOOL; tokens[tok_count].ival = 0; tok_count++; };
             KW_NULL     => { tokens[tok_count].type = TOK_NULL;     tok_count++; };
+            KW_CALL     => { tokens[tok_count].type = TOK_CALL;     tok_count++; };
+            KW_YIELD    => { tokens[tok_count].type = TOK_YIELD;    tok_count++; };
+            KW_ALL      => { tokens[tok_count].type = TOK_ALL;      tok_count++; };
+            KW_ANY      => { tokens[tok_count].type = TOK_ANY;      tok_count++; };
+            KW_NONE     => { tokens[tok_count].type = TOK_NONE;     tok_count++; };
+            KW_SINGLE   => { tokens[tok_count].type = TOK_SINGLE;   tok_count++; };
 
             id => {
                 if (tok_count < max_tokens) {
