@@ -4,6 +4,7 @@
 
 A high-performance in-memory graph engine with a custom Cypher query language,
 supporting 50K+ nodes and 23K+ edges with sub-millisecond label-indexed queries.
+200-test suite validates 61 grammar features.
 
 Two query modes:
 - `--sidecar` — full graph store with indexes, edges, mutations (all Cypher)
@@ -12,12 +13,14 @@ Two query modes:
 ```
 Cypher Query (string)
      ↓
-cypher_lexer.rl       → tokens          ← Ragel lexer (scanner mode)
+cypher_lexer.rl       → tokens          ← Ragel lexer using priority scanner with keyword DFA
      ↓
-cypher_parser.c       → AST             ← Recursive descent (+ error recovery)
+cypher_parser.c       → AST             ← Recursive descent (+ error recovery, sync-on-keyword)
      ↓
-graph_exec.c          → FSM executor    ← Goto-based state machine (Phase 4)
-     ↓                → JIT Ragel       ← AST→.rl→ragel→gcc→dlopen (Phase 3)
+cypher_graph.c        → dispatch        ← Mutation apply + execution routing
+     ↓
+graph_exec.c          → FSM executor    ← Goto-based state machine with BFS for var-len paths
+     ↓                → JIT Ragel       ← AST→.rl→ragel→gcc→dlopen (disabled by default)
      ↓
 graph_scan.rl         → direct mmap     ← Ragel single-pass scanner (--scan mode)
 graph_text.rl         → trigrams        ← Ragel trigram extractor (Phase 5)
@@ -27,136 +30,131 @@ graph_store.c         → result rows     ← Storage + 4 indexes + klib (Phases
 
 All hot-path scanning uses Ragel scanners compiled with `-G2` (goto-driven, expanded actions).
 
-## Phases
+## File Inventory (5,497 total lines)
 
-### Phase 1: Storage Engine (`graph_store.h/c`)
+### Core Pipeline
 
-Struct-of-arrays layout. Nodes auto-grow from 64K initial capacity.
+| File | Lines | Purpose | Generated |
+|------|-------|---------|-----------|
+| `cypher_lexer.rl` | 380 | Ragel tokenizer: 40 keyword patterns via DFA, 12 punctuation, 6 literal types | → cypher_lexer.c |
+| `cypher_parser.c` | 953 | Recursive-descent AST builder with prioritized expression tree (unary→power→term→arith→comparison→NOT→AND→XOR→OR) | — |
+| `cypher_parser.h` | 122 | Token types (71), AST types (28 including AST_REMOVE), graph API, result API, MAX_ROWS/MAX_STR constants | — |
+| `cypher_graph.c` | 607 | Thin wrapper: mutation execution (CREATE, SET, DELETE, MERGE, REMOVE, UNWIND), sidecar JSON loader, result API | — |
+| `cypher_repl.c` | 448 | CLI: readline REPL, pipe mode, batch file mode, dot-commands (.help, .schema, .stats, .hist), Ctrl-R history browser | — |
 
-| Structure | Size | Purpose |
-|-----------|------|---------|
-| `gs_node_t` | 32B | CSR adjacency head, edge_count, label bitmap, props_off, prop_count |
-| `gs_edge_t` | 12B | CSR singly-linked list: dst, type hash, next pointer |
-| `gs_prop_t` | 8B | Columnar: key_hash + value offset into arena |
-| Label table | 132B × 64 | Name hash + string, 64-bit bitmap per node |
-| Value arena | growable | Contiguous buffer, property values as [type:1B][data] |
-| Filepath table | khashl `fpt_t` | `filepath_id → strdup'd string` (interning, saves ~12MB) |
+### Storage Engine
+
+| File | Lines | Purpose |
+|------|-------|---------|
+| `graph_store.c` | 709 | Struct-of-arrays: CSR edges, columnar props (backward-scan for SET overwrite), arena allocator, 4 klib hash indexes, trigram text index |
+| `graph_store.h` | 176 | Node/edge/prop structs (32B/12B/8B), label table (132B×64), index types, public API |
+
+### Execution Engine
+
+| File | Lines | Purpose |
+|------|-------|---------|
+| `graph_exec.c` | 884 | FSM executor: goto-based state machine, multi-hop (up to 8), BFS variable-length paths, arithmetic evaluation including power/unary, aggregation (COUNT/SUM/AVG/MIN/MAX), ORDER BY (qsort), DISTINCT dedup, LIMIT/SKIP, CASE evaluation |
+| `graph_exec.h` | 36 | FSM context struct, public API |
+| `graph_jit.c` | 211 | Phase 3 JIT: AST→Ragel .rl generator, ragel+gcc runner, dlopen cache (disabled: `g_jit_enabled=0`) |
+| `graph_jit.h` | 26 | JIT API, jit_query_func typedef |
+
+### Scan & Text
+
+| File | Lines | Purpose | Generated |
+|------|-------|---------|-----------|
+| `graph_scan.rl` | 93 | Ragel single-pass newline-delimited JSON scanner (--scan mode) | → graph_scan.c |
+| `graph_text.rl` | 54 | Ragel 3-byte window trigram extractor | → graph_text.c |
+
+### Testing & Benchmarking
+
+| File | Lines | Purpose |
+|------|-------|---------|
+| `run_200_final.sh` | 298 | 200-test suite: 18 test groups covering CREATE, MATCH/WHERE, special ops, RETURN, ORDER BY, edges, aggregation, MERGE, DELETE, SET, UNWIND, error recovery, multi-line, edge cases, REMOVE, compound ops, expressions |
+| `smoke_tests.sh` | 334 | Legacy 36-test smoke suite (superseded by 200-test suite) |
+| `bench_exec.c` | 93 | FSM executor benchmark runner (7 query types, 100 rounds each) |
+| `Makefile` | 73 | Build: ragel→c generation, gcc compile, debug/asan/valgrind targets |
+
+### Vendored Libraries
+
+| File | Lines | Purpose |
+|------|-------|---------|
+| `vendor/klib/khashl.h` | — | Linear-probing hash table (Fibonacci hashing, 75% load factor) — MIT licensed |
+| `vendor/klib/kvec.h` | — | Dynamic array (C++ vector-style) — MIT licensed |
+
+### Legacy / Test Grammar
+
+| File | Purpose |
+|------|---------|
+| `test_grammar/` | Alternative lexer/parser implementation (development reference, not built) |
+
+## Architecture Details
+
+### Lexer (`cypher_lexer.rl`)
+
+- 40 case-insensitive keyword patterns defined as Ragel named patterns (`KW_MATCH`, `KW_RETURN`, etc.)
+- Priority scanner mode (`|*`) dispatches keywords via inline `=>` actions
+- 12 punctuation tokens: `;,.():[]{}` plus `..` (TOK_DOTDOT) for variable-length paths
+- 6 literal types: identifiers, single/double-quoted strings, backtick identifiers, integers (decimal/hex), floats
+- Line comments `//` and block comments `/* */` silently consumed
+- Newlines consumed as whitespace (not semicolons — multi-line queries supported)
+
+### Parser (`cypher_parser.c`)
+
+Recursive descent with precedence climbing:
+
+```
+parse_expression → parse_xor (OR)*
+parse_xor → parse_and (XOR)*
+parse_and → parse_not (AND)*
+parse_not → (NOT)* parse_comparison
+parse_comparison → parse_arithmetic (cmp parse_arithmetic)?
+parse_arithmetic → parse_term (('+'|'-') parse_term)*
+parse_term → parse_power (('*'|'/'|'%') parse_power)*
+parse_power → parse_unary ('^' parse_unary)*
+parse_unary → (('+'|'-'))* parse_atom parse_postfix
+parse_atom → funccall | parens | ident | string | int | float | bool | null | list | CASE
+parse_postfix → ('.' property | '[' index)*
+```
+
+Error recovery: syncs to next clause-starting keyword (MATCH, CREATE, RETURN, etc.) instead of skipping to semicolon.
+
+### Storage Engine (`graph_store.c`)
 
 Key design decisions:
-- **No MVCC, no locks, no transactions** — single-writer, batch-load model
-- **CSR adjacency** — O(degree) edge traversal, no global scan
-- **Bitmap labels** — 64-bit mask per node for O(1) label membership test
-- **Columnar properties** — `prop_count` per node for O(prop_count) scans (was O(n²) before fix)
-- **Flat arena** — single `realloc`-based buffer
-- **Filepath interning** — 37 unique `strdup`'d strings instead of 50K arena copies
-- **klib** (`khashl.h`, `kvec.h`) — MIT-licensed, single-header, battle-tested
+- **Struct-of-arrays**: filter reads only relevant columns
+- **CSR adjacency**: O(degree) edge traversal, no global scan
+- **Bitmap labels**: 64-bit mask per node for O(1) label membership
+- **Columnar properties**: properties searched backwards (last SET wins)
+- **Flat arena**: single `realloc`-based buffer for property values
+- **Filepath interning**: `strdup`'d strings via khashl, saves ~12MB
+- **No MVCC, locks, or transactions**: single-writer, batch-load model
+- **klib** (`khashl.h`, `kvec.h`): MIT-licensed, single-header
 
-### Phase 2: Index Layer (`graph_store.h/c`)
+Four hash indexes: label, property key, edge type, trigram text.
 
-Four hash indexes built after batch loading:
+### Execution Engine (`graph_exec.c`)
 
-| Index | Key | Value | Purpose |
-|-------|-----|-------|---------|
-| `label_idx` | `hash("LabelName")` | `{offset, count}` → node list | `MATCH (n:Label)` |
-| `prop_idx` | `hash("propertyKey")` | `{offset, count}` → node list | `WHERE n.key = val` candidate narrowing |
-| `edge_idx` | (reserved) | — | Edge type lookups |
-| `text_idx` | `3-byte trigram` | `{offset, count}` → node list | `CONTAINS/STARTS/ENDS` (Phase 5) |
+Goto-based state machine: `state_scan → state_filter → state_expand → state_expand_loop → state_emit_multi`
 
-All indexes use `klib/khashl` (Fibonacci hashing, 75% load factor) and `klib/kvec` dynamic arrays.
+- **Multi-hop**: up to 8 hops via stack-based traversal (`hop_nids[]`, `hop_ej[]`, `hop_ec[]`)
+- **Variable-length paths**: BFS from source node up to 2048 reachable nodes, collects results within [vmin, vmax] range
+- **Arithmetic**: `+`, `-`, `*`, `/`, `%`, `^` (power), unary `-`, `+`
+- **Comparisons**: `=`, `<>`, `<`, `>`, `<=`, `>=`, `IS NULL`, `IS NOT NULL`, `IN`, `CONTAINS`, `STARTS WITH`, `ENDS WITH`
+- **Boolean**: `AND`, `OR`, `XOR`, `NOT`, `true`/`false` literals
+- **Aggregation**: `COUNT(*)`, `SUM(expr)`, `AVG(expr)`, `MIN(expr)`, `MAX(expr)` — multi-aggregate in single query
+- **CASE**: `CASE WHEN cond THEN val ELSE default END` evaluated in expressions
+- **Post-processing**: ORDER BY (qsort, multi-key), DISTINCT (dedup), LIMIT/SKIP (with proper free)
 
-### Phase 3: JIT Compiler (`graph_jit.h/c`)
+## Performance
 
-**Ragel edition:** Generates a `.rl` file with label names and CONTAINS needles inlined
-as Ragel scanner literals. Pipeline:
-
-```
-AST → graph_jit.c (generate .rl)
-        ↓
-   /tmp/cypher_jit/q_HASH.rl     ← Ragel scanner with inlined "type":"LABEL" pattern
-        ↓  ragel -G2
-   /tmp/cypher_jit/q_HASH.c      ← Deterministic goto-driven state machine
-        ↓  gcc -O2 -shared -fPIC
-   /tmp/cypher_jit/q_HASH.so     ← dlopen'd, cached by query hash
-```
-
-Eliminates `strstr`/`strcmp` on the hot path — the Ragel FSM directly matches bytes.
-Falls back to pre-compiled FSM interpreter if ragel/gcc unavailable at runtime.
-
-### Phase 4: Execution Engine (`graph_exec.c`)
-
-A goto-based state machine with:
-- Multi-hop support via stack-based traversal (`hop_nids[]`, `hop_ej[]`, `hop_ec[]`)
-- IS NULL / IS NOT NULL evaluation
-- Arithmetic expression evaluation (`+`, `-`, `*`, `/`, `%`)
-- CONTAINS / STARTS WITH / ENDS WITH via `strstr`/`strncmp`
-- IN list operator
-- Post-execution: ORDER BY (bubble sort), DISTINCT (dedup), LIMIT/SKIP (proper free), COUNT(*) aggregation
-- OPTIONAL MATCH stub (`cypher_fsm_exec_optional`)
-
-### Phase 5: Trigram Text Index (`graph_store.h/c` + `graph_text.rl`)
-
-**Ragel extractor:** `graph_text.rl` scans property strings with a 3-byte window pattern:
-
-```ragel
-main := |*
-  any{3} => store_tg;   // every 3-byte window → packed uint32
-  any;                    // trailing bytes
-*|;
-```
-
-Called via `gs_extract_trigrams(str, len, out, max)`. Replaces the hand-written
-sliding window loop. Built into `gs_build_text_index(gs)` when invoked manually.
-
-### --scan Mode (`graph_scan.rl`)
-
-Single-pass Ragel scanner over mmap'd sidecar JSON:
-
-```ragel
-main := |*
-  '{'  => start_rec;
-  '"type":"' [^"]+ '"' => found_type;   // label matching
-  '"text":"' ([^"\\] | '\\' any)* '"' => found_text;  // text extraction
-  any;
-*|;
-```
-
-Eliminates per-line `strstr` calls and 16KB stack buffer copies. 34MB file scanned
-in ~70ms (including mmap+process startup). The JIT path inlines the label name
-into the Ragel pattern (e.g., `'"type":"math"'`) for zero-comparison-overhead matching.
-
-### Math Token AST (`scanner.rl` + `latex.rl`)
-
-The scanner emits 8 typed math tokens inside display/inline math.
-EMIT_BLOCK recursively scans inner content for structural constructs.
-
-**Context tracking**: A global `g_in_math` counter is incremented by `EMIT_BLOCK`
-before recursing and decremented after. All math token patterns (`math_var`,
-`math_op`, `math_rel`, `math_fn`, `math_greek`, `math_num`, `math_sub`,
-`math_sup`) are guarded by `if (g_in_math)`. This prevents spurious `math_var`
-matches on standalone letters in prose.
-
-| Token | Examples | Children via EMIT_BLOCK |
-|-------|----------|------------------------|
-| `math_op` | `+`, `-`, `\times`, `\cdot`, `\pm`, `\div` | — |
-| `math_rel` | `=`, `\lt`, `\gt`, `\leq`, `\equiv`, `\approx` | — |
-| `math_fn` | `\sin`, `\cos`, `\log`, `\ln`, `\exp` | — |
-| `math_greek` | `\alpha`–`\omega` (24 letters) | — |
-| `math_num` | digit sequences | — |
-| `math_var` | single letters | — |
-| `math_sub` | `_{i=1}`, `_{xyz}` | — |
-| `math_sup` | `^{n}`, `^{\infty}` | — |
-| `frac` | `\frac{a}{b}` | braces ×2 (num, den) |
-| `sum` | `\sum_{i=1}^{n}` | math_sub, math_sup |
-| `prod` | `\prod_{i=1}^{n}` | math_sub, math_sup |
-| `lim` | `\lim_{x\to 0}` | math_sub |
-| `int` | `\int_{0}^{\infty}` | math_sub, math_sup |
-| `display_math` | `\[...\]` | all math tokens (parent block) |
-| `display_2_math` | `$$...$$` | all math tokens (parent block) |
-| `math` (inline) | `$...$` | all math tokens (parent block) |
-
-Inline math (`$...$`) was changed from a leaf `EMIT("math")` to
-`EMIT_BLOCK("math", 1, 1)` — stripping delimiters and recursing so
-`g_in_math` activates for `$a+b$` content.
+| Query pattern | Time |
+|---------------|------|
+| Label index lookup | 10-70 µs |
+| Label + WHERE str eq | <10 µs |
+| Edge traversal (label + expand) | ~200 µs (fixed 1-hop) |
+| Full scan (50K nodes, no index) | ~20-50 ms |
+| --scan Ragel (34MB mmap) | ~70 ms total |
+| Variable-length BFS | Depends on path depth and fanout |
 
 ## Build System
 
@@ -164,7 +162,7 @@ Inline math (`$...$`) was changed from a leaf `EMIT("math")` to
 make              # optimized build (-O2)
 make debug        # debug build (-O0 -g)
 make asan         # AddressSanitizer build
-make test         # run smoke tests (36 queries)
+make test         # run legacy smoke tests (36 queries)
 make valgrind     # valgrind memcheck on 4 query types
 make bench        # build and run benchmark
 make tools        # build data manipulation tools
@@ -173,150 +171,27 @@ make clean        # remove artifacts
 
 Requires: `gcc`, `ragel` (7.x), `libreadline-dev`, `valgrind` (optional), `fzf` (optional).
 
-Ragel files regenerated on change: `cypher_lexer.rl`, `graph_scan.rl`, `graph_text.rl`.
-
-## Pipeline Demo (242K-token math sidecar)
-
-Scanner compiled with `-O0` (30s), generates rich math AST:
-
-| Token type | Count | Example query |
-|-----------|-------|---------------|
-| `math_var` | 41,185 | `MATCH (v:math_var) RETURN v.text` |
-| `math_op` | 17,403 | `MATCH (dm:display_2_math)-[:PARENT_OF]->(op:math_op) RETURN op.text` |
-| `math_num` | 14,078 | |
-| `math_rel` | 12,848 | |
-| `math_greek` | 10,949 | `MATCH (eq:equation)-[:PARENT_OF]->(g:math_greek) RETURN g.text` |
-| `frac` | 4,718 | `MATCH (f:frac)-[:PARENT_OF]->(c:braces) RETURN f.text, c.text` |
-| `sum` | 713 | `MATCH (s:sum)-[:PARENT_OF]->(sub:math_sub) RETURN s.text, sub.text` |
-| `int` | 1,121 | `MATCH (i:int)-[:PARENT_OF]->(sub:math_sub) RETURN i.text` |
-| `prod` | 181 | |
-| `lim` | 130 | |
-| `math_fn` | 1,184 | |
-
-Total: 242,011 nodes, 131,182 parent-child edges, 80 distinct token types.
-
-**Structural queries:**
-```
-frac numerator/denominator:
-  \frac{\vec{p}^2}{2\kappa} → children: {\vec{p}^2}, {2\kappa}
-
-sum limits:
-  \sum_{i=1}^{3} → child: _{i=1}
-
-int bounds:
-  \int_{0}^{2\pi} → child: _{0}
-
-display_math operators:
-  display_2_math → children: +, -, \times, =
-
-equations with Greek letters:
-  equation → children: \delta, \epsilon, \eta, \alpha
-```
-
-**Full pipeline:**
-```
-Scanner → 242K tokens → tree_fingerprint → structural signatures
-       → def_extract → 33 definitions → lean4_gen → .lean proofs
-```
-
-## Data Manipulation Tools (`tools/`)
-
-OpenRefine-inspired sidecar modification system with clustering, rule chains,
-and undo logs.
-
-| Tool | Purpose |
-|------|---------|
-| `sidecar_mod` | Rule engine — mmap stream, regex/strip/trim transforms, undo log |
-| `cluster_find` | Clustering engine — fingerprint + Levenshtein distance |
-| `cluster_apply.sh` | Interactive fzf cluster merge workflow |
-| `sidecar_apply.sh` | Interactive fzf rule application workflow |
-| `strip_latex.rules` | 10 example rules for LaTeX delimiter removal |
-
-### Rule Format (JSON lines)
-```json
-{"step":1,"name":"strip author prefix","match_type":"author",
- "prop":"text","transform":"regex",
- "pattern":"\\\\author\\{(.*)\\}","replace":"$1"}
-```
-
-Transform types: `regex`, `strip_prefix`, `strip_suffix`, `trim`.
-
-### Clustering
-```bash
-# Fingerprint clustering (normalize → hash → group)
-./cluster_find sidecar.json label
-
-# Levenshtein clustering (edit distance threshold)
-./cluster_find sidecar.json label --levenshtein 3
-```
-
-### Interactive Merge Workflow
-```
-./cluster_apply.sh sidecar.json label
-  → lists clusters with fzf preview
-  → Enter selects canonical value
-  → generates merge rules + undo log
-  → applies via sidecar_mod
-```
-
-## REPL Features
-
-| Feature | Binding / Command |
-|---------|-------------------|
-| Up/Down arrows | Navigate command history (readline) |
-| Left/Right, Ctrl-A/E/W/U | Line editing (readline) |
-| Ctrl-R | Open fzf history browser (same as `.hist`) |
-| `.help` | Show available commands and syntax |
-| `.schema` | Show all labels with node counts |
-| `.stats` | Show node/edge/property counts |
-| `.history` | Browse command history with fzf |
-
-History auto-loaded from `~/.cypher_history` on startup, saved on exit (1000-line cap).
-Parser error recovery: skips to next `;` on unrecognized clause instead of aborting.
-
-## Performance (50K nodes, -O2)
-
-| Query pattern | Time |
-|---------------|------|
-| Label index lookup | 10-70 µs |
-| Label + WHERE str eq | <10 µs |
-| Edge traversal (label + expand) | ~200 µs |
-| Full scan (50K nodes, no index) | ~20-50 ms |
-| --scan Ragel (34MB mmap) | ~70 ms total |
-
-## File Inventory
-
-| File | Purpose | Generated |
-|------|---------|-----------|
-| `cypher_lexer.rl` | Ragel tokenizer (28 keywords) | → cypher_lexer.c |
-| `cypher_parser.c` | Recursive-descent AST builder + error recovery | — |
-| `cypher_parser.h` | Token/AST types, graph API, result API | — |
-| `cypher_graph.c` | Mutation handler, sidecar importer (mmap'd), execution dispatch | — |
-| `cypher_repl.c` | CLI: readline, piped, batch, dot-commands, Ctrl-R | — |
-| `graph_store.c` | Storage engine, 4 indexes, prop_count fix, fp interning | — |
-| `graph_store.h` | Node/edge/prop structs, index types, public API | — |
-| `graph_exec.c` | FSM executor, multi-hop, arithmetic, IS NULL, IN | — |
-| `graph_exec.h` | FSM API, optional match stub | — |
-| `graph_jit.c` | AST→Ragel .rl generator, ragel+gcc runner, dlopen | — |
-| `graph_jit.h` | JIT API | — |
-| `graph_scan.rl` | Ragel single-pass JSON scanner (--scan mode) | → graph_scan.c |
-| `graph_text.rl` | Ragel trigram extractor (Phase 5) | → graph_text.c |
-| `vendor/klib/khashl.h` | Vendored hash table (MIT) | — |
-| `vendor/klib/kvec.h` | Vendored dynamic array (MIT) | — |
-| `tools/sidecar_mod.c` | Rule engine for sidecar transforms | — |
-| `tools/cluster_find.c` | Clustering engine (fingerprint + Levenshtein) | — |
-| `tools/cluster_apply.sh` | Interactive fzf cluster merge workflow | — |
-| `tools/sidecar_apply.sh` | Interactive fzf rule application workflow | — |
-| `tools/strip_latex.rules` | Example rules (10 LaTeX transforms) | — |
-
-## Key Bug Fixes
+## Key Bug Fixes History
 
 | Bug | Fix | Impact |
 |-----|-----|--------|
 | O(n²) property scans | Added `prop_count` per node | 50K nodes: 2.9GB RSS → ~75MB |
 | Filepath duplication | `fp_table` interning via khashl + `strdup` | 50K copies → 37 unique, saves ~12MB |
 | Arena realloc UAF in fp_table | Separate heap allocation for filepath strings | Eliminated crash |
-| Truncated pointer in fp_table | `fpt_t` with pointer-sized value instead of uint32 | Fixed on 64-bit |
-| parse_set memory leak | `parse_expression()` consumed `=` → `parse_atom()+parse_postfix()` | 5 AST nodes (1520 bytes) |
-| result_limit_skip leak | Rows beyond limit/skip freed before truncation | Variable |
 | Robin Hood hash corruption | Replaced with klib linear probing | Correct label lookups |
+| SET property append-only | Property reader scans backwards (last-set wins) | SET overwrites correctly |
+| Compound CREATE missed target node props | Added label/property loop for target node | Target nodes created properly |
+| DISTINCT flag corrupted by union overlap | Moved DISTINCT to `rel.dir` (offset 24) | DISTINCT deduplication works |
+| Function call parsing broken by paren expr | Reordered checks in parse_atom | SUM/AVG/MIN/MAX, CASE work |
+| Multi-aggregate freed rows early | Two-pass: compute all then free once | COUNT+SUM+AVG+MIN+MAX in one query |
+| Property parser infinite loop on malformed input | Added break on unrecognized token types | No hangs on bad braces |
+| Newlines treated as semicolons | Changed to whitespace consumption | Multi-line queries work |
+| 34-strcmp keyword dispatch | Replaced with Ragel keyword patterns in scanner | O(1) DFA dispatch |
+| Bubble sort O(n²) for ORDER BY | Replaced with qsort() | O(n log n) | 
+| AST_UNWIND/AST_CASE memory leak | Added cases to cypher_ast_free() | Valgrind clean |
+
+## Grammar Coverage
+
+61 features fully supported, 4 partial, 19 missing (see `CYPHER_GAP_ANALYSIS.md`).
+
+**Test coverage**: 200 tests, all passing, valgrind clean, 0 build warnings.

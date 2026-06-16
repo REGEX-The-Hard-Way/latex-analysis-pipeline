@@ -24,44 +24,33 @@ $(TARGET): $(SRCS) $(HDRS)
 debug: CFLAGS = -O0 -g -I. -Ivendor/klib
 debug: clean all
 
-# AddressSanitizer build  
+# AddressSanitizer build
 asan: CFLAGS = -O2 -g -fsanitize=address -I. -Ivendor/klib
 asan: clean all
 
-# run smoke tests (26 core + 5 sidecar + 5 context = 36)
-test: $(TARGET) ctx_sidecar
-	@bash smoke_tests.sh
+# run 200-test suite
+test: $(TARGET)
+	@bash run_200_final.sh
 
-# generate context-awareness test sidecar
-ctx_sidecar:
-	@printf 'prose x prose\n\\[ x^2 = y \\]\n$$\n\\alpha \\beta\n$$\n$$a + b$$\n' > /tmp/context_test.tex; \
-	mkdir -p /tmp/context_test; \
-	cd /tmp/context_test && ../../scanner.out --json /tmp/context_test.tex tex 2>/dev/null; \
-	[ -f /tmp/context_test/sidecar.json ] || { echo "FAILED to generate context test sidecar"; exit 1; }
-
-# valgrind memcheck on smoke tests
+# valgrind memcheck on key query types
 valgrind: debug
-	@echo "=== Valgrind smoke tests ==="; \
-	r=0; \
-	echo "CREATE (n:Paper {title:'Test', year:2024}) RETURN n.title, n.year;" | valgrind --leak-check=full --show-reachable=no --error-exitcode=1 --quiet ./$(TARGET) 2>&1 || r=1; \
-	if [ $$r -eq 0 ]; then echo "  PASS: CREATE + RETURN"; else echo "  FAIL: CREATE + RETURN"; fi; \
-	r=0; \
-	echo "CREATE (a:Item {name:'C', val:3}) CREATE (b:Item {name:'A', val:1}) MATCH (n:Item) RETURN n.name, n.val ORDER BY n.val LIMIT 2;" | valgrind --leak-check=full --show-reachable=no --error-exitcode=1 --quiet ./$(TARGET) 2>&1 || r=1; \
-	if [ $$r -eq 0 ]; then echo "  PASS: ORDER BY + LIMIT"; else echo "  FAIL: ORDER BY + LIMIT"; fi; \
-	r=0; \
-	echo "CREATE (a:Item {name:'S'}) CREATE (b:Item {name:'T'}) CREATE (a)-[:CITES]->(b) MATCH (src:Item)-[:CITES]->(tgt:Item) RETURN src.name, tgt.name;" | valgrind --leak-check=full --show-reachable=no --error-exitcode=1 --quiet ./$(TARGET) 2>&1 || r=1; \
-	if [ $$r -eq 0 ]; then echo "  PASS: edge expand"; else echo "  FAIL: edge expand"; fi; \
-	r=0; \
-	echo "CREATE (a:Item {name:'A'}) CREATE (b:Item {name:'B'}) SET a.name = 'X' DETACH DELETE b MATCH (n:Item) RETURN n.name;" | valgrind --leak-check=full --show-reachable=no --error-exitcode=1 --quiet ./$(TARGET) 2>&1 || r=1; \
-	if [ $$r -eq 0 ]; then echo "  PASS: SET + DETACH DELETE"; else echo "  FAIL: SET + DETACH DELETE"; fi
+	@echo "=== Valgrind checks ==="; \
+	e=0; \
+	echo "CREATE (a:A {v:10}) CREATE (b:A {v:20}) CREATE (c:A {v:30}) MATCH (n:A) RETURN COUNT(*), SUM(n.v), AVG(n.v), MIN(n.v), MAX(n.v);" | valgrind --leak-check=full --error-exitcode=1 --quiet ./$(TARGET) 2>/dev/null && echo "  PASS: aggregation" || { echo "  FAIL: aggregation"; e=1; }; \
+	echo "CREATE (a:V {n:'A'}) CREATE (b:V {n:'B'}) CREATE (c:V {n:'C'}) CREATE (a)-[:X]->(b) CREATE (b)-[:X]->(c) MATCH (s:V)-[:X*2]->(t:V) WHERE s.n='A' RETURN t.n;" | valgrind --leak-check=full --error-exitcode=1 --quiet ./$(TARGET) 2>/dev/null && echo "  PASS: var-len path" || { echo "  FAIL: var-len path"; e=1; }; \
+	echo "CREATE (n:I {val:10}) MATCH (n:I) RETURN CASE WHEN n.val > 5 THEN 1 ELSE 0 END;" | valgrind --leak-check=full --error-exitcode=1 --quiet ./$(TARGET) 2>/dev/null && echo "  PASS: CASE" || { echo "  FAIL: CASE"; e=1; }; \
+	echo "CREATE (a:Item {name:'S'})-[:LINK]->(b:Item {name:'T'}) MATCH (src:Item)-[:LINK]->(tgt:Item) RETURN src.name;" | valgrind --leak-check=full --error-exitcode=1 --quiet ./$(TARGET) 2>/dev/null && echo "  PASS: edge expand" || { echo "  FAIL: edge expand"; e=1; }; \
+	echo "CREATE (a:Item {name:'A'}) CREATE (b:Item {name:'B'}) SET a.name = 'X' DETACH DELETE b MATCH (n:Item) RETURN n.name;" | valgrind --leak-check=full --error-exitcode=1 --quiet ./$(TARGET) 2>/dev/null && echo "  PASS: SET + DETACH DELETE" || { echo "  FAIL: SET + DETACH DELETE"; e=1; }; \
+	test $$e -eq 0 || { echo "Valgrind: FAILURES"; exit 1; }; \
+	echo "Valgrind: ALL PASS"
 
 # build the benchmark runner
 bench_exec.out: bench_exec.c $(SRCS) $(HDRS)
 	$(CC) $(CFLAGS) bench_exec.c $(SRCS) -o $@ $(LDLIBS)
 
-# run benchmark (needs sidecar-small.json in ../)
+# run benchmark (needs sidecar.json in ../)
 bench: bench_exec.out
-	./bench_exec.out ../sidecar-small.json
+	./bench_exec.out ../sidecar.json
 
 clean:
 	rm -f $(TARGET) cypher_lexer.c graph_scan.c graph_text.c *.o bench_exec.out
