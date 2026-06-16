@@ -654,36 +654,25 @@ cypher_ast_t *cypher_parse(cypher_token_t *tokens, int n, const char **error) {
 
     cypher_ast_t *head = NULL, *tail = NULL;
 
-    /* WITH-separated multi-part queries */
-    while (1) {
+    while (TI < TN) {
+        /* Skip leading garbage — advance to next clause keyword */
+        if (!IS_KW) { NXT; continue; }
+
         cypher_ast_t *sq = parse_single_query();
-        if (!sq) break;
+        if (!sq) { NXT; continue; }
         if (!head) head = sq;
         else {
             cypher_ast_t *last = head;
             while (last->next) last = last->next;
             last->next = sq;
         }
-        /* Check for WITH (multi-part) */
-        if (CUR == TOK_WITH) {
-            cypher_ast_t *w = pwith();
-            if (w) {
-                cypher_ast_t *last = head;
-                while (last->next) last = last->next;
-                last->next = w;
-            }
-        }
         /* Check for UNION */
         if (CUR == TOK_UNION) {
             NXT; EAT(TOK_ALL);
             continue;
         }
-        break;
+        if (TI >= TN || CUR == TOK_EOF) break;
     }
-
-    EAT(TOK_SEMI);
-    if (TI < TN && CUR != TOK_EOF)
-        *error = "unexpected token after statement";
 
     return head;
 }
@@ -712,10 +701,7 @@ void cypher_ast_free(cypher_ast_t *a) {
     case AST_RETURN: case AST_WITH: {
         for (int i = 0; i < a->list.n; i++) cypher_ast_free(a->list.items[i]);
         free(a->list.items);
-        if (a->type == AST_RETURN || a->type == AST_WITH) {
-            cypher_ast_free(a->bin.r);
-            for (cypher_ast_t *n = a->next; n; n = n->next) cypher_ast_free(n);
-        }
+        cypher_ast_free(a->bin.r);
         break;
     }
     case AST_ORDER_ITEM:

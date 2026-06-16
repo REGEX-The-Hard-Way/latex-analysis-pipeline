@@ -1,3 +1,9 @@
+scanner/newcommand.out
+sidecar.json
+sidecar.tok
+sound1.tex
+tools/cluster_find
+tools/def_extract
 tools/vocab_classify
 scanner/sidecar.tok
 zoekt
