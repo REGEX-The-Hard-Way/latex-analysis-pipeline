@@ -9,7 +9,7 @@ validator. Handles context-sensitive grammars with arbitrary nesting depth. Proc
 
 Forked from [allofphysicsgraph/latex-in-arxiv](https://github.com/allofphysicsgraph/latex-in-arxiv).
 
-Documentation: [docs/](docs/README.md) | [Architecture](docs/ARCHITECTURE.md) | [Macro Plan](docs/MACRO_EXPANSION_PLAN.md) | [Graph Plan](docs/IGRAPH_INTEGRATION.md) | [Roadmap](docs/GOLD_STANDARD_ROADMAP.md)
+Documentation: [docs/](docs/README.md) | [Architecture](docs/ARCHITECTURE.md) | [Macro Plan](docs/MACRO_EXPANSION_PLAN.md) | [Graph Plan](docs/IGRAPH_INTEGRATION.md) | [Roadmap](docs/GOLD_STANDARD_ROADMAP.md) | [Cypher Engine](docs/CYPHER_ARCHITECTURE.md)
 
 ## Quick Start
 
@@ -22,6 +22,10 @@ cd scanner
 make scanner
 make sent_split
 
+# Build the Cypher query engine
+cd cypher
+make
+
 # Build the macro expander
 gcc -O2 -Iinclude include/macro_expander.c include/regex_util.c -o macro_expander.out -lm
 
@@ -32,6 +36,10 @@ make all
 # Tokenize a LaTeX file
 cd scanner
 ./scanner.out sound1.tex tex > sidecar.tok
+
+# Query the token tree with Cypher
+cd cypher
+./cypher_repl.out --sidecar ../sidecar.json
 
 # Expand macros
 cat input.tex | ../macro_expander.out > expanded.tex
@@ -120,6 +128,52 @@ abstract       = '\\begin{abstract}' @{n=1;}
 
 Handles arbitrary nesting of identical environments without recursion
 in the C call stack.
+
+## Cypher Query Engine
+
+Query the token tree with an embedded openCypher graph database. **200 tests**, **61 grammar features**, **0 build warnings**, **valgrind clean**.
+
+```cypher
+-- Label lookup (sub-millisecond)
+MATCH (eq:equation) RETURN eq LIMIT 5;
+
+-- Edge traversal: find subscripts inside equations
+MATCH (eq:equation)-[:PARENT_OF]->(sub:math_sub) RETURN sub.text LIMIT 10;
+
+-- Aggregation: count tokens by type
+MATCH (n:Token) RETURN COUNT(*), SUM(n.length), AVG(n.length);
+
+-- Variable-length paths
+MATCH (s:section)-[:PARENT_OF*1..3]->(t:Token) RETURN t.text LIMIT 5;
+
+-- Complex filtering
+MATCH (t:Token) WHERE t.offset > 1000 AND t.length > 50
+      AND t.text CONTAINS 'alpha' RETURN t.text;
+
+-- Multi-hop with CASE
+MATCH (eq:equation)-[:PARENT_OF]->(f:frac)-[:PARENT_OF]->(b:braces)
+RETURN CASE WHEN f.length > 10 THEN 'big' ELSE 'small' END;
+```
+
+```bash
+cd scanner/cypher
+make                    # optimized build (-O2)
+make test               # run 200-test suite
+make valgrind           # memory safety check
+
+# Interactive REPL
+./cypher_repl.out
+
+# Load token sidecar
+./cypher_repl.out --sidecar ../sidecar.json
+
+# Direct mmap scan (zero import cost, ~70ms for 34MB)
+./cypher_repl.out --scan ../sidecar.json
+```
+
+See [`docs/CYPHER_ARCHITECTURE.md`](docs/CYPHER_ARCHITECTURE.md) for architecture,
+[`docs/CYPHER_SYNTAX.md`](docs/CYPHER_SYNTAX.md) for full syntax reference,
+[`docs/CYPHER_GAP_ANALYSIS.md`](docs/CYPHER_GAP_ANALYSIS.md) for grammar coverage.
 
 ## Installation
 
@@ -281,6 +335,19 @@ latex-analysis-pipeline/
 │           ├── multi_analyzer.h    # Public API
 │           ├── main.c              # CLI entry point
 │           └── porter2.c/h         # Porter2 stemmer
+│   └── cypher/                 # Embedded Cypher graph query engine
+│       ├── cypher_lexer.rl     # Ragel keyword DFA lexer
+│       ├── cypher_parser.c     # Recursive descent parser
+│       ├── cypher_graph.c      # Mutation + execution dispatch
+│       ├── cypher_repl.c       # Interactive REPL
+│       ├── graph_store.c/h     # Struct-of-arrays storage engine
+│       ├── graph_exec.c/h      # Goto-based FSM executor
+│       ├── graph_jit.c/h       # JIT compiler (disabled)
+│       ├── graph_scan.rl       # Ragel mmap JSON scanner
+│       ├── graph_text.rl       # Ragel trigram extractor
+│       ├── run_200_final.sh    # 200-test suite
+│       ├── Makefile            # Build + test + valgrind targets
+│       └── vendor/klib/        # klib (khashl.h, kvec.h)
 ├── python/                    # Python bindings
 │   └── latex_analysis_pipeline/
 │       └── __init__.py        # MacroExpander, LaTeXScanner, SentenceSplitter
@@ -345,8 +412,10 @@ file contents.
 | Macro expansion (`\newcommand`, `\def`, `\let`, etc.) | ✅ Stable |
 | Sentence segmentation | ✅ Stable |
 | Multi-analyzer pipeline (tokenize → normalize → stem) | ✅ Stable |
+| Cypher query engine (61 grammar features) | ✅ Stable |
 | Cross-reference validation (`\ref` → `\label`) | ✅ Functional |
-| JSON output format |  ✅ Functional |
+| JSON output format | ✅ Functional |
+| UNION support | 📋 Planned |
 | Docker image | 📋 Planned |
 | Incremental mode (`--watch`) | 📋 Planned |
 | Compliance rule engine | 📋 Planned |
@@ -383,6 +452,11 @@ Issues and pull requests welcome. Before opening a PR:
 | [docs/README.md](docs/README.md) | Documentation index |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Detailed architecture guide |
 | [docs/TOKEN_TYPES.md](docs/TOKEN_TYPES.md) | Complete token type reference |
+| [docs/CYPHER_ARCHITECTURE.md](docs/CYPHER_ARCHITECTURE.md) | Cypher engine architecture |
+| [docs/CYPHER_SYNTAX.md](docs/CYPHER_SYNTAX.md) | Cypher query syntax reference |
+| [docs/CYPHER_GAP_ANALYSIS.md](docs/CYPHER_GAP_ANALYSIS.md) | Grammar coverage analysis |
+| [docs/Cypher_Implementation_Guide.md](docs/Cypher_Implementation_Guide.md) | Developer guide |
+| [docs/IMPLEMENTATION_STATUS.md](docs/IMPLEMENTATION_STATUS.md) | Feature status dashboard |
 | [docs/MACRO_EXPANSION_PLAN.md](docs/MACRO_EXPANSION_PLAN.md) | Macro expander bug-fix and feature roadmap |
 | [docs/IGRAPH_INTEGRATION.md](docs/IGRAPH_INTEGRATION.md) | Graph-based cross-document analysis plan |
 | [docs/GOLD_STANDARD_ROADMAP.md](docs/GOLD_STANDARD_ROADMAP.md) | Path to production-grade LaTeX processing |

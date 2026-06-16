@@ -100,6 +100,12 @@ static int g_in_math = 0;
   math_sub   = '_' (braces | alpha | digit) ;
   math_sup   = '^' (braces | alpha | digit) ;
 
+  # Full math operator expressions: command + optional limits
+  sum_full   = '\\sum'  (math_sub math_sup? | math_sup math_sub?) ;
+  prod_full  = '\\prod' (math_sub math_sup? | math_sup math_sub?) ;
+  lim_full   = '\\lim'  (math_sub math_sup?)? ;
+  int_full   = '\\int'  (math_sub math_sup? | math_sup math_sub?) ;
+
   # Math binary operators
   math_op    = '+' | '-' | '\\times' | '\\cdot' | '\\pm' | '\\mp'
              | '\\div' | '\\ast' | '\\star' | '\\circ' | '\\bullet'
@@ -170,10 +176,10 @@ main :=|*
   inline_math        => { EMIT_BLOCK("math",1,1); };
   math_sub           => { if (g_in_math) EMIT("math_sub"); };
   math_sup           => { if (g_in_math) EMIT("math_sup"); };
-  sum                => { EMIT_BLOCK("sum",4,0); };
-  prod               => { EMIT_BLOCK("prod",5,0); };
-  lim                => { EMIT_BLOCK("lim",4,0); };
-  int                => { EMIT_BLOCK("int",4,0); };
+  sum_full                => { EMIT_BLOCK("sum",4,0); };
+  prod_full               => { EMIT_BLOCK("prod",5,0); };
+  lim_full                => { EMIT_BLOCK("lim",4,0); };
+  int_full                => { EMIT_BLOCK("int",4,0); };
   math_op             => { if (g_in_math) EMIT("math_op"); };
   math_rel            => { if (g_in_math) EMIT("math_rel"); };
   math_fn             => { if (g_in_math) EMIT("math_fn"); };

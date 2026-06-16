@@ -58,7 +58,7 @@ Comparison against the openCypher grammar (`docs/Cypher.g4`, 793 lines).
 | Relationship: `-[:TYPE]->` | ✅ | |
 | Relationship: `<-[:TYPE]-` | ✅ | |
 | Relationship: `--` (any type) | ✅ | |
-| Relationship: `-[:T1\|T2]->` (type union) | ⚠️ | Parsed; first type matched |
+| Relationship: `-[:T1\|T2]->` (type union) | ✅ | All types matched via linked list traversal |
 | `[*1..3]` variable-length paths | ✅ | BFS traversal |
 | `[*]` any-length paths | ✅ | Unbounded BFS |
 | Pattern comma-separated | ✅ | Cross-product |
@@ -154,6 +154,6 @@ Comparison against the openCypher grammar (`docs/Cypher.g4`, 793 lines).
 | Projections | 10 | 1 | 1 |
 | Functions | 1 | 0 | 6 |
 | Other | 3 | 0 | 4 |
-| **Total** | **61** | **4** | **19** |
+| **Total** | **62** | **3** | **19** |
 
 **Test coverage**: 200 tests, all passing, valgrind clean, 0 build warnings.

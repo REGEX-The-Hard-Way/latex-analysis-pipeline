@@ -376,6 +376,14 @@ static const char *fsm_first_text_op(cypher_ast_t *e, const char **prop_key, int
     return NULL;
 }
 
+static int fsm_edge_type_match(graph_store_t *gs, uint32_t et,
+                                cypher_ast_t *edge_labels) {
+    if (!edge_labels || !edge_labels->str[0]) return 1; /* any type */
+    for (cypher_ast_t *lab = edge_labels; lab; lab = lab->next)
+        if (lab->type == AST_LABEL && gs_hash_str(lab->str) == et) return 1;
+    return 0;
+}
+
 /* ---------- Goto-based FSM executor ---------- */
 
 cypher_result_t *cypher_fsm_exec(cypher_graph_t *g, cypher_ast_t *match_cl,
@@ -451,7 +459,7 @@ cypher_result_t *cypher_fsm_exec(cypher_graph_t *g, cypher_ast_t *match_cl,
     cypher_ast_t *hop_rels[MAX_HOPS];      /* rel patterns:  items[1], items[3], items[5], ... */
     cypher_ast_t *hop_labels[MAX_HOPS];    /* extracted labels per hop node */
     cypher_ast_t *hop_props[MAX_HOPS];     /* extracted props per hop node */
-    const char   *hop_edge_types[MAX_HOPS];/* edge type per hop */
+    cypher_ast_t *hop_edge_labels[MAX_HOPS];/* edge type label list per hop */
     int num_hops = 0;
     int hop_varlen_min[MAX_HOPS];
     int hop_varlen_max[MAX_HOPS];
@@ -472,10 +480,7 @@ cypher_result_t *cypher_fsm_exec(cypher_graph_t *g, cypher_ast_t *match_cl,
                 hop_rels[hi] = it;
                 hop_varlen_min[hi] = it->rel.varlen_min;
                 hop_varlen_max[hi] = it->rel.varlen_max;
-                if (it->rel.labels && it->rel.labels->str[0])
-                    hop_edge_types[hi] = it->rel.labels->str;
-                else
-                    hop_edge_types[hi] = NULL;
+                hop_edge_labels[hi] = it->rel.labels;
             }
         }
         if (num_hops >= 2) has_edge = 1;
@@ -553,7 +558,7 @@ state_filter:
         hop_nids[0] = nid;
         goto state_expand;
     }
-    if (optional) goto state_emit_null;
+    if (optional) { hop_nids[0] = nid; goto state_emit_null; }
     goto state_emit;
 
 state_expand:
@@ -586,9 +591,9 @@ state_expand:
                     for (uint32_t ej = 0; ej < ec && tail < 2040; ej++) {
                         uint32_t d2 = gs_edge_dst(gs, u, ej);
                         if (d2 == 0xFFFFFFFF) continue;
-                        if (hop_edge_types[hop]) {
+                        if (hop_edge_labels[hop]) {
                             uint32_t et = gs_edge_type(gs, u, ej);
-                            if (gs_hash_str(hop_edge_types[hop]) != et) continue;
+                            if (!fsm_edge_type_match(gs, et, hop_edge_labels[hop])) continue;
                         }
                         vbuf[tail++] = d2;
                     }
@@ -621,9 +626,9 @@ state_expand_loop:
         hop_ej[hop]++;
         if (dst == 0xFFFFFFFF) goto state_expand_loop;
 
-        if (hop_edge_types[hop]) {
+        if (hop_edge_labels[hop]) {
             uint32_t et = gs_edge_type(gs, hop_nids[hop], hop_ej[hop] - 1);
-            if (gs_hash_str(hop_edge_types[hop]) != et) goto state_expand_loop;
+            if (!fsm_edge_type_match(gs, et, hop_edge_labels[hop])) goto state_expand_loop;
         }
 
         int tgt_idx = hop + 1;
