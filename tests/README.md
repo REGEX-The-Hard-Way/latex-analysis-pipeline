@@ -1,74 +1,45 @@
 # Tests
 
-This directory contains test cases for the LaTeX Analysis Pipeline.
-
 ## Running Tests
 
 ```bash
-# Build the scanner first
-cd scanner
-make scanner
-
-# Run tests
+# Python test suite (requires scanner.out)
+cd scanner && make scanner && cd ..
 python3 -m pytest tests/
-# or
-python3 tests/test_issues.py
+
+# Cypher 200-test suite (from within scanner/cypher/)
+cd scanner/cypher
+make test
 ```
 
-## Test Categories
+## Test Files
 
-### test_issues.py
-Tests derived from GitHub issues in `issues_list.json`:
+| File | Description |
+|------|-------------|
+| `test_issues.py` | Scanner + macro expander integration tests |
+| `test_macro_expander.py` | Macro expander unit tests (20+ cases) |
+| `validation_tests.py` | Cross-reference validation (`\ref` → `\label`) |
+| `benchmark_runner.py` | Timing and accuracy benchmarks |
 
-| Test Class | Issue Reference | Description |
-|------------|-----------------|-------------|
-| `TestScannerBinary` | General | Basic scanner functionality |
-| `TestMathDetection` | #8 | Math equation detection accuracy |
-| `TestMacroExpansion` | #10 | LaTeX macro expansion |
-| `TestBibliographyTokens` | #11 | Bibliography entry tokenization |
-| `TestSentenceSplit` | General | Sentence splitting utility |
+## Cypher Tests
 
-### benchmark_runner.py
-Benchmarks for issue #28:
-- Timing benchmarks for scanner performance
-- Accuracy benchmarks for token detection
+The Cypher engine has its own 200-test suite in `scanner/cypher/run_200_final.sh`.
+Run with `make test` from the `scanner/cypher/` directory.
 
-### validation_tests.py
-Bibliography validation for issue #11:
-- Reference/label matching
-- Citation validation
-
-## Adding New Tests
-
-1. Create a new test file or add to existing file
-2. Use temporary files for LaTeX input
-3. Run scanner via subprocess
-4. Assert expected output in stderr (for .tok format) or stdout
-
-## Sample Test Template
+## Adding Tests
 
 ```python
 def test_new_feature(self):
-    """Test description here."""
     with tempfile.NamedTemporaryFile(mode='w', suffix='.tex', delete=False) as f:
-        f.write(r'Your LaTeX content here')
+        f.write(r'\begin{equation} x = 1 \end{equation}')
         tex_file = f.name
-    
     try:
         result = subprocess.run(
             ['scanner/scanner.out', tex_file, 'tex'],
-            capture_output=True,
-            text=True
+            capture_output=True, text=True
         )
         self.assertEqual(result.returncode, 0)
-        self.assertIn('expected_token', result.stderr)
+        self.assertIn('equation', result.stderr)
     finally:
         os.unlink(tex_file)
 ```
-
-## Dependencies
-
-Tests require:
-- scanner/scanner.out binary (built via `make scanner`)
-- scanner/sent_split.out binary (built via `make sent_split`)
-- Python 3.x with unittest

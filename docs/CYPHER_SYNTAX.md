@@ -202,7 +202,7 @@ Newlines are consumed as whitespace; semicolons delimit queries.
 - **No CALL/YIELD procedures** — not supported
 - **No parameters ($param)** — not implemented
 - **Type union** — executor matches first type only
-- **COUNT is the only function keyword** — SUM/AVG/MIN/MAX matched as identifiers
+- **COUNT is a keyword token** — SUM/AVG/MIN/MAX are matched as regular identifiers
 - **Hardcoded 200-row result limit** — configurable via MAX_ROWS
 - **Full scans are slow** — always use label filters with `MATCH (n:Label)`
 
