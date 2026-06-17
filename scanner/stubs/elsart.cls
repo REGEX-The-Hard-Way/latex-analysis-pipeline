@@ -1,0 +1,9 @@
+\ProvidesClass{elsart}
+\LoadClass[11pt]{article}
+\def\fnmark#1{}
+\def\fntext#1{}
+\def\corresp#1{}
+\def\cormark#1{}
+\def\address#1{\thanks{#1}}
+\def\ead#1{\texttt{#1}}
+\endinput

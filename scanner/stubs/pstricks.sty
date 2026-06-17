@@ -1,0 +1,13 @@
+\ProvidesPackage{pstricks}
+\def\psline{\@ifnextchar[{\@gobble}{\@gobble}}
+\def\psframe{\@ifnextchar[{\@gobble}{\@gobble}}
+\def\pscircle{\@ifnextchar[{\@gobble}{\@gobble}}
+\def\psoval{\@ifnextchar[{\@gobble}{\@gobble}}
+\def\pscurve{\@ifnextchar[{\@gobble}{\@gobble}}
+\def\rput(#1,#2)#3{#3}
+\def\uput(#1,#2)#3{}
+\def\psdots{\@ifnextchar[{\@gobble}{\@gobble}}
+\def\psgrid{}
+\newdimen\psunit
+\psunit=1cm
+\endinput

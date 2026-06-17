@@ -1,0 +1,42 @@
+\ProvidesPackage{psfig}
+\RequirePackage{graphicx,keyval}
+\define@key{psfig}{figure}{\def\psfig@file{#1}}
+\define@key{psfig}{file}{\def\psfig@file{#1}}
+\define@key{psfig}{width}{\def\psfig@width{#1}}
+\define@key{psfig}{height}{\def\psfig@height{#1}}
+\define@key{psfig}{angle}{\def\psfig@angle{#1}}
+\def\psfig{\@ifnextchar[{\@psfig}{\@psfig@simple}}
+\def\@psfig@simple#1{\@psfig[#1]}
+\def\@psfig[#1]{%
+  \let\psfig@file\relax
+  \let\psfig@width\relax
+  \let\psfig@height\relax
+  \let\psfig@angle\relax
+  \setkeys{psfig}{#1}%
+  \ifx\psfig@file\relax\else
+    \@psfig@show
+  \fi}
+\def\@psfig@show{%
+  \IfFileExists{\psfig@file}{%
+    \@psfig@dographics
+  }{%
+    \IfFileExists{\psfig@file.eps}{%
+      \edef\psfig@file{\psfig@file.eps}%
+      \@psfig@dographics
+    }{%
+      \@psfig@missing
+    }%
+  }}
+\def\@psfig@dographics{%
+  \edef\psfig@opt{%
+    \ifx\psfig@width\relax\else width=\psfig@width,\fi
+    \ifx\psfig@height\relax\else height=\psfig@height,\fi
+    \ifx\psfig@angle\relax\else angle=\psfig@angle,\fi}%
+  \expandafter\includegraphics\expandafter[\psfig@opt]{\psfig@file}}
+\def\@psfig@missing{%
+  \ifx\psfig@width\relax
+    \framebox{\texttt{\psfig@file}}%
+  \else
+    \framebox[\psfig@width]{\texttt{\psfig@file}}%
+  \fi}
+\endinput

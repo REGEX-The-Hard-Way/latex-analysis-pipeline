@@ -1,0 +1,45 @@
+\ProvidesPackage{epsf}
+\RequirePackage{graphicx}
+\newdimen\epsfxsize
+\newdimen\epsfysize
+
+\def\epsfbox#1{\@epsfbox{#1}}
+\def\epsffile#1{\@epsfbox{#1}}
+
+\def\@epsfbox#1{%
+  \@epsf@try{#1}{}%
+  \global\epsfxsize=0pt\global\epsfysize=0pt}
+
+\def\@epsf@try#1#2{%
+  \IfFileExists{#1#2}{%
+    \@epsf@show{#1#2}%
+  }{%
+    \ifx\relax#2\relax
+      \@epsf@try{#1}{.eps}%
+    \else
+      \@epsf@missing{#1#2}%
+    \fi
+  }}
+
+\def\@epsf@show#1{%
+  \ifdim\epsfxsize>0pt
+    \ifdim\epsfysize>0pt
+      \includegraphics[width=\epsfxsize,height=\epsfysize]{#1}%
+    \else
+      \includegraphics[width=\epsfxsize]{#1}%
+    \fi
+  \else
+    \ifdim\epsfysize>0pt
+      \includegraphics[height=\epsfysize]{#1}%
+    \else
+      \includegraphics{#1}%
+    \fi
+  \fi}
+
+\def\@epsf@missing#1{%
+  \ifdim\epsfxsize>0pt
+    \framebox[\epsfxsize]{\texttt{#1}}%
+  \else
+    \framebox{\texttt{#1}}%
+  \fi}
+\endinput

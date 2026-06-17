@@ -1,0 +1,14 @@
+\ProvidesPackage{epic}
+\newdimen\dashline
+\newdimen\dottedline
+\def\drawline{\@ifnextchar(\@drawline\@drawline}
+\def\@drawline(#1,#2)(#3,#4)(#5,#6){\put(#1,#2){\line(#3-#1,#4-#2){1}}}
+\def\dashline{\@ifnextchar[{\@dashline}{\@dashline}}
+\def\@dashline[#1]#2(#3,#4)(#5,#6){\put(#3,#4){\line(#5-#3,#6-#4){1}}}
+\def\dottedline#1(#2,#3)(#4,#5){\put(#2,#3){\circle*{1}}}
+\def\dashlinestretch#1{}
+\def\ellipse#1#2{\circle*{1}}
+\def\arc#1#2#3{\circle*{1}}
+\def\path{\@ifnextchar(\@path\@path}
+\def\@path(#1,#2){\put(#1,#2){\circle*{0.5}}}
+\endinput

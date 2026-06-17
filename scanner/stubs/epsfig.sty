@@ -1,0 +1,27 @@
+\ProvidesPackage{epsfig}
+\RequirePackage{graphicx,keyval}
+\newdimen\epsfxsize
+\newdimen\epsfysize
+\def\epsfbox#1{\IfFileExists{#1}{\includegraphics{#1}}{\framebox{\texttt{#1}}}}
+\def\epsffile#1{\epsfbox{#1}}
+\define@key{psfig}{figure}{\def\psfig@file{#1}}
+\define@key{psfig}{file}{\def\psfig@file{#1}}
+\define@key{psfig}{width}{\def\psfig@width{#1}}
+\define@key{psfig}{height}{\def\psfig@height{#1}}
+\define@key{psfig}{angle}{\def\psfig@angle{#1}}
+\def\psfig{\@ifnextchar[{\@psfig}{\@psfig@simple}}
+\def\@psfig@simple#1{\@psfig[#1]}
+\def\@psfig[#1]{%
+  \let\psfig@file\relax
+  \let\psfig@width\relax
+  \let\psfig@height\relax
+  \let\psfig@angle\relax
+  \setkeys{psfig}{#1}%
+  \ifx\psfig@file\relax\else
+    \IfFileExists{\psfig@file}{%
+      \includegraphics[width=\psfig@width,height=\psfig@height,angle=\psfig@angle]{\psfig@file}%
+    }{%
+      \framebox{\texttt{\psfig@file}}%
+    }%
+  \fi}
+\endinput

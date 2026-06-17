@@ -1,0 +1,15 @@
+\ProvidesPackage{axodraw}
+\RequirePackage{graphicx}
+\unitlength=1pt
+\def\Line(#1,#2)(#3,#4){\put(#1,#2){\line(#3-#1,#4-#2){1}}}
+\def\ArrowLine(#1,#2)(#3,#4){\put(#1,#2){\vector(#3-#1,#4-#2){1}}}
+\def\DashLine(#1,#2)(#3,#4)#5{\put(#1,#2){\line(#3-#1,#4-#2){1}}}
+\def\DashArrowLine(#1,#2)(#3,#4)#5{\put(#1,#2){\vector(#3-#1,#4-#2){1}}}
+\def\Photon(#1,#2)(#3,#4)#5#6{\put(#1,#2){\line(#3-#1,#4-#2){1}}}
+\def\ArrowArc(#1,#2)(#3,#4,#5){\put(#1,#2){\circle*{1}}}
+\def\ArrowArcn(#1,#2)(#3,#4,#5){\put(#1,#2){\circle*{1}}}
+\def\Vertex(#1,#2)#3{\put(#1,#2){\circle*{#3}}}
+\def\BCirc(#1,#2)#3{\put(#1,#2){\circle{#3}}}
+\def\Text(#1,#2)#3{\put(#1,#2){\makebox(0,0){#3}}}
+\def\LongArrow(#1,#2)(#3,#4){\put(#1,#2){\vector(#3-#1,#4-#2){1}}}
+\endinput

@@ -1,0 +1,10 @@
+\ProvidesPackage{xy}
+\DeclareOption{all}{\PackageInfo{xy}{ignoring option all}}
+\DeclareOption*{\PackageInfo{xy}{ignoring option \CurrentOption}}
+\ProcessOptions\relax
+\def\xymatrix#1{\begin{equation}\begin{array}{c}#1\end{array}\end{equation}}
+\def\ar{\@ifnextchar[{\@ar}{\@ar}}
+\def\@ar[#1]{}
+\def\save{}
+\def\restore{}
+\endinput
