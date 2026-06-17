@@ -7,6 +7,7 @@
 \def\address#1{\thanks{#1}}
 \def\author#1{\gdef\@author{#1}}
 \def\title#1{\gdef\@title{#1}}
+\def\pacs#1{}
 \def\jl#1{\gdef\@jl{#1}}
 \def\makefront{\maketitle}
 \def\maketitle{\begin{center}\LARGE\bf\@title\vskip1em\normalsize\@author\vskip0.5em\end{center}\global\let\@title\relax\global\let\@author\relax}
