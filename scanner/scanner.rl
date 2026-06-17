@@ -258,8 +258,8 @@ main :=|*
   l_vert              => { if (g_in_math) EMIT("l_vert"); };
   r_vert              => { if (g_in_math) EMIT("r_vert"); };
   vert_cmd            => { if (g_in_math) EMIT("vert"); };
-  accent              => { if (g_in_math) EMIT_BLOCK("accent",0,0); };
-  binom               => { if (g_in_math) EMIT_BLOCK("binom",0,0); };
+  accent              => { if (g_in_math) EMIT("accent"); };
+  binom               => { if (g_in_math) EMIT("binom"); };
   sqrt_full           => { if (g_in_math) EMIT_BLOCK("sqrt",5,0); };
   comment            => { EMIT("comment");};
 
