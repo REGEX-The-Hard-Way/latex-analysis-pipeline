@@ -14,9 +14,19 @@ export TEXINPUTS="${STUBS_DIR}:"
 TMPDIR=$(mktemp -d)
 trap "rm -rf $TMPDIR" EXIT
 
-cp "$FILE" "$TMPDIR/orig.tex"
+# Filter non-ASCII first
+LC_ALL=C sed 's/[\x80-\xff]//g' "$TMPDIR/orig.tex" > "$TMPDIR/orig_clean.tex"
+mv "$TMPDIR/orig_clean.tex" "$TMPDIR/orig.tex"
 
-echo "=== $BASENAME ==="
+# Detect plain TeX (uses \magnification or no \documentclass/style)
+is_plain=0
+if grep -q '\\magnification' "$TMPDIR/orig.tex"; then is_plain=1; fi
+if ! grep -q '\\documentclass\|\\documentstyle' "$TMPDIR/orig.tex"; then is_plain=1; fi
+
+PDFLATEX=pdflatex
+if [ "$is_plain" -eq 1 ]; then PDFLATEX=pdftex; fi
+
+echo "  Engine: $PDFLATEX"
 
 # Expand macros and prepend catcode fix for @-commands
 { printf '\\catcode`\\@=11\\relax\n'; "$SCRIPTPATH/macro_pipeline.sh" < "$TMPDIR/orig.tex" 2>/dev/null; } > "$TMPDIR/exp.tex"
@@ -34,19 +44,19 @@ cd "$TMPDIR"
 export max_print_line=1000
 export openout_any=a
 
-if ! pdflatex -interaction=nonstopmode -halt-on-error orig.tex >/dev/null 2>&1; then
+if ! $PDFLATEX -interaction=nonstopmode -halt-on-error orig.tex >/dev/null 2>&1; then
   echo "  COMPILE ORIG: FAILED"
   exit 1
 fi
-pdflatex -interaction=nonstopmode orig.tex >/dev/null 2>&1
-pdflatex -interaction=nonstopmode orig.tex >/dev/null 2>&1
+$PDFLATEX -interaction=nonstopmode orig.tex >/dev/null 2>&1
+$PDFLATEX -interaction=nonstopmode orig.tex >/dev/null 2>&1
 
-if ! pdflatex -interaction=nonstopmode -halt-on-error exp.tex >/dev/null 2>&1; then
+if ! $PDFLATEX -interaction=nonstopmode -halt-on-error exp.tex >/dev/null 2>&1; then
   echo "  COMPILE EXP: FAILED"
   exit 1
 fi
-pdflatex -interaction=nonstopmode exp.tex >/dev/null 2>&1
-pdflatex -interaction=nonstopmode exp.tex >/dev/null 2>&1
+$PDFLATEX -interaction=nonstopmode exp.tex >/dev/null 2>&1
+$PDFLATEX -interaction=nonstopmode exp.tex >/dev/null 2>&1
 
 orig_pages=$(pdfinfo orig.pdf 2>/dev/null | grep Pages | awk '{print $2}') || true
 exp_pages=$(pdfinfo exp.pdf 2>/dev/null | grep Pages | awk '{print $2}') || true
