@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 import sqlite3
 
-conn = sqlite3.connect('/mnt/x/home/user/my_data.db')
+conn = sqlite3.connect("/mnt/x/home/user/my_data.db")
 tokenizer = mwe.MWETokenizer(separator="")
 
 
@@ -18,12 +18,12 @@ def read_file(f_name):
     return data
 
 
-#with open("vocab", "r") as f:
+# with open("vocab", "r") as f:
 #    vocab = [x[:-1] for x in f.readlines()]
 
 data = read_file(argv[1])
-#tokens = set()
-#for token in vocab:
+# tokens = set()
+# for token in vocab:
 #    tokens.add(r"{}".format(token))
 
 # print(tokens)
@@ -37,9 +37,11 @@ output = []
 for ix in range(len(resp)):
     output.append([x for x in resp[ix] if x.strip()])
 
+del resp
 from tqdm import tqdm
-for ix in tqdm(range(0,len(output),1000)):
-    df = pd.DataFrame(output[ix:ix+1000])
+
+for ix in tqdm(range(0, len(output), 1000)):
+    df = pd.DataFrame(output[ix : ix + 1000])
     df.columns = [
         "filepath",
         "filepath_id",
@@ -50,8 +52,14 @@ for ix in tqdm(range(0,len(output),1000)):
         "type",
         "token",
     ]
-    authors = df[df['type'].apply(lambda x : True if re.findall('author|footnote|email|thanks',str(x)) else False)]
-    authors.to_sql(name='authors', con=conn, if_exists='append', index=False)
+    authors = df[
+        df["type"].apply(
+            lambda x: (
+                True if re.findall("author|footnote|email|thanks", str(x)) else False
+            )
+        )
+    ]
+    authors.to_sql(name="authors", con=conn, if_exists="append", index=False)
     print(len(authors))
 
 exit()
@@ -64,41 +72,45 @@ exit()
 # 4. Always close the connection when finished
 conn.close()
 
-df = pd.DataFrame(output,)
+df = pd.DataFrame(
+    output,
+)
 
 
 print(df.head())
-authors = df[df['type'].apply(lambda x : True if re.findall('author|equation|inline|cite|ref|affiliation|bibitem',str(x)) else False)]
-authors = authors.loc[:,['filepath','token_id','token']]
+authors = df[
+    df["type"].apply(
+        lambda x: (
+            True
+            if re.findall("author|equation|inline|cite|ref|affiliation|bibitem", str(x))
+            else False
+        )
+    )
+]
+authors = authors.loc[:, ["filepath", "token_id", "token"]]
 
 print(authors)
 
 
 file_name = list(set(authors.filepath.tolist()))[0]
-with open(file_name,'r') as f:
+with open(file_name, "r") as f:
     data = f.read()
     x = authors.itertuples()
     while True:
         try:
             row = next(x)
-            data = data.replace(row.token,' ' + row.token_id+ ' ')
+            data = data.replace(row.token, " " + row.token_id + " ")
         except StopIteration:
             break
-f = open(file_name+'.dev','w')
+f = open(file_name + ".dev", "w")
 f.write(data)
 f.close()
-
-
 
 
 exit()
 
 
-
 zf = df.loc[:, ["type", "token"]]
-
-
-
 
 
 equations = zf[zf.type == "equation"]

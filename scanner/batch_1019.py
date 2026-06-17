@@ -8,8 +8,12 @@ DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "2003")
 OUT = "/tmp/pdfs"
 os.makedirs(OUT, exist_ok=True)
 
-MACRO_BIN  = os.path.join(os.path.dirname(os.path.abspath(__file__)), "macro_expander.out")
-COMMENT_SH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "comment_missing.sh")
+MACRO_BIN = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "macro_expander.out"
+)
+COMMENT_SH = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "comment_missing.sh"
+)
 
 files = sorted(glob.glob(f"{DIR}/03*.tex"))
 N = len(files)
@@ -31,13 +35,15 @@ for i, f in enumerate(files):
 
     # ---- Step 1: comment missing deps ----
     cleaned = os.path.join(OUT, f"{base}.tex")
-    cp = subprocess.run(["bash", COMMENT_SH, f, cleaned],
-                        capture_output=True, text=True, timeout=10)
+    cp = subprocess.run(
+        ["bash", COMMENT_SH, f, cleaned], capture_output=True, text=True, timeout=10
+    )
     if cp.returncode != 0 or not os.path.exists(cleaned):
         r["phase"] = "comment_failed"
         r["errors"].append(f"comment_missing: rc={cp.returncode}")
         results.append(r)
-        if (i+1) % 100 == 0: print(f"  [{i+1}/{N}] {base}: comment failed")
+        if (i + 1) % 100 == 0:
+            print(f"  [{i+1}/{N}] {base}: comment failed")
         continue
 
     # ---- Step 2: macro expand ----
@@ -50,13 +56,15 @@ for i, f in enumerate(files):
         r["phase"] = "expand_timeout"
         r["errors"].append("macro_expander: TIMEOUT")
         results.append(r)
-        if (i+1) % 50 == 0: print(f"  [{i+1}/{N}] {base}: expand timeout")
+        if (i + 1) % 50 == 0:
+            print(f"  [{i+1}/{N}] {base}: expand timeout")
         continue
     if mp.returncode != 0 or len(mp.stdout) == 0:
         r["phase"] = "expand_failed"
         r["errors"].append(f"macro_expander: rc={mp.returncode} len={len(mp.stdout)}")
         results.append(r)
-        if (i+1) % 100 == 0: print(f"  [{i+1}/{N}] {base}: expand failed")
+        if (i + 1) % 100 == 0:
+            print(f"  [{i+1}/{N}] {base}: expand failed")
         continue
     with open(expanded, "wb") as fh:
         fh.write(mp.stdout)
@@ -64,9 +72,13 @@ for i, f in enumerate(files):
     # ---- Step 3: count macros before/after ----
     try:
         orig_text = raw.decode("utf-8", errors="replace")
-        exp_text  = mp.stdout.decode("utf-8", errors="replace")
-        macros_before = len(re.findall(r'\\(?:newcommand|renewcommand|def|newenvironment)\b', orig_text))
-        macros_after  = len(re.findall(r'\\(?:newcommand|renewcommand|def|newenvironment)\b', exp_text))
+        exp_text = mp.stdout.decode("utf-8", errors="replace")
+        macros_before = len(
+            re.findall(r"\\(?:newcommand|renewcommand|def|newenvironment)\b", orig_text)
+        )
+        macros_after = len(
+            re.findall(r"\\(?:newcommand|renewcommand|def|newenvironment)\b", exp_text)
+        )
         r["macros_before"] = macros_before
         r["macros_after"] = macros_after
     except:
@@ -77,16 +89,27 @@ for i, f in enumerate(files):
     logfile = os.path.join(OUT, f"{base}.log")
     try:
         pp = subprocess.run(
-            ["pdflatex", "-interaction=nonstopmode", "-output-directory", OUT, expanded],
-            capture_output=True, timeout=45)
+            [
+                "pdflatex",
+                "-interaction=nonstopmode",
+                "-output-directory",
+                OUT,
+                expanded,
+            ],
+            capture_output=True,
+            timeout=45,
+        )
     except subprocess.TimeoutExpired:
         r["phase"] = "pdflatex_timeout"
         r["category"] = "pdflatex_timeout"
         r["errors"].append("pdflatex: TIMEOUT")
         results.append(r)
-        if (i+1) % 50 == 0: print(f"  [{i+1}/{N}] {base}: pdflatex timeout")
+        if (i + 1) % 50 == 0:
+            print(f"  [{i+1}/{N}] {base}: pdflatex timeout")
         continue
-    log_text = pp.stdout.decode("utf-8", errors="replace") + pp.stderr.decode("utf-8", errors="replace")
+    log_text = pp.stdout.decode("utf-8", errors="replace") + pp.stderr.decode(
+        "utf-8", errors="replace"
+    )
     with open(logfile, "w", encoding="utf-8") as fh:
         fh.write(log_text)
 
@@ -95,7 +118,9 @@ for i, f in enumerate(files):
     if os.path.exists(pdf):
         r["pdflatex_ok"] = True
         try:
-            pi = subprocess.run(["pdfinfo", pdf], capture_output=True, text=True, timeout=5)
+            pi = subprocess.run(
+                ["pdfinfo", pdf], capture_output=True, text=True, timeout=5
+            )
             for line in pi.stdout.split("\n"):
                 if "Pages:" in line:
                     r["pdf_pages"] = int(line.split(":")[1].strip())
@@ -103,11 +128,11 @@ for i, f in enumerate(files):
             pass
 
     # Parse LaTeX errors
-    latex_errors = re.findall(r'^!\s+(.*)$', log_text, re.MULTILINE)
+    latex_errors = re.findall(r"^!\s+(.*)$", log_text, re.MULTILINE)
     r["errors"] = latex_errors[:5]  # first 5 unique
 
     # Parse warnings
-    latex_warnings = re.findall(r'LaTeX Warning:\s+(.*)$', log_text, re.MULTILINE)
+    latex_warnings = re.findall(r"LaTeX Warning:\s+(.*)$", log_text, re.MULTILINE)
     r["warnings"] = latex_warnings[:5]
 
     # Categorise the primary error
@@ -141,9 +166,13 @@ for i, f in enumerate(files):
     r["phase"] = "done"
     results.append(r)
     if r["category"] == "clean":
-        print(f"  [{i+1}/{N}] {base}: ✓ PDF {r['pdf_pages']}p  macros:{r['macros_before']}→{r['macros_after']}")
+        print(
+            f"  [{i+1}/{N}] {base}: ✓ PDF {r['pdf_pages']}p  macros:{r['macros_before']}→{r['macros_after']}"
+        )
     else:
-        print(f"  [{i+1}/{N}] {base}: {r['category']}  (pdf={r['pdf_pages']}p errs={len(latex_errors)})")
+        print(
+            f"  [{i+1}/{N}] {base}: {r['category']}  (pdf={r['pdf_pages']}p errs={len(latex_errors)})"
+        )
 
 td = time.time() - t0
 print(f"\nDone in {td:.0f}s ({td/N:.1f}s/file)")
@@ -153,7 +182,7 @@ cats = Counter(r.get("category", "unknown") for r in results)
 phases = Counter(r.get("phase", "unknown") for r in results)
 pdf_ok = sum(1 for r in results if r["pdflatex_ok"])
 total_macros_before = sum(r.get("macros_before", 0) for r in results)
-total_macros_after  = sum(r.get("macros_after", 0) for r in results)
+total_macros_after = sum(r.get("macros_after", 0) for r in results)
 
 print("\n" + "=" * 60)
 print("  RESULTS — ALL 1019 FILES")
