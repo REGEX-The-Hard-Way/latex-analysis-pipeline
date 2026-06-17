@@ -1,10 +1,15 @@
 #!/usr/bin/env python3
 """
-Detect and extract address information from author blocks in /tmp/authors,
-match them to database author rows, insert address records, and update
-author tokens in the SQLite database.
+detect_address.py
 
-Usage: python3 detect_address.py
+Reads /tmp/authors (one author block per line, each being the content
+inside \\author{...} in LaTeX), matches each block to a row in
+my_data.db (table authors, type='author'), detects embedded address
+text, inserts address rows linked to the parent author, and strips the
+address from the author token.
+
+Usage:
+    python3 detect_address.py
 """
 
 import re
@@ -13,798 +18,592 @@ import shutil
 import sys
 
 DB_PATH = "/mnt/x/home/user/my_data.db"
-DB_BAK_PATH = "/mnt/x/home/user/my_data.db.bak2"
+DB_BAK = "/mnt/x/home/user/my_data.db.bak2"
 AUTHORS_FILE = "/tmp/authors"
 
-ADDRESS_KEYWORDS = [
-    "Department",
-    "University",
-    "Universidade",
-    "Universidad",
-    "Universitat",
-    "Universit",
-    "Institute",
-    "Laboratory",
-    "Laboratoire",
-    "Laboratori",
-    "College",
-    "School",
-    "Center",
-    "Centre",
-    "Faculty",
-    "Facult",
-    "Faculdade",
-    "INFN",
-    "CERN",
-    "P.O. Box",
-    "P.O.Box",
-    "P.O. Box",
-    "Street",
-    "Road",
-    "Avenue",
-    "Observatoire",
-    "Academy",
-    "DESY",
-    "JINR",
-    "SISSA",
-    "Perimeter Institute",
-    "Jefferson Laboratory",
-    "Racah Institute",
-    "Max-Planck-Institut",
-    "Steklov",
-    "Saha Institute",
-    "Harish-chandra",
-    "Tata Institute",
-    "Bogoliubov",
-    "CBPF",
-    "ICTP",
-    "DAMTP",
-    "KEK",
-    "MPI/AEI",
-    "LPTHE",
-    "LPTMC",
-    "IHES",
-    "NORDITA",
-    "SUBATECH",
-    "ITEP",
-    "ETH ",
-    "SLAC",
-    "Formula presented",
+# ── Address-indicating keywords ──────────────────────────────────────
+_ADDR_KW = [
+    "Department", "University", "Universidade", "Universidad",
+    "Universitat", "Universit", "Institute", "Laboratory",
+    "Laboratoire", "Laboratori", "College", "School", "Center",
+    "Centre", "Faculty", "Facult", "Faculdade", "INFN", "CERN",
+    "P.O. Box", "P.O.Box", "P. O. Box", "Street", "Road", "Avenue",
+    "Observatoire", "Academy", "DESY", "JINR", "SISSA",
+    "Perimeter Institute", "Jefferson Laboratory", "Racah Institute",
+    "Max-Planck", "Steklov", "Saha Institute", "Harish-chandra",
+    "Tata Institute", "Bogoliubov", "CBPF", "ICTP", "DAMTP",
+    "KEK", "LPTHE", "LPTMC", "IHES", "NORDITA", "SUBATECH",
+    "ITEP", "SLAC", "MPI/AEI",
 ]
 
-COUNTRY_PATTERNS = [
-    "Canada",
-    "France",
-    "Italy",
-    "Germany",
-    "USA",
-    "U.S.A.",
-    "U.S.A",
-    "Russia",
-    "Spain",
-    "Brazil",
-    "Japan",
-    "China",
-    "India",
-    "UK",
-    "U.K.",
-    "U.K",
-    "Sweden",
-    "Switzerland",
-    "Israel",
-    "Iran",
-    "Korea",
-    "Taiwan",
-    "Poland",
-    "Portugal",
-    "Ukraine",
-    "Belgium",
-    "Netherlands",
-    "Australia",
-    "Mexico",
-    "Hungary",
-    "Romania",
-    "Turkey",
-    "Finland",
-    "Greece",
-    "Norway",
-    "Denmark",
-    "Ireland",
-    "Chile",
-    "Argentina",
-    "Yugoslavia",
-    "Serbia",
-    "Croatia",
-    "Bulgaria",
-    "Czech",
-    "Slovak",
-    "Austria",
-    "New Zealand",
-    "Armenia",
-    "Georgia",
-    "Morocco",
-    "Jordan",
-    "South Africa",
-    "Indonesia",
-    "Thailand",
-    "Vietnam",
-    "Egypt",
-]
-
-NON_ADDRESS_PATTERNS = [
-    r"\bcite\b",
-    r"^\s*%",
-    r"\\keywords\{",
-    r"hep-th/",
-    r"hep-ph/",
-    r"math/",
-    r"gr-qc/",
-    r"\\date\{",
-    r"\\speaker\{",
-    r"\\firstname\{",
-    r"\\surname\{",
-    r"\\pdf",
-    r"\\inst\{",
-    r"\\corauthref\{",
-    r"\\altaffiliation",
-    r"\\renewcommand",
-    r"\\textcolor",
-]
+_COUNTRY_RX = re.compile(
+    r"\b(?:Canada|France|Italy|Germany|USA|U\.?S\.?A\.?|Russia|Spain|"
+    r"Brazil|Japan|China|India|UK|U\.?K\.?|Sweden|Switzerland|Israel|"
+    r"Iran|Korea|Taiwan|Poland|Portugal|Ukraine|Belgium|Netherlands|"
+    r"Mexico|Hungary|Romania|Turkey|Finland|Greece|Norway|Denmark|"
+    r"Ireland|Chile|Argentina|Yugoslavia|Serbia|Croatia|Bulgaria|"
+    r"Czech|Slovak|Austria|Australia|New Zealand|Armenia|Georgia|"
+    r"Morocco|Jordan|South Africa|Indonesia|Thailand|Vietnam|Egypt|"
+    r"Belarus|Estonia|Latvia|Lithuania|Peru|Venezuela|Pakistan|"
+    r"Bangladesh|Nepal|Sri Lanka|Malaysia|Singapore|Philippines)\b",
+    re.IGNORECASE,
+)
 
 
-def strip_outer_braces(s):
-    """Strip outer { } wrapper from a line, handling nested braces carefully."""
-    s = s.strip()
-    if s.startswith("{") and s.endswith("}"):
-        depth = 0
-        for i, ch in enumerate(s):
-            if ch == "{":
-                depth += 1
-            elif ch == "}":
-                depth -= 1
-                if depth == 0 and i == len(s) - 1:
-                    return s[1:-1]
-    return s
-
-
-def strip_inner_braces(s):
-    """Remove outer { } if the entire string is wrapped in them."""
-    s = s.strip()
-    if s.startswith("{") and s.endswith("}"):
-        depth = 0
-        for i, ch in enumerate(s):
-            if ch == "{":
-                depth += 1
-            elif ch == "}":
-                depth -= 1
-                if depth == 0 and i == len(s) - 1:
-                    return s[1:-1]
-    return s
-
-
-def extract_balanced(text, start_pos, open_char="{", close_char="}"):
-    """Extract content between balanced braces starting at start_pos."""
-    if start_pos >= len(text) or text[start_pos] != open_char:
-        return None, start_pos
+# ── Helper: balanced-brace extraction ────────────────────────────────
+def _balanced_extract(text: str, start: int, lbrace: str = "{", rbrace: str = "}") -> tuple:
+    """Return (content_inside, position_after_closing_brace)."""
     depth = 0
-    for i in range(start_pos, len(text)):
-        if text[i] == open_char:
+    for i in range(start, len(text)):
+        ch = text[i]
+        if ch == lbrace:
             depth += 1
-        elif text[i] == close_char:
+        elif ch == rbrace:
             depth -= 1
             if depth == 0:
-                return text[start_pos + 1 : i], i + 1
-    return None, start_pos
+                return text[start + 1 : i], i + 1
+    return None, start
 
 
-def remove_thanks(content):
-    """Remove \\thanks{...} blocks from content."""
-    result = []
-    i = 0
-    while i < len(content):
-        if content[i : i + 8] == "\\thanks{" or content[i : i + 8] == "\\thanks{":
-            _, end = extract_balanced(content, i + 7)
-            i = end
+def strip_balanced_outer(s: str) -> str:
+    """Strip one layer of { } if the whole string is balanced-wrapped."""
+    s = s.strip()
+    if not (s.startswith("{") and s.endswith("}")):
+        return s
+    content, end = _balanced_extract(s, 0)
+    if content is not None and end == len(s):
+        return content.strip()
+    return s
+
+
+# ── Normalisation helpers ────────────────────────────────────────────
+def _normalise(s: str) -> str:
+    """Normalise a string for fuzzy matching."""
+    # Remove \\author{…} wrapper if present
+    t = s.strip()
+    if t.startswith("\\author{") and t.endswith("}"):
+        content, end = _balanced_extract(t, 7, "{", "}")
+        if content is not None and end == len(t):
+            t = content
+    # Collapse all line-break / whitespace variations
+    t = t.replace("\\\\", " ")   # LaTeX \\   → space
+    t = t.replace("\n", " ")
+    t = t.replace("\r", " ")
+    t = t.replace("\t", " ")
+    t = re.sub(r"\s+", " ", t).strip()
+    return t
+
+
+def _normalise_full(s: str) -> str:
+    """Extra-aggressive normalisation: also strip outer braces."""
+    return _normalise(strip_balanced_outer(s))
+
+
+# ── Address keyword check ───────────────────────────────────────────
+def has_address_content(text: str) -> bool:
+    """True when *text* contains enough address-like signals."""
+    if not text or len(text) < 10:
+        return False
+    t = text.lower()
+    for kw in _ADDR_KW:
+        if kw.lower() in t:
+            return True
+    if _COUNTRY_RX.search(text):
+        return True
+    # Postal-code heuristic only when also street-ish
+    if re.search(r"\b\d{5}(?:[-\s]\d{4})?\b", text) and re.search(
+        r"\b(?:Street|Road|Avenue|St\.|Rd\.|Ave\.|Blvd|Drive|Lane|Way|Place|"
+        r"Square|Park|Row|Court|Circle|Highway|Route|Boulevard)\b", text, re.IGNORECASE
+    ):
+        return True
+    return False
+
+
+# ── Stripping non-address constructs ─────────────────────────────────
+def _remove_thanks(text: str) -> str:
+    out, i = [], 0
+    while i < len(text):
+        if text[i : i + 8] == "\\thanks{":
+            _, i = _balanced_extract(text, i + 7)
             continue
-        result.append(content[i])
+        out.append(text[i])
         i += 1
-    return "".join(result)
+    return "".join(out)
 
 
-def remove_footnote(content):
-    """Remove \\footnote{...} and \\footnotemark[...] blocks."""
-    result = []
-    i = 0
-    while i < len(content):
-        if content[i : i + 10] == "\\footnote{":
-            _, end = extract_balanced(content, i + 9)
-            i = end
+def _remove_footnote(text: str) -> str:
+    out, i = [], 0
+    while i < len(text):
+        if text[i : i + 10] == "\\footnote{":
+            _, i = _balanced_extract(text, i + 9)
             continue
-        if content[i : i + 13] == "\\footnotemark":
+        if text[i : i + 13] == "\\footnotemark":
             j = i + 13
-            if j < len(content) and content[j] == "[":
-                k = content.find("]", j)
+            if j < len(text) and text[j] == "[":
+                k = text.find("]", j)
                 if k != -1:
                     i = k + 1
                     continue
             i = j
             continue
-        result.append(content[i])
+        out.append(text[i])
         i += 1
-    return "".join(result)
+    return "".join(out)
 
 
-def remove_emails(content):
-    """Remove email-related patterns from content."""
-    content = re.sub(r"\\email\{[^}]*\}", "", content)
-    content = re.sub(
-        r"E-mail\s*:\s*[^\n\\]*(?:\\[^\n]*)?", "", content, flags=re.IGNORECASE
-    )
-    content = re.sub(
-        r"E?mail\s*:\s*[^\n\\]*(?:\\[^\n]*)?", "", content, flags=re.IGNORECASE
-    )
-    content = re.sub(r"\\texttt\{[^@]*@[^}]*\}", "", content)
-    content = re.sub(r"\{\\tt\s[^@]*@[^}]*\}", "", content)
-    content = re.sub(r"email\s*:\s*", "", content, flags=re.IGNORECASE)
-    content = re.sub(r"E-mail", "", content, flags=re.IGNORECASE)
-    content = re.sub(r"\\pdflink\{mailto:[^}]*\}", "", content)
-    return content
-
-
-def clean_for_detection(content):
-    """Remove non-address constructs to isolate address detection."""
-    c = content
-    c = remove_thanks(c)
-    c = remove_footnote(c)
-    c = remove_emails(c)
-    c = re.sub(r"\\parbox\{[^}]*\}\{[^}]*\}", "", c)
+def _remove_emails(text: str) -> str:
+    c = text
+    c = re.sub(r"\\email\{[^}]*\}", "", c)
+    c = re.sub(r"[Ee]-?mail\s*:\s*[^\n\\]*(?:\\[^\n\\]*)?", "", c)
+    c = re.sub(r"\\texttt\{[^@]*@[^}]*\}", "", c)
+    c = re.sub(r"\{\\tt\s[^@]*@[^}]*\}", "", c)
+    c = re.sub(r"\\pdflink\{mailto:[^}]*\}", "", c)
+    # Remove {\small e-mail:...} style
+    c = re.sub(r"\{\s*\\small\s+(?:e-?mail|E?-?mail)\s*:\s*[^}]*\}", "", c)
+    c = re.sub(r"[Ee]-?mail\s*:?\s*", "", c)
     return c
 
 
-def has_address_keywords(text):
-    """Check if text contains address-indicating keywords."""
-    text_lower = text.lower()
-    for kw in ADDRESS_KEYWORDS:
-        if kw.lower() in text_lower:
+def _remove_urls(text: str) -> str:
+    c = text
+    c = re.sub(r"\\url\{[^}]*\}", "", c)
+    c = re.sub(r"\bhttps?://\S+", "", c)
+    # E-print identifiers
+    c = re.sub(r"\b(?:hep-th|hep-ph|gr-qc|math|astro-ph|nucl-th|cond-mat)/\d+", "", c)
+    return c
+
+
+def clean_for_detection(content: str) -> str:
+    c = content
+    c = _remove_thanks(c)
+    c = _remove_footnote(c)
+    c = _remove_emails(c)
+    c = _remove_urls(c)
+    # Remove \date{...}
+    c = re.sub(r"\\date\{[^}]*\}", "", c)
+    # Remove \keywords{...}
+    c = re.sub(r"\\keywords\{.*?(?<!\\)\}", "", c, flags=re.DOTALL)
+    # Remove commented lines  %...
+    c = re.sub(r"%.*", "", c)
+    return c
+
+
+# ── Separator detection ─────────────────────────────────────────────
+# Words that should NOT be treated as author names
+_NON_NAME_WORDS = {
+    "department", "university", "universidade", "universidad",
+    "universitat", "universit", "institute", "laboratory",
+    "laboratoire", "laboratori", "college", "school", "center",
+    "centre", "faculty", "facult", "faculdade", "infn", "cern",
+    "observatoire", "academy", "desy", "jinr", "sissa", "ictp",
+    "damtp", "kek", "lpthe", "lptmc", "ihes", "nordita",
+    "subatech", "itep", "slac", "cbpf", "steklov", "max", "planck",
+    "bogoliubov", "tata", "harish", "chandra", "saha", "racah",
+    "perimeter", "jefferson", "mit", "eth", "theory", "theoretical",
+    "division", "mathematical", "physics", "chemistry", "science",
+    "sciences", "particle", "nuclear", "statistics", "mathematics",
+    "applied", "advanced", "studies", "research", "quantum",
+    "national", "international", "european", "american", "russian",
+    "chinese", "japanese", "french", "german", "italian", "spanish",
+}
+
+
+def _author_name_likely(text: str) -> bool:
+    """Heuristic: does *text* very likely start with an author name
+    (as opposed to continuing the address)?"""
+    t = text.strip()
+    if not t:
+        return False
+    # Strip leading {…} group
+    if t.startswith("{"):
+        inner, _ = _balanced_extract(t, 0)
+        if inner is not None:
+            t = inner.strip()
+    # Strip optional LaTeX formatting tokens
+    t = re.sub(
+        r"^(?:\\sc\b|\\bf\b|\\sf\b|\\it\b|\\textbf\b|\\textsf\b|"
+        r"\\textit\b|\\textsc\b|\\large\b|\\Large\b|\\small\b|"
+        r"\\footnotesize\b|\\normalsize\b|\\rm\b|\\sl\b|\\em\b|"
+        r"\\itshape\b|\\scshape\b|\$[\^_]\{[^}]*\}\$|\$\^[a-zA-Z\d]\$)\s*",
+        "", t,
+        count=1,
+    ).strip()
+    # Try to extract a person name
+    m = re.match(r"([A-Z][a-z]*(?:\.[\s~]?[A-Z]|~[A-Z])?)", t)
+    if not m:
+        return False
+    name_candidate = m.group(1).lower()
+    # Reject if it looks like an institution word
+    if name_candidate in _NON_NAME_WORDS:
+        return False
+    # Also reject single letters followed by more content without a dot
+    if len(name_candidate) <= 2 and not m.group(1).endswith("."):
+        # Short name like "H." is fine, "H " alone is suspicious
+        pass  # still accept very short names with dots
+    return True
+
+
+def _contains_author_like(text: str) -> bool:
+    """Does *text* contain another \\and or author-name pattern?"""
+    if re.search(r"\\and\b", text):
+        after = text.split("\\and")[-1].strip()
+        if _author_name_likely(after):
             return True
-    for country in COUNTRY_PATTERNS:
-        if country.lower() in text_lower:
+    for m in re.finditer(r"\\\\", text):
+        after = text[m.end():].strip()
+        if _author_name_likely(after):
             return True
-    # Postal code patterns
-    if re.search(r"\b\d{5}(?:[-\s]\d{4})?\b", text):
-        if re.search(
-            r"(Street|Road|Avenue|St\.|Rd\.|Ave\.|Blvd|Drive|Lane|Way|Place|Plaza|Square|Park|Row|Court|Circle|Highway|Hwy|Route)\b",
-            text,
-            re.IGNORECASE,
-        ):
-            return True
+    if _author_name_likely(text):
+        return True
     return False
 
 
-def extract_explicit_addresses(content):
-    """Extract \\address{...} blocks from content. Returns (addresses, cleaned_content)."""
-    addresses = []
-    cleaned = []
-    i = 0
-    while i < len(content):
-        if content[i : i + 9] == "\\address{":
-            addr_text, end = extract_balanced(content, i + 8)
-            if addr_text is not None:
-                addresses.append(addr_text.strip())
-            i = end
-            continue
-        cleaned.append(content[i])
-        i += 1
-    return addresses, "".join(cleaned)
+def _find_authors_end(cleaned: str) -> int:
+    """Return index where author portion ends and address portion begins.
+    -1 when no separation is found."""
+    candidates = []
+
+    # ── \vspace{…}, \bigskip, \smallskip, \medskip, \hspace{…} ──
+    # These are strong separators – trust them without extra checks.
+    for m in re.finditer(r"\\vspace\*?\{[^}]*\}|\\bigskip|\\smallskip|\\medskip|\\hspace\*?\{[^}]*\}", cleaned):
+        after = cleaned[m.end():].strip()
+        if has_address_content(after) and len(after) > 15:
+            candidates.append((m.end(), 10))
+
+    # ── 3+ LaTeX \\  commands ────────────────────────────────────
+    # Strong separator – co-authors rarely need 3+ line breaks.
+    for m in re.finditer(r"(?:\\\\\s*){3,}", cleaned):
+        after = cleaned[m.end():].strip()
+        if has_address_content(after) and len(after) > 15:
+            candidates.append((m.end(), 8))
+
+    # ── 2  LaTeX \\  (ambiguous – may separate co-authors) ───────
+    for m in re.finditer(r"(?:\\\\\s*){2}", cleaned):
+        after = cleaned[m.end():].strip()
+        if has_address_content(after) and len(after) > 15:
+            if not _contains_author_like(after):
+                candidates.append((m.end(), 4))
+
+    # ── single \\ (last resort, very ambiguous) ──────────────────
+    if not candidates:
+        for m in re.finditer(r"\\\\", cleaned):
+            after = cleaned[m.end():].strip()
+            if has_address_content(after) and len(after) > 20:
+                if not _contains_author_like(after):
+                    candidates.append((m.end(), 2))
+
+    if candidates:
+        # Prefer higher priority, then earliest position
+        candidates.sort(key=lambda x: (-x[1], x[0]))
+        return candidates[0][0]
+    return -1
 
 
-def find_numbered_markers(text):
-    """Find numbered marker patterns in text.
-    Returns list of (marker_text, start_pos, end_pos) tuples.
-    """
-    patterns = [
-        r"\$\^\{?(\d+|[a-zA-Z])\}?\$",
-        r"\$\{\}\^\{([a-zA-Z\d]+)\}\$",
-        r"\$\(?\(?([a-zA-Z\d]+)\)?\)?\^\{\\?[a-zA-Z]*\}?\$",
-    ]
-    markers = []
-    for pat in patterns:
-        for m in re.finditer(pat, text):
-            markers.append((m.group(0), m.start(), m.end()))
-    # Also match ${}^{a}$ style
-    for m in re.finditer(r"\$\{\}\^\{([^\}]+)\}\$", text):
-        markers.append((m.group(0), m.start(), m.end()))
-    # Match $^1$ style
-    for m in re.finditer(r"\$\^(\d+|[a-zA-Z\*\+\-\$])\$", text):
-        markers.append((m.group(0), m.start(), m.end()))
-    # Match $^{1}$ style
-    for m in re.finditer(r"\$\^\{([\d,]+|[a-zA-Z\*\+\-\$]+)\}\$", text):
-        markers.append((m.group(0), m.start(), m.end()))
-    # Match $^{(a)}$ style
-    for m in re.finditer(r"\$\(\(?([a-zA-Z\d]+)\)?\)?\$", text):
-        markers.append((m.group(0), m.start(), m.end()))
-    # Match ${}^{a,b}$ style
-    for m in re.finditer(r"\$\{\}\^\{([a-zA-Z,\s]+)\}\$", text):
-        markers.append((m.group(0), m.start(), m.end()))
-    # Remove duplicates by position
-    seen = set()
-    unique = []
-    for m in sorted(markers, key=lambda x: x[1]):
-        if m[1] not in seen:
-            seen.add(m[1])
-            unique.append(m)
-    return unique
+_FMT_CMDS = (
+    r"\\small\b|\\normalsize\b|\\it\b|\\bf\b|\\sf\b|\\sl\b|"
+    r"\\sc\b|\\em\b|\\rm\b|\\itshape\b|\\bfseries\b|\\scshape\b|"
+    r"\\large\b|\\Large\b|\\footnotesize\b|\\tiny\b|\\scriptsize\b|"
+    r"\\textbf\b|\\textsf\b|\\textit\b|\\textsc\b|\\emph\b|"
+    r"\\textcolor\b"
+)
 
 
-def find_separator_position(cleaned_content):
-    """Find the position where authors end and addresses begin.
-    Returns the index in the string where address content starts,
-    or -1 if no clear separator is found.
+def _strip_formatting(text: str) -> str:
+    """Remove LaTeX formatting commands and outer formatting braces
+    from address text, preserving the meaningful content."""
+    t = text.strip()
 
-    Separator patterns (in order of strength):
-    - \\vspace, \\bigskip, \\smallskip, \\medskip
-    - \\\\\\(three or more \\)
-    - \\and
-    - \\[ ... ] (vertical spacing)
-    """
-    content = cleaned_content
-
-    # Find strongest separator first
-    sep_patterns = [
-        r"\\vspace\*?\{[^}]*\}",
-        r"\\bigskip",
-        r"\\smallskip",
-        r"\\medskip",
-        r"\\\[[\d.]+[a-z]*\\\]",  # like \[0.4cm]
-        r"\\\\\\",  # three or more \\
-    ]
-
-    # Find the LAST strong separator (address comes after the last separator
-    # that separates authors from addresses)
-    best_pos = -1
-
-    for pat in sep_patterns:
-        for m in re.finditer(pat, content):
-            pos_after = m.end()
-            remaining = content[pos_after:].strip()
-            # Check if the remaining text has address keywords
-            if has_address_keywords(remaining) and len(remaining) > 20:
-                # Found a separator followed by address text
-                best_pos = max(best_pos, pos_after)
-
-    if best_pos != -1:
-        return best_pos
-
-    # Try finding multiple \\ separators
-    # Look for patterns like: names \\\\\ address or names \\ \vspace{...} \ address
-    # Find a point after author names where address text begins
-    # Strategy: find the longest stretch of \\ followed by address text
-
-    # Try: find \\ followed by address-like text
-    for m in re.finditer(r"\\\\\\\\", content):
-        remaining = content[m.end() :].strip()
-        if has_address_keywords(remaining) and len(remaining) > 20:
-            best_pos = max(best_pos, m.end())
-
-    for m in re.finditer(r"\\\\\\", content):
-        remaining = content[m.end() :].strip()
-        if has_address_keywords(remaining) and len(remaining) > 20:
-            best_pos = max(best_pos, m.end())
-
-    for m in re.finditer(r"\\\\", content):
-        remaining = content[m.end() :].strip()
-        if has_address_keywords(remaining) and len(remaining) > 20:
-            best_pos = max(best_pos, m.end())
-
-    if best_pos != -1:
-        return best_pos
-
-    # Check for \and separator
-    for m in re.finditer(r"\\and\b", content):
-        remaining = content[m.end() :].strip()
-        if has_address_keywords(remaining) and len(remaining) > 30:
-            # But this might be just another author after \and
-            # Check if it has more address than author feel
-            if not re.match(r"^[A-Z][a-z]*\.?\s+(?:~)?[A-Z]", remaining.strip()):
-                best_pos = max(best_pos, m.end())
-
-    return best_pos
-
-
-def extract_numbered_addresses(content, all_markers):
-    """Extract addresses preceded by numbered markers.
-    Returns list of (address_text, marker_text) tuples.
-    """
-    addresses = []
-
-    if not all_markers:
-        return addresses
-
-    # For each marker, check if the text that follows contains address keywords
-    # The text runs from after the marker to either the next marker or the end
-    for idx, (marker_text, start, end) in enumerate(all_markers):
-        # Find the text after this marker
-        if idx + 1 < len(all_markers):
-            next_start = all_markers[idx + 1][1]
-            text_after = content[end:next_start].strip()
+    # Repeatedly strip outermost {…} when they contain formatting commands
+    while t.startswith("{"):
+        inner, _ = _balanced_extract(t, 0)
+        if inner is None:
+            break
+        if re.match(r"^(?:" + _FMT_CMDS + r")", inner):
+            t = inner.strip()
         else:
-            text_after = content[end:].strip()
+            break
 
-        if has_address_keywords(text_after) and len(text_after) > 15:
-            # Clean up the text: remove LaTeX formatting commands but keep content
-            cleaned = clean_address_text(text_after)
-            if cleaned:
-                addresses.append((cleaned, marker_text.strip()))
+    # Strip leading formatting commands not wrapped in braces
+    t = re.sub(r"^(?:" + _FMT_CMDS + r")\s*", "", t)
 
-    return addresses
+    # Remove remaining formatting commands globally (just the command, not args)
+    t = re.sub(r"\\(?:small|normalsize|it|bf|sf|sl|sc|em|rm|itshape|bfseries|scshape|"
+               r"large|Large|LARGE|footnotesize|tiny|scriptsize|"
+               r"textbf|textsf|textit|textsc|emph|textcolor"
+               r")\s*", " ", t)
+    t = re.sub(r"\s+", " ", t).strip()
 
+    # Strip stray trailing } not balanced by {
+    while t.endswith("}") and t.count("{") < t.count("}"):
+        t = t[: t.rfind("}")].strip()
 
-def clean_address_text(text):
-    """Clean address text by removing LaTeX formatting, keeping the content."""
-    # Remove LaTeX font commands while preserving their content
-    text = re.sub(r"\\small\s*", "", text)
-    text = re.sub(r"\\\\ormalsize\s*", "", text)
-    text = re.sub(r"\\it\s*", "", text)
-    text = re.sub(r"\\bf\s*", "", text)
-    text = re.sub(r"\\bfseries\s*", "", text)
-    text = re.sub(r"\\sc\s*", "", text)
-    text = re.sub(r"\\sf\s*", "", text)
-    text = re.sub(r"\\sf\s*", "", text)
-    text = re.sub(r"\\sl\s*", "", text)
-    text = re.sub(r"\\rm\s*", "", text)
-    text = re.sub(r"\\em\s*", "", text)
-    text = re.sub(r"\\emph\s*", "", text)
-    text = re.sub(r"\\itshape\s*", "", text)
-    text = re.sub(r"\\textsf\s*", "", text)
-    text = re.sub(r"\\textbf\s*", "", text)
-    text = re.sub(r"\\textit\s*", "", text)
-    text = re.sub(r"\\texttt\s*", "", text)
-    text = re.sub(r"\\scshape\s*", "", text)
-    text = re.sub(r"\\textsc\s*", "", text)
-    text = re.sub(r"\\large\s*", "", text)
-    text = re.sub(r"\\Large\s*", "", text)
-    text = re.sub(r"\\LARGE\s*", "", text)
-    text = re.sub(r"\\footnotesize\s*", "", text)
-    text = re.sub(r"\\tiny\s*", "", text)
-    text = re.sub(r"\\scriptsize\s*", "", text)
+    # Strip leading separators
+    t = re.sub(
+        r"^\s*(?:\\\\\s*|\\vspace\*?\{[^}]*\}\s*|\\\[[\d.]+[a-z]*\\\]\s*|"
+        r"\\bigskip\s*|\\smallskip\s*|\\medskip\s*|\\hspace\*?\{[^}]*\}\s*)+",
+        "", t,
+    )
+    # Strip trailing separators
+    t = re.sub(
+        r"\s*(?:\\\\\s*|\\vspace\*?\{[^}]*\}\s*|\\\[[\d.]+[a-z]*\\\]\s*|"
+        r"\\bigskip\s*|\\smallskip\s*|\\medskip\s*|\\hspace\*?\{[^}]*\}\s*)+$",
+        "", t,
+    ).strip()
 
-    # Replace LaTeX line breaks
-    text = re.sub(r"\\\\\s*", ", ", text)
-    text = re.sub(r"\\newline\s*", ", ", text)
-
-    # Remove volume/phantom commands
-    text = re.sub(r"\\vspace\*?\{[^}]*\}", "", text)
-    text = re.sub(r"\\vphantom\{[^}]*\}", "", text)
-    text = re.sub(r"\\hspace\*?\{[^}]*\}", "", text)
-    text = re.sub(r"\\\[[^\]]*\\\]", "", text)
-
-    # Collapse whitespace
-    text = re.sub(r"\s+", " ", text)
-    text = text.strip()
-
-    # Remove leading/trailing punctuation and whitespace
-    text = text.strip(".,;: \t\n\r")
-
-    return text
+    return t
 
 
-def extract_direct_address(text, sep_pos):
-    """Extract address text that appears after a separator (no numbered markers)."""
-    if sep_pos < 0:
-        return None
-
-    addr_part = text[sep_pos:].strip()
-
-    # Remove leading separators
-    addr_part = re.sub(r"^(\\\\\s*)+", "", addr_part).strip()
-    addr_part = re.sub(r"^\\vspace\*?\{[^}]*\}\s*", "", addr_part).strip()
-    addr_part = re.sub(r"^\\bigskip\s*", "", addr_part).strip()
-    addr_part = re.sub(r"^\\smallskip\s*", "", addr_part).strip()
-    addr_part = re.sub(r"^\\medskip\s*", "", addr_part).strip()
-    addr_part = re.sub(r"^\\\[[\d.]+[a-z]*\\\]\s*", "", addr_part).strip()
-
-    if has_address_keywords(addr_part) and len(addr_part) > 15:
-        return clean_address_text(addr_part)
-
+def _extract_trailing_address(content: str, sep: int) -> str | None:
+    """Extract a single address block trailing after *sep*."""
+    raw = content[sep:].strip()
+    raw = re.sub(
+        r"^(?:\\\\\s*|\\vspace\*?\{[^}]*\}\s*|\\[\[].*?\\[\]\]\s*|"
+        r"\\bigskip\s*|\\smallskip\s*|\\medskip\s*|\\hspace\*?\{[^}]*\}\s*|"
+        r"%[^\n]*\s*)+",
+        "", raw,
+    )
+    raw = raw.strip()
+    if has_address_content(raw) and len(raw) > 10:
+        raw = _strip_formatting(raw)
+        return raw
     return None
 
 
-def detect_addresses(file_content):
-    """
-    Main address detection function.
-    Takes the content of an author block (from /tmp/authors, with outer braces stripped).
-    Returns (addresses_list, cleaned_author_content) or (None, None) if no addresses.
-    """
-    if not file_content or not file_content.strip():
+def extract_addresses(file_line: str):
+    """Return (addresses: list[str] | None, author_cleaned: str | None)."""
+    if not file_line or not file_line.strip():
         return None, None
 
-    # Remove outer braces from the file content
-    inner = strip_outer_braces(file_content)
-    if not inner or not inner.strip():
+    inner = strip_balanced_outer(file_line)
+    if not inner or len(inner.strip()) < 3:
         return None, None
 
-    # Clean for detection (remove thanks, footnotes, emails)
     cleaned = clean_for_detection(inner)
     if not cleaned.strip():
         return None, None
 
-    # Strategy 1: Extract explicit \address{...} blocks
-    explicit_addrs, cleaned2 = extract_explicit_addresses(cleaned)
+    # Strategy-1: explicit \address{…} blocks
+    addrs_via_macro: list[str] = []
+    remaining = inner
+    while True:
+        m = re.search(r"\\address\{", remaining)
+        if not m:
+            break
+        addr_body, endpos = _balanced_extract(remaining, m.start() + 8)
+        if addr_body is not None:
+            addrs_via_macro.append(addr_body.strip())
+            remaining = remaining[: m.start()] + remaining[endpos:]
+        else:
+            break
 
-    # Strategy 2: Find numbered marker addresses
-    all_markers = find_numbered_markers(cleaned2)
-    numbered_addrs = extract_numbered_addresses(cleaned2, all_markers)
+    # Strategy-2: find separator → trailing address
+    sep = _find_authors_end(cleaned)
+    trailing_raw = _extract_trailing_address(cleaned, sep) if sep >= 0 else None
 
-    # Strategy 3: Check for direct address text after separators
-    sep_pos = find_separator_position(cleaned2)
-    direct_addr = extract_direct_address(cleaned2, sep_pos) if sep_pos >= 0 else None
+    # Strategy-3: fallback split at last \\ if still no match
+    if not trailing_raw and sep < 0:
+        for m in reversed(list(re.finditer(r"\\\\", cleaned))):
+            after = cleaned[m.end():].strip()
+            if has_address_content(after) and len(after) > 15:
+                if not _contains_author_like(after):
+                    trailing_raw = after
+                    sep = m.start()
+                    break
 
-    # Collect all addresses
-    all_addresses = []
+    # ── Assemble final address list ──────────────────────────────
+    addresses: list[str] = []
 
-    for addr_text in explicit_addrs:
-        all_addresses.append(addr_text)
+    # Add explicit \address{…} blocks
+    if addrs_via_macro:
+        for a in addrs_via_macro:
+            a = _strip_formatting(a)
+            if a and a not in addresses:
+                addresses.append(a)
 
-    for addr_text, marker in numbered_addrs:
-        all_addresses.append(addr_text)
+    # Add trailing address
+    if trailing_raw:
+        trailing_raw = _strip_formatting(trailing_raw)
+        if trailing_raw and trailing_raw not in addresses:
+            addresses.append(trailing_raw)
 
-    if direct_addr and not all_addresses:
-        # Only add direct address if no numbered markers were found
-        # (numbered markers are more specific)
-        all_addresses.append(direct_addr)
-
-    if not all_addresses:
+    if not addresses:
         return None, None
 
-    # Now build the cleaned author content
-    # Strategy: remove address-like text from the original content
+    # ── Build cleaned author content ─────────────────────────────
+    if addrs_via_macro:
+        author_text = inner
+        for m in re.finditer(r"\\address\{", author_text):
+            _, endpos = _balanced_extract(author_text, m.start() + 8)
+            if endpos:
+                author_text = author_text[: m.start()] + author_text[endpos:]
+    else:
+        author_text = inner
 
-    # Start with the original inner content
-    author_cleaned = inner
+    if sep >= 0 and not addrs_via_macro:
+        author_text = inner[:sep]
 
-    # Remove address blocks we found
-    for addr in all_addresses:
-        # Try to find and remove the address from the original content
-        # Use normalized matching to find the address in the original
-        author_cleaned = _remove_address_from_content(author_cleaned, addr)
-
-    # Also try to chop at the separator position
-    if sep_pos >= 0:
-        # The author part is everything before the separator
-        author_part = inner[:sep_pos].strip()
-        # Check if the author_part still contains names (not empty)
-        if author_part and len(author_part) > 5:
-            author_cleaned = author_part
-
-    # Remove trailing separators from author
-    author_cleaned = re.sub(r"(\\\\\s*)+$", "", author_cleaned).strip()
-    author_cleaned = re.sub(r"\\vspace\*?\{[^}]*\}\s*$", "", author_cleaned).strip()
-    author_cleaned = re.sub(r"\\bigskip\s*$", "", author_cleaned).strip()
-    author_cleaned = re.sub(r"\\smallskip\s*$", "", author_cleaned).strip()
-    author_cleaned = re.sub(r"\\medskip\s*$", "", author_cleaned).strip()
-    author_cleaned = re.sub(r"\\\[[\d.]+[a-z]*\\\]\s*$", "", author_cleaned).strip()
-
-    return all_addresses, author_cleaned
-
-
-def _remove_address_from_content(content, address):
-    """Try to remove an address string from the content."""
-
-    # Normalize both for matching
-    def normalize(s):
-        s = re.sub(r"\s+", " ", s)
-        s = re.sub(r"\\\\\s*", " ", s)
-        return s.strip().lower()
-
-    norm_cont = normalize(content)
-    norm_addr = normalize(address)
-
-    if norm_addr in norm_cont:
-        # Find the original position
-        idx = norm_cont.index(norm_addr)
-        # Map back to original content (approximate)
-        # Just remove all address-related text after the separator
-        return content
-
-    # Try removing character by character after the address keywords
-    return content
-
-
-def normalize_for_match(text):
-    """Normalize text for matching between file lines and DB tokens."""
-    if text is None:
-        return ""
-    # Replace various line break representations with spaces
-    t = text.replace("\n", " ")
-    t = t.replace("\r", " ")
-    t = t.replace("\t", " ")
-    # Collapse multiple spaces
-    t = re.sub(r"\s+", " ", t)
-    # Remove outer \\author{...} wrapper if present
-    t = t.strip()
-    if t.startswith("\\author{") and t.endswith("}"):
-        t = t[8:-1]
-    # Strip outer braces from file content too
-    t = strip_inner_braces(t)
-    t = t.strip()
-    # Collapse spaces again
-    t = re.sub(r"\s+", " ", t)
-    return t
-
-
-def main():
-    print("=" * 60)
-    print("Address Detection and Database Update Script")
-    print("=" * 60)
-
-    # Backup the database
-    print(f"\nBacking up database to {DB_BAK_PATH}...")
-    shutil.copy2(DB_PATH, DB_BAK_PATH)
-    print("Backup complete.")
-
-    # Read authors file
-    print(f"\nReading {AUTHORS_FILE}...")
-    with open(AUTHORS_FILE, "r", encoding="utf-8") as f:
-        file_lines = f.readlines()
-    file_lines = [l.rstrip("\n") for l in file_lines]
-    print(f"Read {len(file_lines)} lines.")
-
-    # Connect to database
-    print(f"\nConnecting to database {DB_PATH}...")
-    conn = sqlite3.connect(DB_PATH)
-    cur = conn.cursor()
-
-    # Get all author rows from DB
-    cur.execute(
-        "SELECT filepath, filepath_id, token_id, parent_id, offset, length, type, token FROM authors WHERE type='author'"
+    author_text = re.sub(
+        r"(?:\\\\\s*|\\vspace\*?\{[^}]*\}\s*|\\\[[\d.]+[a-z]*\\\]\s*|"
+        r"\\bigskip\s*|\\smallskip\s*|\\medskip\s*|\\hspace\*?\{[^}]*\}\s*)+$",
+        "", author_text,
     )
-    db_authors = cur.fetchall()
-    print(f"Found {len(db_authors)} author rows in database.")
+    author_text = author_text.strip()
 
-    # Build a lookup: normalized author content -> DB row
-    db_lookup = {}
-    for row in db_authors:
-        token = row[7]  # token column
-        # Extract content inside \author{...}
-        norm = normalize_for_match(token)
-        if norm:
-            if norm not in db_lookup:
-                db_lookup[norm] = []
-            db_lookup[norm].append(row)
+    if not author_text or len(author_text) < 3:
+        author_text = inner
 
-    print(f"Built lookup with {len(db_lookup)} unique author tokens.")
+    return addresses, author_text
 
-    # Process each file line
+
+# ── Database matching ────────────────────────────────────────────────
+def build_db_lookup(conn) -> dict[str, list[tuple]]:
+    """Return {normalised_content: [db_rows]} for all type='author' rows."""
+    cur = conn.cursor()
+    cur.execute(
+        "SELECT filepath, filepath_id, token_id, parent_id, "
+        "offset, length, type, token FROM authors WHERE type='author'"
+    )
+    lookup: dict[str, list[tuple]] = {}
+    for row in cur.fetchall():
+        norm = _normalise_full(row[7])
+        if not norm:
+            continue
+        lookup.setdefault(norm, []).append(row)
+    return lookup
+
+
+def match_author(file_line: str, db_lookup: dict) -> tuple | None:
+    """Find the DB author row matching *file_line* (raw line from
+    /tmp/authors).  Returns the row tuple or None."""
+    norm_f = _normalise_full(file_line)
+    if not norm_f:
+        return None
+    if norm_f in db_lookup:
+        return db_lookup[norm_f][0]
+    # Fuzzy: substring containment
+    for db_norm, rows in db_lookup.items():
+        if len(norm_f) > 25 and len(db_norm) > 25:
+            if norm_f in db_norm or db_norm in norm_f:
+                return rows[0]
+    return None
+
+
+# ── Main routine ─────────────────────────────────────────────────────
+def main() -> None:
+    print("=" * 64)
+    print("  Address Detection & Database Update")
+    print("=" * 64)
+
+    # 1. Backup DB
+    print(f"\nBacking up {DB_PATH}  →  {DB_BAK}")
+    shutil.copy2(DB_PATH, DB_BAK)
+    print("Backup done.")
+
+    # 2. Read /tmp/authors
+    print(f"\nReading {AUTHORS_FILE} …")
+    with open(AUTHORS_FILE, encoding="utf-8") as fh:
+        file_lines = [ln.rstrip("\n") for ln in fh]
+    print(f"  {len(file_lines)} lines (including blanks).")
+
+    # 3. Open DB
+    conn = sqlite3.connect(DB_PATH)
+    db_lookup = build_db_lookup(conn)
+    print(f"  {len(db_lookup)} unique normalised author tokens in DB.")
+
     stats = {
-        "lines_with_address": 0,
-        "total_addresses_found": 0,
+        "file_lines_total": 0,
+        "address_detected_lines": 0,
+        "address_blocks": 0,
         "matched_authors": 0,
-        "db_rows_updated": 0,
-        "addresses_inserted": 0,
         "unmatched": 0,
+        "db_author_updated": 0,
+        "address_rows_inserted": 0,
     }
 
-    # First pass: detect addresses in file lines
-    file_results = []  # (line_idx, file_content, addresses, cleaned_author)
+    # 4. Process each file line
     for idx, line in enumerate(file_lines):
         if not line.strip():
             continue
-        addresses, cleaned = detect_addresses(line)
-        if addresses:
-            stats["lines_with_address"] += 1
-            stats["total_addresses_found"] += len(addresses)
-        file_results.append((idx, line, addresses, cleaned))
+        stats["file_lines_total"] += 1
 
-    print(f"\nDetected addresses in {stats['lines_with_address']} lines.")
-    print(f"Total address blocks found: {stats['total_addresses_found']}")
-
-    # Second pass: match and update DB
-    for idx, file_content, addresses, cleaned in file_results:
+        addresses, author_cleaned = extract_addresses(line)
         if not addresses:
             continue
 
-        # Normalize file content for matching
-        norm_file = normalize_for_match(file_content)
-        if not norm_file:
+        stats["address_detected_lines"] += 1
+        stats["address_blocks"] += len(addresses)
+
+        # Match to DB
+        db_row = match_author(line, db_lookup)
+        if db_row is None:
             stats["unmatched"] += 1
             continue
-
-        # Find matching DB row
-        matched_rows = db_lookup.get(norm_file, [])
-
-        if not matched_rows:
-            # Try fuzzy match: check if normalized file content is a substring
-            # of any DB content or vice versa
-            for db_norm, rows in db_lookup.items():
-                if norm_file in db_norm or db_norm in norm_file:
-                    if len(norm_file) > 20 and len(db_norm) > 20:
-                        matched_rows = rows
-                        break
-            if not matched_rows:
-                stats["unmatched"] += 1
-                continue
-
-        # Use the first match
-        db_row = matched_rows[0]
-        filepath = db_row[0]
-        filepath_id = db_row[1]
-        author_token_id = db_row[2]
-        token = db_row[7]
-
         stats["matched_authors"] += 1
 
-        # Build cleaned author token
-        cleaned_author = cleaned if cleaned else normalize_for_match(file_content)
-        # Wrap back in \author{...}
-        new_token = "\\author{" + cleaned_author + "}"
+        filepath, filepath_id, author_token_id, parent_id, offset, length, _, db_token = db_row
 
-        # Update the author's token in the DB
-        try:
-            cur.execute(
-                "UPDATE authors SET token = ? WHERE token_id = ? AND type = 'author'",
-                (new_token, author_token_id),
+        # ── Update author token ─────────────────────────────────
+        clean_content = author_cleaned if author_cleaned else strip_balanced_outer(line)
+        # Re-wrap in \\author{…}
+        new_token = "\\author{" + clean_content + "}"
+        if new_token != db_token:
+            conn.execute(
+                "UPDATE authors SET token = ?, length = ? WHERE token_id = ? AND type = 'author'",
+                (new_token, str(len(clean_content)), author_token_id),
             )
-            stats["db_rows_updated"] += 1
-        except Exception as e:
-            print(f"  ERROR updating author {author_token_id}: {e}")
-            continue
+            stats["db_author_updated"] += 1
 
-        # Insert address rows
+        # ── Insert address rows ────────────────────────────────
         for counter, addr_text in enumerate(addresses):
-            new_token_id = str(
-                abs(hash(f"{filepath_id}_{addr_text}_{counter}")) % 10**10
+            new_id = str(abs(hash(f"{filepath_id}_{addr_text}_{counter}")) % 10**10)
+            # Ensure uniqueness
+            exists = conn.execute(
+                "SELECT 1 FROM authors WHERE token_id = ?", (new_id,)
+            ).fetchone()
+            if exists:
+                new_id = str(abs(hash(f"{filepath_id}_{addr_text}_{counter}_v2")) % 10**10)
+
+            conn.execute(
+                "INSERT INTO authors "
+                "(filepath, filepath_id, token_id, parent_id, offset, length, type, token) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                (
+                    filepath,
+                    filepath_id,
+                    new_id,
+                    author_token_id,
+                    "0",
+                    str(len(addr_text)),
+                    "address",
+                    "\\address{" + addr_text + "}",
+                ),
             )
+            stats["address_rows_inserted"] += 1
 
-            # Ensure unique
-            cur.execute(
-                "SELECT COUNT(*) FROM authors WHERE token_id = ?", (new_token_id,)
-            )
-            if cur.fetchone()[0] > 0:
-                # Slight modification to ensure uniqueness
-                new_token_id = str(
-                    abs(hash(f"{filepath_id}_{addr_text}_{counter}_v2")) % 10**10
-                )
+        # Progress indicator
+        if stats["matched_authors"] % 50 == 0:
+            print(f"  … processed {stats['matched_authors']} matched authors …")
 
-            try:
-                cur.execute(
-                    "INSERT INTO authors (filepath, filepath_id, token_id, parent_id, offset, length, type, token) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                    (
-                        filepath,
-                        filepath_id,
-                        new_token_id,
-                        author_token_id,
-                        "0",
-                        str(len(addr_text)),
-                        "address",
-                        "\\address{" + addr_text + "}",
-                    ),
-                )
-                stats["addresses_inserted"] += 1
-            except Exception as e:
-                print(f"  ERROR inserting address {new_token_id}: {e}")
-
-    # Commit changes
     conn.commit()
 
-    # Print summary
-    print("\n" + "=" * 60)
-    print("SUMMARY")
-    print("=" * 60)
-    print(f"  Lines in /tmp/authors:            {len(file_lines)}")
-    print(f"  DB author rows:                   {len(db_authors)}")
-    print(f"  Lines with detected addresses:    {stats['lines_with_address']}")
-    print(f"  Total address blocks found:       {stats['total_addresses_found']}")
-    print(f"  Authors matched to DB:            {stats['matched_authors']}")
-    print(f"  Unmatched (no DB counterpart):    {stats['unmatched']}")
-    print(f"  DB author rows updated:           {stats['db_rows_updated']}")
-    print(f"  Address records inserted:         {stats['addresses_inserted']}")
-
-    # Verify
-    cur.execute("SELECT COUNT(*) FROM authors WHERE type='address'")
-    addr_count = cur.fetchone()[0]
-    print(f"\n  Address rows in DB after update:  {addr_count}")
-
+    # 5. Verify
+    final_count = conn.execute(
+        "SELECT COUNT(*) FROM authors WHERE type='address'"
+    ).fetchone()[0]
     conn.close()
+
+    # 6. Summary
+    print("\n" + "=" * 64)
+    print("  SUMMARY")
+    print("=" * 64)
+    print(f"  Non-blank lines in /tmp/authors:         {stats['file_lines_total']:>5d}")
+    print(f"  Lines with detected address(es):         {stats['address_detected_lines']:>5d}")
+    print(f"  Total address blocks found:              {stats['address_blocks']:>5d}")
+    print(f"  Authors matched to DB:                   {stats['matched_authors']:>5d}")
+    print(f"  Unmatched (no DB counterpart):           {stats['unmatched']:>5d}")
+    print(f"  DB author rows updated (token stripped): {stats['db_author_updated']:>5d}")
+    print(f"  Address records inserted into DB:        {stats['address_rows_inserted']:>5d}")
+    print(f"  Address rows in DB after run:            {final_count:>5d}")
     print("\nDone.")
 
 
