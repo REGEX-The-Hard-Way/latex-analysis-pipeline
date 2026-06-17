@@ -77,6 +77,13 @@ static void store_macro(const char *name, int name_len, const char *body_start, 
   macros->keys[k].val = val;
 }
 
+static int body_has_at(const char *s, int len) {
+  for (int i = 0; i < len - 1; i++) {
+    if (s[i] == '\\' && s[i+1] == '@') return 1;
+  }
+  return 0;
+}
+
 %%{
   machine providecommand_expander;
 include latex "../latex.rl";
@@ -100,6 +107,7 @@ letcmd = '\\let';
 main :=|*
 
   providecommand_def => {
+    fwrite(ts, 1, te - ts, stdout);
     const char *p = ts;
     const char *end = te;
     int ok = 1;
@@ -149,7 +157,7 @@ main :=|*
 
       while (p < end && (*p == ' ' || *p == '\t')) p++;
       if (p < end && *p == '{') {
-        store_macro(ns, (int)(ne - ns), p + 1, end - 1, argc, opt_def, opt_def_len);
+        if (!body_has_at(p + 1, (int)(end - 1 - (p + 1)))) store_macro(ns, (int)(ne - ns), p + 1, end - 1, argc, opt_def, opt_def_len);
       } else {
         ok = 0;
       }

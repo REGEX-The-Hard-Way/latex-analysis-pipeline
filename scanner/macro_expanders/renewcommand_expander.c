@@ -78,12 +78,19 @@ static void store_macro(const char *name, int name_len, const char *body_start, 
 	macros->keys[k].val = val;
 }
 
+static int body_has_at(const char *s, int len) {
+	for (int i = 0; i < len - 1; i++) {
+		if (s[i] == '\\' && s[i+1] == '@') return 1;
+		}
+	return 0;
+}
 
-#line 252 "macro_expanders/renewcommand_expander.rl"
+
+#line 260 "macro_expanders/renewcommand_expander.rl"
 
 
 
-#line 84 "macro_expanders/renewcommand_expander.c"
+#line 91 "macro_expanders/renewcommand_expander.c"
 static const int renewcommand_expander_start = 115;
 static const int renewcommand_expander_first_final = 115;
 static const int renewcommand_expander_error = -1;
@@ -91,7 +98,7 @@ static const int renewcommand_expander_error = -1;
 static const int renewcommand_expander_en_main = 115;
 
 
-#line 254 "macro_expanders/renewcommand_expander.rl"
+#line 262 "macro_expanders/renewcommand_expander.rl"
 
 int main(int argc, char **argv) {
 	int ch;
@@ -114,17 +121,17 @@ int main(int argc, char **argv) {
 	const char *ts = NULL, *te = NULL;
 	
 
-#line 112 "macro_expanders/renewcommand_expander.c"
+#line 119 "macro_expanders/renewcommand_expander.c"
 	{
 		cs = (int)renewcommand_expander_start;
 		ts = 0;
 		te = 0;
 	}
 	
-#line 275 "macro_expanders/renewcommand_expander.rl"
+#line 283 "macro_expanders/renewcommand_expander.rl"
 
 
-#line 119 "macro_expanders/renewcommand_expander.c"
+#line 126 "macro_expanders/renewcommand_expander.c"
 {
 		int _ck;
 		switch ( cs ) {
@@ -477,10 +484,11 @@ int main(int argc, char **argv) {
 		}
 		_ctr118:
 			{
-#line 102 "macro_expanders/renewcommand_expander.rl"
+#line 109 "macro_expanders/renewcommand_expander.rl"
 			{te = p+1;{
-#line 102 "macro_expanders/renewcommand_expander.rl"
+#line 109 "macro_expanders/renewcommand_expander.rl"
 					
+					fwrite(ts, 1, te - ts, stdout);
 					const char *p = ts;
 					const char *end = te;
 					int ok = 1;
@@ -530,7 +538,7 @@ int main(int argc, char **argv) {
 					
 					while (p < end && (*p == ' ' || *p == '\t')) p++;
 					if (p < end && *p == '{') {
-							store_macro(ns, (int)(ne - ns), p + 1, end - 1, argc, opt_def, opt_def_len);
+							if (!body_has_at(p + 1, (int)(end - 1 - (p + 1)))) store_macro(ns, (int)(ne - ns), p + 1, end - 1, argc, opt_def, opt_def_len);
 						} else {
 							ok = 0;
 						}
@@ -542,38 +550,38 @@ int main(int argc, char **argv) {
 				}
 			}}
 		
-#line 536 "macro_expanders/renewcommand_expander.c"
+#line 544 "macro_expanders/renewcommand_expander.c"
 
 		goto _st115;
 		_ctr0:
 			{
-#line 249 "macro_expanders/renewcommand_expander.rl"
+#line 257 "macro_expanders/renewcommand_expander.rl"
 			{p = ((te))-1;
 				{
-#line 249 "macro_expanders/renewcommand_expander.rl"
+#line 257 "macro_expanders/renewcommand_expander.rl"
 					fputc(*ts, stdout); }
 			}}
 		
-#line 547 "macro_expanders/renewcommand_expander.c"
+#line 555 "macro_expanders/renewcommand_expander.c"
 
 		goto _st115;
 		_ctr2:
 			{
-#line 247 "macro_expanders/renewcommand_expander.rl"
+#line 255 "macro_expanders/renewcommand_expander.rl"
 			{te = p+1;{
-#line 247 "macro_expanders/renewcommand_expander.rl"
+#line 255 "macro_expanders/renewcommand_expander.rl"
 					fwrite(ts, 1, te - ts, stdout); }
 			}}
 		
-#line 557 "macro_expanders/renewcommand_expander.c"
+#line 565 "macro_expanders/renewcommand_expander.c"
 
 		goto _st115;
 		_ctr101:
 			{
-#line 171 "macro_expanders/renewcommand_expander.rl"
+#line 179 "macro_expanders/renewcommand_expander.rl"
 			{p = ((te))-1;
 				{
-#line 171 "macro_expanders/renewcommand_expander.rl"
+#line 179 "macro_expanders/renewcommand_expander.rl"
 					
 					int nl = (int)(te - ts - 1);
 					int did_expand = 0;
@@ -652,36 +660,36 @@ int main(int argc, char **argv) {
 					}
 				}}
 			
-#line 643 "macro_expanders/renewcommand_expander.c"
+#line 651 "macro_expanders/renewcommand_expander.c"
 
 			goto _st115;
 			_ctr122:
 				{
-#line 249 "macro_expanders/renewcommand_expander.rl"
+#line 257 "macro_expanders/renewcommand_expander.rl"
 				{te = p+1;{
-#line 249 "macro_expanders/renewcommand_expander.rl"
+#line 257 "macro_expanders/renewcommand_expander.rl"
 						fputc(*ts, stdout); }
 				}}
 			
-#line 653 "macro_expanders/renewcommand_expander.c"
+#line 661 "macro_expanders/renewcommand_expander.c"
 
 			goto _st115;
 			_ctr125:
 				{
-#line 249 "macro_expanders/renewcommand_expander.rl"
+#line 257 "macro_expanders/renewcommand_expander.rl"
 				{te = p;p = p - 1;{
-#line 249 "macro_expanders/renewcommand_expander.rl"
+#line 257 "macro_expanders/renewcommand_expander.rl"
 						fputc(*ts, stdout); }
 				}}
 			
-#line 663 "macro_expanders/renewcommand_expander.c"
+#line 671 "macro_expanders/renewcommand_expander.c"
 
 			goto _st115;
 			_ctr136:
 				{
-#line 171 "macro_expanders/renewcommand_expander.rl"
+#line 179 "macro_expanders/renewcommand_expander.rl"
 				{te = p;p = p - 1;{
-#line 171 "macro_expanders/renewcommand_expander.rl"
+#line 179 "macro_expanders/renewcommand_expander.rl"
 						
 						int nl = (int)(te - ts - 1);
 						int did_expand = 0;
@@ -760,84 +768,84 @@ int main(int argc, char **argv) {
 						}
 					}}
 				
-#line 748 "macro_expanders/renewcommand_expander.c"
+#line 756 "macro_expanders/renewcommand_expander.c"
 
 				goto _st115;
 				_ctr139:
 					{
-#line 163 "macro_expanders/renewcommand_expander.rl"
+#line 171 "macro_expanders/renewcommand_expander.rl"
 					{te = p;p = p - 1;{
-#line 163 "macro_expanders/renewcommand_expander.rl"
+#line 171 "macro_expanders/renewcommand_expander.rl"
 							fwrite(ts, 1, te - ts, stdout); }
 					}}
 				
-#line 758 "macro_expanders/renewcommand_expander.c"
+#line 766 "macro_expanders/renewcommand_expander.c"
 
 				goto _st115;
 				_ctr143:
 					{
-#line 165 "macro_expanders/renewcommand_expander.rl"
+#line 173 "macro_expanders/renewcommand_expander.rl"
 					{te = p;p = p - 1;{
-#line 165 "macro_expanders/renewcommand_expander.rl"
+#line 173 "macro_expanders/renewcommand_expander.rl"
 							fwrite(ts, 1, te - ts, stdout); }
 					}}
 				
-#line 768 "macro_expanders/renewcommand_expander.c"
+#line 776 "macro_expanders/renewcommand_expander.c"
 
 				goto _st115;
 				_ctr147:
 					{
-#line 164 "macro_expanders/renewcommand_expander.rl"
+#line 172 "macro_expanders/renewcommand_expander.rl"
 					{te = p;p = p - 1;{
-#line 164 "macro_expanders/renewcommand_expander.rl"
+#line 172 "macro_expanders/renewcommand_expander.rl"
 							fwrite(ts, 1, te - ts, stdout); }
 					}}
 				
-#line 778 "macro_expanders/renewcommand_expander.c"
+#line 786 "macro_expanders/renewcommand_expander.c"
 
 				goto _st115;
 				_ctr150:
 					{
-#line 169 "macro_expanders/renewcommand_expander.rl"
+#line 177 "macro_expanders/renewcommand_expander.rl"
 					{te = p;p = p - 1;{
-#line 169 "macro_expanders/renewcommand_expander.rl"
+#line 177 "macro_expanders/renewcommand_expander.rl"
 							fwrite(ts, 1, te - ts, stdout); }
 					}}
 				
-#line 788 "macro_expanders/renewcommand_expander.c"
+#line 796 "macro_expanders/renewcommand_expander.c"
 
 				goto _st115;
 				_ctr160:
 					{
-#line 167 "macro_expanders/renewcommand_expander.rl"
+#line 175 "macro_expanders/renewcommand_expander.rl"
 					{te = p;p = p - 1;{
-#line 167 "macro_expanders/renewcommand_expander.rl"
+#line 175 "macro_expanders/renewcommand_expander.rl"
 							fwrite(ts, 1, te - ts, stdout); }
 					}}
 				
-#line 798 "macro_expanders/renewcommand_expander.c"
+#line 806 "macro_expanders/renewcommand_expander.c"
 
 				goto _st115;
 				_ctr174:
 					{
-#line 168 "macro_expanders/renewcommand_expander.rl"
+#line 176 "macro_expanders/renewcommand_expander.rl"
 					{te = p;p = p - 1;{
-#line 168 "macro_expanders/renewcommand_expander.rl"
+#line 176 "macro_expanders/renewcommand_expander.rl"
 							fwrite(ts, 1, te - ts, stdout); }
 					}}
 				
-#line 808 "macro_expanders/renewcommand_expander.c"
+#line 816 "macro_expanders/renewcommand_expander.c"
 
 				goto _st115;
 				_ctr189:
 					{
-#line 166 "macro_expanders/renewcommand_expander.rl"
+#line 174 "macro_expanders/renewcommand_expander.rl"
 					{te = p;p = p - 1;{
-#line 166 "macro_expanders/renewcommand_expander.rl"
+#line 174 "macro_expanders/renewcommand_expander.rl"
 							fwrite(ts, 1, te - ts, stdout); }
 					}}
 				
-#line 818 "macro_expanders/renewcommand_expander.c"
+#line 826 "macro_expanders/renewcommand_expander.c"
 
 				goto _st115;
 				_st115:
@@ -847,7 +855,7 @@ int main(int argc, char **argv) {
 #line 1 "NONE"
 					{ts = 0;}}
 				
-#line 827 "macro_expanders/renewcommand_expander.c"
+#line 835 "macro_expanders/renewcommand_expander.c"
 
 				p+= 1;
 				st_case_115:
@@ -857,7 +865,7 @@ int main(int argc, char **argv) {
 #line 1 "NONE"
 					{ts = p;}}
 				
-#line 836 "macro_expanders/renewcommand_expander.c"
+#line 844 "macro_expanders/renewcommand_expander.c"
 
 				if ( p == eof ) {
 					goto _st115;}
@@ -877,7 +885,7 @@ int main(int argc, char **argv) {
 #line 1 "NONE"
 					{te = p+1;}}
 				
-#line 855 "macro_expanders/renewcommand_expander.c"
+#line 863 "macro_expanders/renewcommand_expander.c"
 
 				goto _st116;
 				_st116:
@@ -3524,7 +3532,7 @@ int main(int argc, char **argv) {
 #line 1 "NONE"
 					{te = p+1;}}
 				
-#line 3501 "macro_expanders/renewcommand_expander.c"
+#line 3509 "macro_expanders/renewcommand_expander.c"
 
 				goto _st168;
 				_st168:
@@ -3821,7 +3829,7 @@ int main(int argc, char **argv) {
 #line 800 "macro_expanders/../latex.rl"
 					n--; }
 				
-#line 3797 "macro_expanders/renewcommand_expander.c"
+#line 3805 "macro_expanders/renewcommand_expander.c"
 
 				goto _st111;
 				_ctr109:
@@ -3829,7 +3837,7 @@ int main(int argc, char **argv) {
 #line 802 "macro_expanders/../latex.rl"
 					n=0;}
 				
-#line 3804 "macro_expanders/renewcommand_expander.c"
+#line 3812 "macro_expanders/renewcommand_expander.c"
 
 				goto _st111;
 				_ctr116:
@@ -3837,7 +3845,7 @@ int main(int argc, char **argv) {
 #line 799 "macro_expanders/../latex.rl"
 					n++; }
 				
-#line 3811 "macro_expanders/renewcommand_expander.c"
+#line 3819 "macro_expanders/renewcommand_expander.c"
 
 				goto _st111;
 				_st111:
@@ -3857,7 +3865,7 @@ int main(int argc, char **argv) {
 						case 125: {
 							_ck = 0;
 							if ( (!n)
-#line 3830 "macro_expanders/renewcommand_expander.c"
+#line 3838 "macro_expanders/renewcommand_expander.c"
  )
 							_ck += 1;
 							if ( _ck > 0 ) {
@@ -4194,7 +4202,7 @@ int main(int argc, char **argv) {
 				_out: {}
 			}
 			
-#line 276 "macro_expanders/renewcommand_expander.rl"
+#line 284 "macro_expanders/renewcommand_expander.rl"
 
 			
 			if (cs == renewcommand_expander_error) {

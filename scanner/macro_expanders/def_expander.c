@@ -70,14 +70,20 @@ static void store_macro(const char *name, int name_len, const char *body_start, 
 	macros->keys[k].val = val;
 }
 
+static int body_has_at(const char *s, int len) {
+	for (int i = 0; i < len - 1; i++) {
+		if (s[i] == '\\' && s[i+1] == '@') return 1;
+		}
+	return 0;
+}
 
 
 
-#line 192 "macro_expanders/def_expander.rl"
+#line 199 "macro_expanders/def_expander.rl"
 
 
 
-#line 78 "macro_expanders/def_expander.c"
+#line 84 "macro_expanders/def_expander.c"
 static const int def_expander_start = 136;
 static const int def_expander_first_final = 136;
 static const int def_expander_error = -1;
@@ -85,7 +91,7 @@ static const int def_expander_error = -1;
 static const int def_expander_en_main = 136;
 
 
-#line 194 "macro_expanders/def_expander.rl"
+#line 201 "macro_expanders/def_expander.rl"
 
 int main(int argc, char **argv) {
 	int ch;
@@ -108,17 +114,17 @@ int main(int argc, char **argv) {
 	const char *ts = NULL, *te = NULL;
 	
 
-#line 106 "macro_expanders/def_expander.c"
+#line 112 "macro_expanders/def_expander.c"
 	{
 		cs = (int)def_expander_start;
 		ts = 0;
 		te = 0;
 	}
 	
-#line 215 "macro_expanders/def_expander.rl"
+#line 222 "macro_expanders/def_expander.rl"
 
 
-#line 113 "macro_expanders/def_expander.c"
+#line 119 "macro_expanders/def_expander.c"
 {
 		int _ck;
 		switch ( cs ) {
@@ -545,10 +551,11 @@ int main(int argc, char **argv) {
 		}
 		_ctr113:
 			{
-#line 93 "macro_expanders/def_expander.rl"
+#line 99 "macro_expanders/def_expander.rl"
 			{te = p+1;{
-#line 93 "macro_expanders/def_expander.rl"
+#line 99 "macro_expanders/def_expander.rl"
 					
+					fwrite(ts, 1, te - ts, stdout);
 					const char *p = ts;
 					const char *end = te;
 					
@@ -574,43 +581,43 @@ int main(int argc, char **argv) {
 					if (p < end && *p == '{') {
 							const char *bs = p + 1;
 							const char *be = end - 1;
-							store_macro(ns, (int)(ne - ns), bs, be, argc);
+							if (!body_has_at(bs, (int)(be - bs))) store_macro(ns, (int)(ne - ns), bs, be, argc);
 						}
 					}
 				}}
 			
-#line 573 "macro_expanders/def_expander.c"
+#line 580 "macro_expanders/def_expander.c"
 
 			goto _st136;
 			_ctr0:
 				{
-#line 189 "macro_expanders/def_expander.rl"
+#line 196 "macro_expanders/def_expander.rl"
 				{p = ((te))-1;
 					{
-#line 189 "macro_expanders/def_expander.rl"
+#line 196 "macro_expanders/def_expander.rl"
 						fputc(*ts, stdout); }
 				}}
 			
-#line 584 "macro_expanders/def_expander.c"
+#line 591 "macro_expanders/def_expander.c"
 
 			goto _st136;
 			_ctr2:
 				{
-#line 187 "macro_expanders/def_expander.rl"
+#line 194 "macro_expanders/def_expander.rl"
 				{te = p+1;{
-#line 187 "macro_expanders/def_expander.rl"
+#line 194 "macro_expanders/def_expander.rl"
 						fwrite(ts, 1, te - ts, stdout); }
 				}}
 			
-#line 594 "macro_expanders/def_expander.c"
+#line 601 "macro_expanders/def_expander.c"
 
 			goto _st136;
 			_ctr101:
 				{
-#line 130 "macro_expanders/def_expander.rl"
+#line 137 "macro_expanders/def_expander.rl"
 				{p = ((te))-1;
 					{
-#line 130 "macro_expanders/def_expander.rl"
+#line 137 "macro_expanders/def_expander.rl"
 						
 						int nl = (int)(te - ts - 1);
 						int did_expand = 0;
@@ -670,36 +677,36 @@ int main(int argc, char **argv) {
 						}
 					}}
 				
-#line 661 "macro_expanders/def_expander.c"
+#line 668 "macro_expanders/def_expander.c"
 
 				goto _st136;
 				_ctr143:
 					{
-#line 189 "macro_expanders/def_expander.rl"
+#line 196 "macro_expanders/def_expander.rl"
 					{te = p+1;{
-#line 189 "macro_expanders/def_expander.rl"
+#line 196 "macro_expanders/def_expander.rl"
 							fputc(*ts, stdout); }
 					}}
 				
-#line 671 "macro_expanders/def_expander.c"
+#line 678 "macro_expanders/def_expander.c"
 
 				goto _st136;
 				_ctr146:
 					{
-#line 189 "macro_expanders/def_expander.rl"
+#line 196 "macro_expanders/def_expander.rl"
 					{te = p;p = p - 1;{
-#line 189 "macro_expanders/def_expander.rl"
+#line 196 "macro_expanders/def_expander.rl"
 							fputc(*ts, stdout); }
 					}}
 				
-#line 681 "macro_expanders/def_expander.c"
+#line 688 "macro_expanders/def_expander.c"
 
 				goto _st136;
 				_ctr158:
 					{
-#line 130 "macro_expanders/def_expander.rl"
+#line 137 "macro_expanders/def_expander.rl"
 					{te = p;p = p - 1;{
-#line 130 "macro_expanders/def_expander.rl"
+#line 137 "macro_expanders/def_expander.rl"
 							
 							int nl = (int)(te - ts - 1);
 							int did_expand = 0;
@@ -759,73 +766,73 @@ int main(int argc, char **argv) {
 							}
 						}}
 					
-#line 747 "macro_expanders/def_expander.c"
+#line 754 "macro_expanders/def_expander.c"
 
 					goto _st136;
 					_ctr164:
 						{
-#line 126 "macro_expanders/def_expander.rl"
+#line 133 "macro_expanders/def_expander.rl"
 						{te = p;p = p - 1;{
-#line 126 "macro_expanders/def_expander.rl"
+#line 133 "macro_expanders/def_expander.rl"
 								fwrite(ts, 1, te - ts, stdout); }
 						}}
 					
-#line 757 "macro_expanders/def_expander.c"
+#line 764 "macro_expanders/def_expander.c"
 
 					goto _st136;
 					_ctr173:
 						{
-#line 128 "macro_expanders/def_expander.rl"
+#line 135 "macro_expanders/def_expander.rl"
 						{te = p;p = p - 1;{
-#line 128 "macro_expanders/def_expander.rl"
+#line 135 "macro_expanders/def_expander.rl"
 								fwrite(ts, 1, te - ts, stdout); }
 						}}
 					
-#line 767 "macro_expanders/def_expander.c"
+#line 774 "macro_expanders/def_expander.c"
 
 					goto _st136;
 					_ctr185:
 						{
-#line 123 "macro_expanders/def_expander.rl"
+#line 130 "macro_expanders/def_expander.rl"
 						{te = p;p = p - 1;{
-#line 123 "macro_expanders/def_expander.rl"
+#line 130 "macro_expanders/def_expander.rl"
 								fwrite(ts, 1, te - ts, stdout); }
 						}}
 					
-#line 777 "macro_expanders/def_expander.c"
+#line 784 "macro_expanders/def_expander.c"
 
 					goto _st136;
 					_ctr209:
 						{
-#line 125 "macro_expanders/def_expander.rl"
+#line 132 "macro_expanders/def_expander.rl"
 						{te = p;p = p - 1;{
-#line 125 "macro_expanders/def_expander.rl"
+#line 132 "macro_expanders/def_expander.rl"
 								fwrite(ts, 1, te - ts, stdout); }
 						}}
 					
-#line 787 "macro_expanders/def_expander.c"
+#line 794 "macro_expanders/def_expander.c"
 
 					goto _st136;
 					_ctr221:
 						{
-#line 124 "macro_expanders/def_expander.rl"
+#line 131 "macro_expanders/def_expander.rl"
 						{te = p;p = p - 1;{
-#line 124 "macro_expanders/def_expander.rl"
+#line 131 "macro_expanders/def_expander.rl"
 								fwrite(ts, 1, te - ts, stdout); }
 						}}
 					
-#line 797 "macro_expanders/def_expander.c"
+#line 804 "macro_expanders/def_expander.c"
 
 					goto _st136;
 					_ctr225:
 						{
-#line 127 "macro_expanders/def_expander.rl"
+#line 134 "macro_expanders/def_expander.rl"
 						{te = p;p = p - 1;{
-#line 127 "macro_expanders/def_expander.rl"
+#line 134 "macro_expanders/def_expander.rl"
 								fwrite(ts, 1, te - ts, stdout); }
 						}}
 					
-#line 807 "macro_expanders/def_expander.c"
+#line 814 "macro_expanders/def_expander.c"
 
 					goto _st136;
 					_st136:
@@ -835,7 +842,7 @@ int main(int argc, char **argv) {
 #line 1 "NONE"
 						{ts = 0;}}
 					
-#line 816 "macro_expanders/def_expander.c"
+#line 823 "macro_expanders/def_expander.c"
 
 					p+= 1;
 					st_case_136:
@@ -845,7 +852,7 @@ int main(int argc, char **argv) {
 #line 1 "NONE"
 						{ts = p;}}
 					
-#line 825 "macro_expanders/def_expander.c"
+#line 832 "macro_expanders/def_expander.c"
 
 					if ( p == eof ) {
 						goto _st136;}
@@ -865,7 +872,7 @@ int main(int argc, char **argv) {
 #line 1 "NONE"
 						{te = p+1;}}
 					
-#line 844 "macro_expanders/def_expander.c"
+#line 851 "macro_expanders/def_expander.c"
 
 					goto _st137;
 					_st137:
@@ -2499,7 +2506,7 @@ int main(int argc, char **argv) {
 #line 1 "NONE"
 						{te = p+1;}}
 					
-#line 2477 "macro_expanders/def_expander.c"
+#line 2484 "macro_expanders/def_expander.c"
 
 					goto _st142;
 					_st142:
@@ -2702,7 +2709,7 @@ int main(int argc, char **argv) {
 #line 800 "macro_expanders/../latex.rl"
 						n--; }
 					
-#line 2679 "macro_expanders/def_expander.c"
+#line 2686 "macro_expanders/def_expander.c"
 
 					goto _st107;
 					_ctr107:
@@ -2710,7 +2717,7 @@ int main(int argc, char **argv) {
 #line 802 "macro_expanders/../latex.rl"
 						n=0;}
 					
-#line 2686 "macro_expanders/def_expander.c"
+#line 2693 "macro_expanders/def_expander.c"
 
 					goto _st107;
 					_ctr111:
@@ -2718,7 +2725,7 @@ int main(int argc, char **argv) {
 #line 799 "macro_expanders/../latex.rl"
 						n++; }
 					
-#line 2693 "macro_expanders/def_expander.c"
+#line 2700 "macro_expanders/def_expander.c"
 
 					goto _st107;
 					_st107:
@@ -2738,7 +2745,7 @@ int main(int argc, char **argv) {
 							case 125: {
 								_ck = 0;
 								if ( (!n)
-#line 2712 "macro_expanders/def_expander.c"
+#line 2719 "macro_expanders/def_expander.c"
  )
 								_ck += 1;
 								if ( _ck > 0 ) {
@@ -2956,7 +2963,7 @@ int main(int argc, char **argv) {
 #line 1 "NONE"
 						{te = p+1;}}
 					
-#line 2929 "macro_expanders/def_expander.c"
+#line 2936 "macro_expanders/def_expander.c"
 
 					goto _st152;
 					_st152:
@@ -3194,7 +3201,7 @@ int main(int argc, char **argv) {
 #line 1 "NONE"
 						{te = p+1;}}
 					
-#line 3166 "macro_expanders/def_expander.c"
+#line 3173 "macro_expanders/def_expander.c"
 
 					goto _st158;
 					_st158:
@@ -3935,7 +3942,7 @@ int main(int argc, char **argv) {
 #line 1 "NONE"
 						{te = p+1;}}
 					
-#line 3906 "macro_expanders/def_expander.c"
+#line 3913 "macro_expanders/def_expander.c"
 
 					goto _st173;
 					_st173:
@@ -4154,7 +4161,7 @@ int main(int argc, char **argv) {
 #line 1 "NONE"
 						{te = p+1;}}
 					
-#line 4124 "macro_expanders/def_expander.c"
+#line 4131 "macro_expanders/def_expander.c"
 
 					goto _st182;
 					_st182:
@@ -4985,7 +4992,7 @@ int main(int argc, char **argv) {
 					_out: {}
 				}
 				
-#line 216 "macro_expanders/def_expander.rl"
+#line 223 "macro_expanders/def_expander.rl"
 
 				
 				if (cs == def_expander_error) {
