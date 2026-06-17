@@ -185,19 +185,24 @@ extractor produce *candidate* equivalences; only Lean4's kernel provides proof.
 
 | Step | Component | Effort | Status |
 |------|-----------|--------|--------|
-| 1a | Add math tokens to latex.rl | 2-3 hours | ✅ Done |
-| 1b | EMIT_BLOCK for frac, sqrt | 30 min | ✅ Done (frac) |
+| 1a | Add math tokens to latex.rl | 2-3 hours | ✅ Done (120+ symbols, 30+ accents) |
+| 1b | EMIT_BLOCK for frac, sqrt | 30 min | ✅ Done |
 | 1c | EMIT_BLOCK for sum, prod, lim, int | 1 hour | ✅ Done |
 | 1d | Context-aware math tokens (g_in_math) | 1 hour | ✅ Done |
 | 1e | Inline math as EMIT_BLOCK | 30 min | ✅ Done |
 | 1f | Vocab classifier (13,439 words) | 1 hour | ✅ Done |
-| 2 | Regenerate sidecar with math AST | scan time | pending |
-| 3 | Tree fingerprint with new tokens | 1 hour | pending |
-| 4 | Benepar variable type extraction | 2-3 hours | pending |
-| 5 | Lean4 type mapping + code generator | 3-4 hours | pending |
-| 6 | Lean4 installation + test on sample | 1 hour | pending |
-| 7 | Interactive proof workflow | 2-3 hours | pending |
-| 8 | Automated proof (rfl/ring/simp) | 2-3 hours | pending |
+| 2 | Regenerate sidecar with math AST | scan time | ✅ Done (314K tokens loaded) |
+| 2b | Cross-document cite/ref/label graph | 2-3 hours | ✅ Done (265K graph edges) |
+| 2c | Phase C operator precedence chains | 2 hours | ✅ Done (1,511 chains) |
+| 3 | Tree fingerprint with new tokens | 1 hour | Pending |
+| 4 | Benepar variable type extraction | 2-3 hours | Pending |
+| 4b | Type inference from math context | 3-4 hours | Pending |
+| 4c | Named expression fingerprint DB | 2-3 hours | Pending |
+| 5 | Lean4 type mapping + code generator | 3-4 hours | Pending |
+| 6 | Lean4 installation + test on sample | 1 hour | Pending |
+| 7 | Interactive proof workflow | 2-3 hours | Pending |
+| 8 | Automated proof (rfl/ring/simp) | 2-3 hours | Pending |
+| 9 | Cross-paper equivalence | 4+ hours | Pending |
 
 ## Dependencies
 
