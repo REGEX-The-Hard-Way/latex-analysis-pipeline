@@ -26,5 +26,13 @@ get_sample_data:
 	gcc strip_non_ascii.c -o strip_non_ascii.out
 	bash pre-process-dataset.sh
 
+MACRO_EXPANDERS = macro_expanders/def_expander.out macro_expanders/newcommand_expander.out macro_expanders/renewcommand_expander.out macro_expanders/providecommand_expander.out macro_expanders/edef_expander.out
+
+macro_expanders/%.out: macro_expanders/%.rl latex.rl
+	ragel -m -G2 $< -o $(dir $<)$*.c
+	$(CC) -O2 -I../include -I.. -o $@ $(dir $<)$*.c
+
+macro_expanders: $(MACRO_EXPANDERS)
+
 clean:
-	rm -f scanner.out sent_split.out scanner.c sent_split.c newcommand.out
+	rm -f scanner.out sent_split.out scanner.c sent_split.c newcommand.out $(MACRO_EXPANDERS) macro_expanders/def_expander.c macro_expanders/newcommand_expander.c macro_expanders/renewcommand_expander.c macro_expanders/providecommand_expander.c macro_expanders/edef_expander.c

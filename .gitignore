@@ -1,3 +1,8 @@
+scanner/macro_expanders/def_expander.out
+scanner/macro_expanders/edef_expander.out
+scanner/macro_expanders/newcommand_expander.out
+scanner/macro_expanders/providecommand_expander.out
+scanner/macro_expanders/renewcommand_expander.out
 scanner/newcommand.out
 sidecar.json
 sidecar.tok
