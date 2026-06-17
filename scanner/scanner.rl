@@ -111,7 +111,12 @@ static int g_in_math = 0;
              | '\\div' | '\\ast' | '\\star' | '\\circ' | '\\bullet'
              | '\\oplus' | '\\otimes' | '\\odot'
              | '\\cap' | '\\cup' | '\\setminus'
-             | '\\wedge' | '\\vee' | '\\land' | '\\lor' ;
+             | '\\wedge' | '\\vee' | '\\land' | '\\lor'
+             | '\\bigcirc' | '\\bigtriangleup' | '\\bigtriangledown'
+             | '\\sqcap' | '\\sqcup' | '\\uplus' | '\\amalg'
+             | '\\dagger' | '\\ddagger' | '\\wr'
+             | '\\triangleleft' | '\\triangleright'
+             | '\\oslash' | '\\ominus' | '\\odash' ;
 
   # Math relations
   math_rel   = '=' | '\\lt' | '\\gt' | '\\leq' | '\\geq' | '\\le' | '\\ge'
@@ -119,7 +124,13 @@ static int g_in_math = 0;
              | '\\equiv' | '\\approx' | '\\sim' | '\\propto'
              | '\\simeq' | '\\cong' | '\\neq' | '\\ne' | '<' | '>'
              | '\\ll' | '\\gg' | '\\perp' | '\\parallel'
-             | '\\not\\equiv' ;
+             | '\\not\\equiv'
+             | '\\doteq' | '\\bowtie' | '\\models' | '\\dashv' | '\\vdash'
+             | '\\smile' | '\\frown' | '\\asymp' | '\\mid'
+             | '\\succ' | '\\prec' | '\\succeq' | '\\preceq'
+             | '\\sqsubseteq' | '\\sqsupseteq'
+             | '\\subset' | '\\supset' | '\\subseteq' | '\\supseteq'
+             | '\\sqsubset' | '\\sqsupset' ;
 
   # Math functions
   math_fn    = '\\sin' | '\\cos' | '\\tan' | '\\csc' | '\\sec' | '\\cot'
@@ -131,12 +142,16 @@ static int g_in_math = 0;
              | '\\lim' | '\\sum' | '\\prod' | '\\int' | '\\oint'
              | '\\max' | '\\min' | '\\sup' | '\\inf' | '\\det'
              | '\\gcd' | '\\lcm' | '\\deg'
-             | '\\dim' | '\\hom' | '\\ker' | '\\Pr' ;
+             | '\\dim' | '\\hom' | '\\ker' | '\\Pr'
+             | '\\floor' | '\\ceil'
+             | '\\arg' | '\\argmax' | '\\argmin'
+             | '\\iint' | '\\iiint' | '\\iiiint' | '\\idotsint'
+             | '\\operatorname' ;
 
   # Greek letters (all variants, lowercase + uppercase)
   math_greek = '\\alpha' | '\\beta' | '\\gamma' | '\\delta' | '\\epsilon'
              | '\\varepsilon' | '\\zeta' | '\\eta' | '\\theta' | '\\vartheta'
-             | '\\iota' | '\\kappa' | '\\lambda' | '\\mu' | '\\nu' | '\\xi'
+             | '\\iota' | '\\kappa' | '\\varkappa' | '\\lambda' | '\\mu' | '\\nu' | '\\xi'
              | '\\pi' | '\\varpi' | '\\rho' | '\\varrho' | '\\sigma' | '\\varsigma'
              | '\\tau' | '\\upsilon' | '\\phi' | '\\varphi'
              | '\\chi' | '\\psi' | '\\omega' | '\\omicron'
@@ -153,10 +168,25 @@ static int g_in_math = 0;
              | '\\leftarrow' | '\\leftrightarrow' | '\\Rightarrow' | '\\Leftarrow'
              | '\\mapsto' | '\\longmapsto' | '\\longrightarrow'
              | '\\cdots' | '\\vdots' | '\\ddots'
-             | '\\therefore' | '\\because' | '\\diamond' ;
+             | '\\therefore' | '\\because' | '\\diamond'
+             | '\\Bbbk' | '\\bigstar' | '\\measuredangle' | '\\sphericalangle'
+             | '\\eth' | '\\diagdown' | '\\diagup'
+             | '\\clubsuit' | '\\diamondsuit' | '\\heartsuit' | '\\spadesuit'
+             | '\\Diamond' | '\\complement' | '\\Finv' | '\\Game'
+             | '\\triangledown' | '\\vartriangle' | '\\blacklozenge' | '\\lozenge'
+             | '\\blacksquare' | '\\mho' | '\\blacktriangle'
+             | '\\sharp' | '\\flat' | '\\natural'
+             | '\\imath' | '\\jmath' | '\\hslash'
+             | '\\backprime' | '\\circledS' | '\\surd'
+             | '\\prime' | '\\backprime'
+             | '\\aleph' | '\\beth' | '\\gimel' | '\\daleth'
+             | '\\digamma' ;
 
-  # Math numbers
-  math_num   = digit+ ;
+  # Math numbers (including decimal and scientific notation)
+  math_num   = digit+ (',' digit digit digit)* ('.' digit+)?
+             | '.' digit+ ;
+  math_scientific = math_num [eE] ('+'|'-')? digit+ ;
+  math_percent    = math_num '\\%' ;
 
   # Math variables (single letters)
   math_var   = alpha ;
@@ -216,6 +246,21 @@ main :=|*
   math_sym            => { if (g_in_math) EMIT("math_sym"); };
   math_num            => { if (g_in_math) EMIT("math_num"); };
   math_var            => { if (g_in_math) EMIT("math_var"); };
+  abs_group           => { if (g_in_math) EMIT_BLOCK("abs",1,1); };
+  norm_group          => { if (g_in_math) EMIT_BLOCK("norm",2,2); };
+  floor_group         => { if (g_in_math) EMIT_BLOCK("floor",7,7); };
+  ceil_group          => { if (g_in_math) EMIT_BLOCK("ceil",6,6); };
+  norm_delim          => { if (g_in_math) EMIT("norm_delim"); };
+  l_floor             => { if (g_in_math) EMIT("l_floor"); };
+  r_floor             => { if (g_in_math) EMIT("r_floor"); };
+  l_ceil              => { if (g_in_math) EMIT("l_ceil"); };
+  r_ceil              => { if (g_in_math) EMIT("r_ceil"); };
+  l_vert              => { if (g_in_math) EMIT("l_vert"); };
+  r_vert              => { if (g_in_math) EMIT("r_vert"); };
+  vert_cmd            => { if (g_in_math) EMIT("vert"); };
+  accent              => { if (g_in_math) EMIT_BLOCK("accent",0,0); };
+  binom               => { if (g_in_math) EMIT_BLOCK("binom",0,0); };
+  sqrt_full           => { if (g_in_math) EMIT_BLOCK("sqrt",5,0); };
   comment            => { EMIT("comment");};
 
 abstract => { EMIT_BLOCK("abstract", 16 , 14 ); };

@@ -867,11 +867,57 @@ symbols = '\\alpha'|'\\approx'|'\\ast'|'\\beta'|'\\cal'|'\\cdot'|'\\cdots'|'\\ch
 integer = '0'|[1-9][0-9]*;
 hat = '\\hat' (braces parens|braces brackets|braces underscore braces brackets|braces);
 vec = '\\vec' (braces parens|braces brackets|braces);
-sqrt = '\\sqrt' braces;
 hspace = '\\hspace' braces;
 e = 'e' caret braces; 
 eta = '\\eta' underscore braces;
 address = '\\address' braces ;
+
+# ---- PS.g4 math delimiter vocabulary ----
+l_group   = '\\lgroup' ;
+r_group   = '\\rgroup' ;
+l_brace_cmd = '\\lbrace' ;
+r_brace_cmd = '\\rbrace' ;
+lbrack_cmd   = '\\lbrack' ;
+rbrack_cmd   = '\\rbrack' ;
+l_vert    = '\\lvert' ;
+r_vert    = '\\rvert' ;
+vert_cmd  = '\\vert' ;
+norm_delim = '\\|' ;
+l_floor   = '\\lfloor' ;
+r_floor   = '\\rfloor' ;
+ll_corner = '\\llcorner' ;
+lr_corner = '\\lrcorner' ;
+l_ceil    = '\\lceil' ;
+r_ceil    = '\\rceil' ;
+ul_corner = '\\ulcorner' ;
+ur_corner = '\\urcorner' ;
+
+# ---- PS.g4 expression groups (abs, norm, floor, ceil) ----
+abs_group = ('|' any+ :> '|') | (l_vert any+ :> r_vert) | (vert_cmd any+ :> vert_cmd) ;
+norm_group = norm_delim any+ :> norm_delim ;
+floor_group = (l_floor any+ :> r_floor) | (ll_corner any+ :> lr_corner) ;
+ceil_group = (l_ceil any+ :> r_ceil) | (ul_corner any+ :> ur_corner) ;
+
+# ---- PS.g4 accent commands ----
+accent_cmd = '\\acute' | '\\bar' | '\\overline' | '\\breve' | '\\check'
+           | '\\widecheck' | '\\dot' | '\\ddot' | '\\grave' | '\\hat'
+           | '\\tilde' | '\\widetilde' | '\\vec' | '\\overrightarrow'
+           | '\\bm' | '\\boldsymbol'
+           | '\\mathbb' | '\\mathbin' | '\\mathbf' | '\\mathcal'
+           | '\\mathfrak' | '\\mathinner' | '\\mathit'
+           | '\\mathnormal' | '\\mathop' | '\\mathopen'
+           | '\\mathord' | '\\mathpunct' | '\\mathrel'
+           | '\\mathring' | '\\mathrm'
+           | '\\mathscr' | '\\mathsf' | '\\mathtt'
+           | '\\text' | '\\textit' | '\\textbf' | '\\textrm' | '\\textsf' | '\\texttt' ;
+accent = accent_cmd braces ;
+
+# ---- PS.g4 binomial ----
+binom_cmd = '\\binom' | '\\tbinom' | '\\dbinom' ;
+binom = binom_cmd braces braces | braces '\\choose' braces ;
+
+# ---- PS.g4 sqrt with optional root ----
+sqrt_full = '\\sqrt' brackets? braces ;
 renewcommand = '\\renewcommand' braces braces;
 
 subexpr = (parens | '\\alpha'| '\\argmax'| '\\argmin'| '\\ast'| '\\bbeta'| '\\beta'| '\\bfx'| '\\bigcap'| '\\bigcup'| '\\bigoplus'| '\\bigotimes'| '\\bigwedge'| '\\bSigma'| '\\btheta'| '\\chi'| '\\circ'| '\\cup'| '\\dag'| '\\dagger'| '\\dashint'| '\\del'| '\\delta'| '\\Delta'| '\\dim'| '\\dsum'| '\\ell'| '\\epsilon'| '\\eta'| '\\exp'| '\\gamma'| '\\Gamma'| '\\grad'| '\\iint'| '\\infty'| '\\iota'| '\\kappa'| '\\lambda' '\\Lambda'| '\\liminf'| '\\limits'| '\\limsup'| '\\log'| '\\max'| '\\min'| '\\mu'| '\\nabla'| '\\nolimits'| '\\nu'| '\\oint'| '\\omega'| '\\Omega'| '\\oplus'| '\\oslash'| '\\otimes'| '\\partial'| '\\perp'| '\\phi'| '\\Phi'| '\\pi'| '\\Pi'| '\\prime'| '\\prod'| '\\psi'| '\\Psi'| '\\rangle'| '\\rho'| '\\rvert'| '\\rVert'| '\\sigma'| '\\Sigma'| '\\star'| '\\state'| '\\sup'| '\\tau'| '\\theta'| '\\Theta'| '\\times'| '\\upsilon'| '\\Upsilon'| '\\varepsilon'| '\\varphi'| '\\varpi'| '\\varrho'| '\\varsigma'| '\\vartheta'| '\\vert'| '\\Vert'| '\\vol'| '\\xi'| '\\Xi'| '\\zeta') underscore (braces | alnum |'!'|'*'|'+'|'-');
