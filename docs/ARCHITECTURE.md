@@ -79,12 +79,20 @@ The main tokenizer uses Ragel to generate a state machine that:
 - `EMIT_TOKEN`: Emit a leaf token
 - `EMIT_BLOCK`: Emit a container block and recursively scan interior
 
-#### 2. Sentence Segmentation (`sent_split.rl`)
+#### 2. Sentence Segmentation
 
-Segments tokenized text into sentences, handling:
-- Abbreviations (e.g., "et al.", "vs.", "Fig.")
-- Initials (e.g., "J.", "K.")
-- Known sentence boundaries
+Two sentence splitters serve different input formats:
+
+**`sent_split.rl`** (Ragel, `scanner/` directory)
+- Input: raw scanner stdout (hash IDs separated by newlines, one token per line)
+- Output: `clean.sent` (one sentence per line, tokens preserved)
+- Use case: post-processing scanner output for NLP pipelines
+
+**`tools/sent_split.py`** (Python)
+- Input: preprocessed TeX body text with inline hash IDs
+- Output: one sentence per line, ready for constituency parsing
+- Use case: feeding sentences to `meta/profile` parser for definition extraction
+- Usage: `python3 tools/sent_split.py file.tex sidecar.tok > sentences.txt`
 
 #### 3. Cross-Reference Validation (`tests/validation_tests.py`)
 

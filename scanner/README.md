@@ -6,8 +6,11 @@
 # Main LaTeX tokenizer
 make scanner           # ragel -m -G2 scanner.rl → gcc -O2 → scanner.out
 
-# Sentence segmenter
+# Sentence segmenter (Ragel — raw scanner output)
 make sent_split        # ragel -m -G2 sent_split.rl → gcc -O2 → sent_split.out
+
+# Sentence segmenter (Python — preprocessed TeX body for parser pipeline)
+python3 tools/sent_split.py sound1.tex sidecar.tok > sentences.txt
 
 # Macro expander (standalone C, no Ragel dependency)
 make macro_expander    # gcc -O2 → macro_expander.out
@@ -45,8 +48,17 @@ cat input.tex | ./macro_expander.out > expanded.tex
 
 ## Sentence Segmentation
 
+Two approaches:
+
 ```bash
+# sent_split.rl — processes raw scanner output (one token per line)
 cat sidecar.tok | ./sent_split.out > clean.sent
+
+# tools/sent_split.py — processes preprocessed TeX body (inline hash IDs)
+# for feeding sentences to the meta/profile constituency parser
+python3 tools/sent_split.py sound1.tex sidecar.tok > sentences.txt
+cd /mnt/x/home/user/meta_dev/meta/build
+./profile config.toml /path/to/sentences.txt --parse
 ```
 
 ## Cypher Query Engine
