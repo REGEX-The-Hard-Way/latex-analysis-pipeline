@@ -96,11 +96,13 @@ def main():
     )
     print(f"Cleared {cursor.rowcount} old chain tokens")
 
-    # Get all math block IDs
+    # Get all math block IDs (including matrix environments)
     cursor.execute(
         """SELECT DISTINCT token_id FROM authors 
            WHERE type IN ('math','display_math','display_2_math','equation',
-           'align','gather','multline','split')"""
+           'align','gather','multline','split',
+           'matrix','bmatrix','pmatrix','vmatrix','Bmatrix','Vmatrix',
+           'smallmatrix','cases','dcases','array')"""
     )
     math_ids = {r[0] for r in cursor.fetchall()}
     print(f"Found {len(math_ids)} math blocks")
@@ -113,7 +115,8 @@ def main():
            AND type IN ('math_var','math_greek','math_sym','math_num','math_fn',
                         'math_op','math_rel','parens','braces','abs','norm',
                         'floor','ceil','frac','accent','binom','sqrt',
-                        'scientific','percent')
+                        'scientific','percent',
+                        'matrix_col_delim','matrix_row_delim')
            ORDER BY parent_id, CAST(offset AS INTEGER)""".format(
             ",".join(f"'{m}'" for m in math_ids)
         )

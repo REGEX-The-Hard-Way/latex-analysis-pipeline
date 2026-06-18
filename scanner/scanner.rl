@@ -6,6 +6,7 @@ FILE *g_out_json = NULL;
 int n;
 uint32_t seed0 = 0;
 static int g_in_math = 0;
+static int g_in_matrix = 0;
 
 
 #define EMIT(t) do { \
@@ -191,6 +192,10 @@ static int g_in_math = 0;
   # Math variables (single letters)
   math_var   = alpha ;
 
+  # Matrix column/row delimiters (PS.g4 MATRIX_DEL_COL, MATRIX_DEL_ROW)
+  matrix_col_delim = '&' ;
+  matrix_row_delim = '\\\\' ;
+
 
   sc_prose = alpha+ ([\-'] alpha+)*;
 
@@ -246,6 +251,8 @@ main :=|*
   math_sym            => { if (g_in_math) EMIT("math_sym"); };
   math_num            => { if (g_in_math) EMIT("math_num"); };
   math_var            => { if (g_in_math) EMIT("math_var"); };
+  matrix_col_delim    => { if (g_in_matrix) EMIT("matrix_col_delim"); };
+  matrix_row_delim    => { if (g_in_matrix) EMIT("matrix_row_delim"); };
   abs_group           => { if (g_in_math) EMIT_BLOCK("abs",1,1); };
   norm_group          => { if (g_in_math) EMIT_BLOCK("norm",2,2); };
   floor_group         => { if (g_in_math) EMIT_BLOCK("floor",7,7); };
@@ -279,7 +286,7 @@ align => { EMIT_BLOCK("align", 13 , 11 ); };
 alltt => { EMIT_BLOCK("alltt", 13 , 11 ); };
 appendices => { EMIT_BLOCK("appendices", 18 , 16 ); };
 appendix => { EMIT_BLOCK("appendix", 16 , 14 ); };
-array => { EMIT_BLOCK("array", 13 , 11 ); };
+array => { g_in_matrix++; EMIT_BLOCK("array", 13 , 11 ); g_in_matrix--; };
 article => { EMIT_BLOCK("article", 15 , 13 ); };
 assumption => { EMIT_BLOCK("assumption", 18 , 16 ); };
 aug => { EMIT_BLOCK("aug", 11 , 9 ); };
@@ -287,10 +294,10 @@ axis => { EMIT_BLOCK("axis", 12 , 10 ); };
 barticle => { EMIT_BLOCK("barticle", 16 , 14 ); };
 bbook => { EMIT_BLOCK("bbook", 13 , 11 ); };
 block => { EMIT_BLOCK("block", 13 , 11 ); };
-bmatrix => { EMIT_BLOCK("bmatrix", 15 , 13 ); };
-bmisc => { EMIT_BLOCK("bmisc", 13 , 11 ); };
+bmatrix => { g_in_matrix++; EMIT_BLOCK("bmatrix", 15 , 13 ); g_in_matrix--; };
+Bmatrix => { g_in_matrix++; EMIT_BLOCK("Bmatrix", 16 , 14 ); g_in_matrix--; };
 case => { EMIT_BLOCK("case", 12 , 10 ); };
-cases => { EMIT_BLOCK("cases", 13 , 11 ); };
+cases => { g_in_matrix++; EMIT_BLOCK("cases", 13 , 11 ); g_in_matrix--; };
 center => { EMIT_BLOCK("center", 14 , 12 ); };
 centering => { EMIT_BLOCK("centering", 17 , 15 ); };
 claim => { EMIT_BLOCK("claim", 13 , 11 ); };
@@ -302,7 +309,7 @@ conj => { EMIT_BLOCK("conj", 12 , 10 ); };
 cor => { EMIT_BLOCK("cor",11,9); };
 coro => { EMIT_BLOCK("coro", 12 , 10 ); };
 corollary => { EMIT_BLOCK("corollary", 17 , 15 ); };
-dcases => { EMIT_BLOCK("dcases", 14 , 12 ); };
+dcases => { g_in_matrix++; EMIT_BLOCK("dcases", 14 , 12 ); g_in_matrix--; };
 defi => { EMIT_BLOCK("defi", 12 , 10 ); };
 defin => { EMIT_BLOCK("defin", 13 , 11 ); };
 definition => { EMIT_BLOCK("definition", 18 , 16 ); };
@@ -364,7 +371,7 @@ maplelatex => { EMIT_BLOCK("maplelatex", 18 , 16 ); };
 math => { EMIT_BLOCK("math", 12 , 10 ); };
 mathletters => { EMIT_BLOCK("mathletters", 19 , 17 ); };
 mathpar => { EMIT_BLOCK("mathpar", 15 , 13 ); };
-matrix => { EMIT_BLOCK("matrix", 14 , 12 ); };
+matrix => { g_in_matrix++; EMIT_BLOCK("matrix", 14 , 12 ); g_in_matrix--; };
 minipage => { EMIT_BLOCK("minipage", 16 , 14 ); };
 multicols => { EMIT_BLOCK("multicols", 17 , 15 ); };
 multlined => { EMIT_BLOCK("multlined", 17 , 15 ); };
@@ -380,7 +387,7 @@ pf => { EMIT_BLOCK("pf", 10 , 8 ); };
 pgfonlayer => { EMIT_BLOCK("pgfonlayer", 18 , 16 ); };
 pgfscope => { EMIT_BLOCK("pgfscope", 16 , 14 ); };
 picture => { EMIT_BLOCK("picture", 15 , 13 ); };
-pmatrix => { EMIT_BLOCK("pmatrix", 15 , 13 ); };
+pmatrix => { g_in_matrix++; EMIT_BLOCK("pmatrix", 15 , 13 ); g_in_matrix--; };
 pr => { EMIT_BLOCK("pr", 10 , 8 ); };
 prf => { EMIT_BLOCK("prf", 11 , 9 ); };
 prob => { EMIT_BLOCK("prob", 12 , 10 ); };
@@ -415,7 +422,7 @@ sideways => { EMIT_BLOCK("sideways", 16 , 14 ); };
 sidewaystable => { EMIT_BLOCK("sidewaystable", 21 , 19 ); };
 sloppypar => { EMIT_BLOCK("sloppypar", 17 , 15 ); };
 small => { EMIT_BLOCK("small", 13 , 11 ); };
-smallmatrix => { EMIT_BLOCK("smallmatrix", 19 , 17 ); };
+smallmatrix => { g_in_matrix++; EMIT_BLOCK("smallmatrix", 19 , 17 ); g_in_matrix--; };
 spacing => { EMIT_BLOCK("spacing", 15 , 13 ); };
 split => { EMIT_BLOCK("split", 13 , 11 ); };
 subarray => { EMIT_BLOCK("subarray", 16 , 14 ); };
@@ -446,7 +453,8 @@ trivlist => { EMIT_BLOCK("trivlist", 16 , 14 ); };
 turn => { EMIT_BLOCK("turn", 12 , 10 ); };
 turnpage => { EMIT_BLOCK("turnpage", 16 , 14 ); };
 verbatim => { EMIT_BLOCK("verbatim", 16 , 14 ); };
-vmatrix => { EMIT_BLOCK("vmatrix", 15 , 13 ); };
+vmatrix => { g_in_matrix++; EMIT_BLOCK("vmatrix", 15 , 13 ); g_in_matrix--; };
+Vmatrix => { g_in_matrix++; EMIT_BLOCK("Vmatrix", 16 , 14 ); g_in_matrix--; };
 widetext => { EMIT_BLOCK("widetext", 16 , 14 ); };
 wrapfigure => { EMIT_BLOCK("wrapfigure", 18 , 16 ); };
 

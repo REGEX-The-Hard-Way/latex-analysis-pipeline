@@ -1,0 +1,62 @@
+{
+  "pythagorean": {
+    "canonical_name": "Pythagorean theorem",
+    "lean4_name": "pythagorean_theorem",
+    "description": "a^2 + b^2 = c^2",
+    "signatures": []
+  },
+  "euler_identity": {
+    "canonical_name": "Euler's identity",
+    "lean4_name": "euler_identity",
+    "description": "e^{i*pi} + 1 = 0",
+    "signatures": []
+  },
+  "quadratic_formula": {
+    "canonical_name": "Quadratic formula",
+    "lean4_name": "quadratic_formula",
+    "description": "x = (-b +/- sqrt(b^2-4ac))/(2a)",
+    "signatures": []
+  },
+  "derivative_definition": {
+    "canonical_name": "Derivative definition",
+    "lean4_name": "derivative_definition",
+    "description": "f'(x) = lim_{h->0} (f(x+h)-f(x))/h",
+    "signatures": []
+  },
+  "schrodinger_equation": {
+    "canonical_name": "Schroedinger equation",
+    "lean4_name": "schrodinger_equation",
+    "description": "i*hbar*d/dt Psi = H Psi",
+    "signatures": []
+  },
+  "einstein_field": {
+    "canonical_name": "Einstein field equations",
+    "lean4_name": "einstein_field_equations",
+    "description": "R_{mu*nu} - 1/2 R g_{mu*nu} = 8*pi*G/c^4 T_{mu*nu}",
+    "signatures": []
+  },
+  "gauss_law": {
+    "canonical_name": "Gauss's law",
+    "lean4_name": "gauss_law",
+    "description": "div E = rho/epsilon_0",
+    "signatures": []
+  },
+  "ampere_law": {
+    "canonical_name": "Ampère's law",
+    "lean4_name": "ampere_law",
+    "description": "curl B = mu_0 J",
+    "signatures": []
+  },
+  "maxwell_equations": {
+    "canonical_name": "Maxwell's equations",
+    "lean4_name": "maxwell_equations",
+    "description": "Set of four partial differential equations",
+    "signatures": []
+  },
+  "heisenberg_uncertainty": {
+    "canonical_name": "Heisenberg uncertainty principle",
+    "lean4_name": "heisenberg_uncertainty",
+    "description": "Delta_x * Delta_p >= hbar/2",
+    "signatures": []
+  }
+}
