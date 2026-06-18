@@ -19,7 +19,7 @@ up named expressions; and prove expression equivalence across papers.
 | Phase C | Operator precedence chain detection (additive, multiplicative) | ✅ Done |
 | Phase D | Matrix cell parsing (`&` / `\\` awareness) | ✅ Done |
 | Phase E | Semantic extraction: types, values, ranges, named expressions | ✅ Done |
-| Phase F | Lean4 code generation from AST + semantic annotations | Pending |
+| Phase F | Lean4 code generation from AST + semantic annotations | ✅ Done |
 | Phase G | Cross-paper equivalence proof pipeline | Pending |
 
 ---
@@ -487,16 +487,15 @@ in this corpus, and whether they are formally equivalent."
    - `named_expressions.json` dictionary seeded with 10 canonical expressions
    - Next: populate signatures from corpus analysis, implement α-renaming
 
-### 6.3 Medium-term (Phase F — Code Generation)
-1. **Lean4 type mapper** — `lean4_emit.py`
-   - Token → Lean4 syntax mapping (Section 4.1)
-   - Type-aware emission using annotations
-2. **Lean4 proof strategy selector**
-   - Analyze equation structure → choose tactic
-   - Simple: `rfl` for structural equivalence
-   - Algebraic: `ring` for polynomial identities
-   - Unknown: `sorry` with source annotation
-3. **Verify with sample equations** — test on known identities from corpus
+### 6.3 Medium-term (Phase F — Code Generation) — ✅ Proof of Concept
+1. **`lean4_emit.py`** ✅ Built — recursive tree-to-Lean4 expression conversion
+   - Converts token trees to Lean4 syntax with type annotations
+   - Handles frac, sqrt, parens, sum, int, lim, greek letters, operators
+   - Integrates Phase E type_annotation tokens for typed variables
+   - Generates theorem statements with `sorry` proof scaffolding
+   - **Limitation:** Only finds relations at the top level of math blocks.
+     Relations nested inside braces/parens/fractions require deeper traversal.
+   - Next: recursive relation search through nested blocks; Lean4 proof strategy selection
 
 ### 6.4 Long-term (Phase G — Cross-Paper Proofs)
 1. **Cross-paper equivalence checker**
@@ -528,7 +527,7 @@ in this corpus, and whether they are formally equivalent."
 | `type_inference.py` | ✅ Built | `scanner/` |
 | `named_expressions.py` | ✅ Built | `scanner/` |
 | `named_expressions.json` | ✅ Created (10 entries) | `docs/` |
-| `lean4_emit.py` | To build | `scanner/` |
+| `lean4_emit.py` | ✅ Built | `scanner/` |
 
 ---
 

@@ -57,6 +57,33 @@ static int symkey(const char *b, int len, char *o, int max) {
     int ul=(int)strlen(up); while(ul>0&&up[ul-1]==' ')ul--; up[ul]=0;
     if(ul<1||ul>12||!isalpha((unsigned char)up[0])) return 0;
     for(int i=0;i<ul;i++) if(!isalnum((unsigned char)up[i])&&up[i]!='_'&&up[i]!='^') return 0;
+    /* reject common English words that appear in math mode */
+    if(!strcmp(up,"and")||!strcmp(up,"the")||!strcmp(up,"for")||!strcmp(up,"are")
+    ||!strcmp(up,"was")||!strcmp(up,"not")||!strcmp(up,"its")||!strcmp(up,"his")
+    ||!strcmp(up,"her")||!strcmp(up,"our")||!strcmp(up,"all")||!strcmp(up,"has")
+    ||!strcmp(up,"had")||!strcmp(up,"can")||!strcmp(up,"may")||!strcmp(up,"but")
+    ||!strcmp(up,"or")||!strcmp(up,"if")||!strcmp(up,"is")||!strcmp(up,"be")
+    ||!strcmp(up,"on")||!strcmp(up,"at")||!strcmp(up,"by")||!strcmp(up,"to")
+    ||!strcmp(up,"of")||!strcmp(up,"in")||!strcmp(up,"as")||!strcmp(up,"an")
+    ||!strcmp(up,"we")||!strcmp(up,"no")||!strcmp(up,"so")||!strcmp(up,"it")
+    ||!strcmp(up,"do")||!strcmp(up,"go")||!strcmp(up,"he")||!strcmp(up,"imply")
+    ||!strcmp(up,"gives")||!strcmp(up,"coarse")||!strcmp(up,"with")
+    ||!strcmp(up,"from")||!strcmp(up,"that")||!strcmp(up,"this")||!strcmp(up,"than")
+    ||!strcmp(up,"then")||!strcmp(up,"thus")||!strcmp(up,"also")||!strcmp(up,"only")
+    ||!strcmp(up,"will")||!strcmp(up,"into")||!strcmp(up,"over")||!strcmp(up,"such")
+    ||!strcmp(up,"each")||!strcmp(up,"some")||!strcmp(up,"many")||!strcmp(up,"more")
+    ||!strcmp(up,"most")||!strcmp(up,"both")||!strcmp(up,"been")||!strcmp(up,"have")
+    ||!strcmp(up,"does")||!strcmp(up,"like")||!strcmp(up,"well")||!strcmp(up,"also")
+    ||!strcmp(up,"very")||!strcmp(up,"just")||!strcmp(up,"used")||!strcmp(up,"using")
+    ||!strcmp(up,"where")||!strcmp(up,"which")||!strcmp(up,"their")
+    ||!strcmp(up,"log")||!strcmp(up,"sin")||!strcmp(up,"cos")||!strcmp(up,"tan")
+    ||!strcmp(up,"exp")||!strcmp(up,"det")||!strcmp(up,"gcd")||!strcmp(up,"lcm")
+    ||!strcmp(up,"lim")||!strcmp(up,"sum")||!strcmp(up,"max")||!strcmp(up,"min")
+    ||!strcmp(up,"dim")||!strcmp(up,"ker")||!strcmp(up,"hom")||!strcmp(up,"deg")
+    ||!strcmp(up,"mod")||!strcmp(up,"arg")||!strcmp(up,"sup")||!strcmp(up,"inf")
+    ||!strcmp(up,"sec")||!strcmp(up,"csc")||!strcmp(up,"cot")||!strcmp(up,"coth")
+    ||!strcmp(up,"sinh")||!strcmp(up,"cosh")||!strcmp(up,"tanh")) return 0;
+    /* reject pure superscripts (contain ^ but no alpha base) */
     int ol=ul<max-1?ul:max-2; memcpy(o,up,ol); o[ol]=0; return 1;
 }
 
@@ -119,9 +146,11 @@ static int strip_tex(const char *in, int ilen, char *out) {
     int o=0;
     for(int i=0;i<ilen&&o<MAX_TEX-2;i++) {
         if(in[i]=='\\'){
-            int nx=i+1;
-            if(nx<ilen&&isalpha((unsigned char)in[nx])){
+            if(i+1<ilen&&isalpha((unsigned char)in[i+1])){
+                i++;
                 while(i<ilen&&isalpha((unsigned char)in[i]))i++;
+                if(i<ilen&&in[i]=='*')i++;
+                if(i<ilen&&in[i]=='['){int d=1;i++;while(i<ilen&&d>0){if(in[i]=='[')d++;else if(in[i]==']')d--;i++;}}
                 if(i<ilen&&in[i]=='{'){int d=1;i++;while(i<ilen&&d>0){if(in[i]=='{')d++;else if(in[i]=='}')d--;i++;}}
                 if(o>0&&out[o-1]!=' ')out[o++]=' '; continue;}
             out[o++]=' '; i++; continue;
@@ -167,7 +196,7 @@ static void split_sents(void) {
                 if(i>=3&&(!strncmp(W+i-3,"e.g",3)||!strncmp(W+i-3,"i.e",3)))ab=1;
                 else if(i>=2&&(!strncmp(W+i-2,"cf",2)||!strncmp(W+i-2,"vs",2)))ab=1;
                 else if(i>=3&&(!strncmp(W+i-3,"etc",3)||!strncmp(W+i-3,"Fig",3)))ab=1;
-                else if(i>=1&&(W[i-1]>='A'&&W[i-1]<='Z'))ab=1;
+                else if(i>=2&&(W[i-1]>='A'&&W[i-1]<='Z')&&!isalpha((unsigned char)W[i-2]))ab=1;
             }
             if(ab)continue;
             if(i+1>=Wlen||W[i+1]==' '||W[i+1]=='\n'){ss[ns]=st;se[ns]=i+1;ns++;st=i+2;}
@@ -314,6 +343,9 @@ int def_extract(const char *tex, int len, const char **want, int nw,
     if(!tex||len<=0||!want||nw<=0)return 0;
     if(len>MAX_TEX-1)len=MAX_TEX-1;
     preprocess(tex,len); split_sents();
+    { FILE *dbg = fopen("/tmp/defextract_preproc.txt","w");
+      if(dbg){fwrite(W,1,Wlen,dbg);fclose(dbg);}
+      fprintf(stderr,"PREPROC: %d sents, %d chars\n",ns,Wlen); }
     int n=0;
     for(int si=0;si<ns&&n<max;si++)
         for(int wi=0;wi<nw&&n<max;wi++){
