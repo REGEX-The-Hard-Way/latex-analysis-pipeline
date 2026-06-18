@@ -20,7 +20,7 @@ up named expressions; and prove expression equivalence across papers.
 | Phase D | Matrix cell parsing (`&` / `\\` awareness) | ✅ Done |
 | Phase E | Semantic extraction: types, values, ranges, named expressions | ✅ Done |
 | Phase F | Lean4 code generation from AST + semantic annotations | ✅ Done |
-| Phase G | Cross-paper equivalence proof pipeline | Pending |
+| Phase G | Cross-document equivalence proof pipeline | ✅ Done |
 
 ---
 
@@ -177,6 +177,34 @@ curated dictionary in `docs/named_expressions.json`. Dictionary seeded with
 10 canonical physics/math identities — ready for population from corpus
 fingerprint analysis.
 
+### 1.7 Phase F — Lean4 Code Generation
+
+**`scanner/lean4_emit.py`:** Recursive tree-to-Lean4 expression conversion.
+Generates `.lean` theorem stubs with type annotations from Phase E and
+`sorry` proof scaffolding. Handles frac, sqrt, parens, sum, int, lim, Greek,
+operators. Output written to `output/lean4/`.
+
+### 1.8 Phase G — Cross-Paper Expression Equivalence
+
+**`scanner/phase_g_equivalence.py`:** Computes structural fingerprints from
+child token type counts across all math blocks, groups by fingerprint, and
+inserts `equivalent_to` edges between structurally identical expressions
+from different papers.
+
+Results (57 papers, 13,535 math blocks):
+- **5,503 unique fingerprints** identified
+- **832 fingerprints** appear in >= 2 papers (cross-paper)
+- **134,723 equivalent_to edges** inserted into `graph_edges`
+- Covers **55 source / 56 target papers**
+
+Example: `math_num.1|math_rel.1|math_sub.1|math_var.1` (subscripted variable
+equals number, e.g. `x_i = 0`) appears in 29 papers with 64 occurrences.
+
+**Limitation:** Current fingerprints are type-only (structural, not
+value-aware). `x_i = 0` and `n_k = 1` produce the same fingerprint despite
+being semantically different. Value-aware fingerprinting (Phase G+) would
+include actual variable names and values for precision.
+
 ---
 
 ## 2. Current Database State
@@ -201,6 +229,7 @@ Token counts after scanner re-ingestion (`load_tokens.py`, 314K new tokens):
 | `bibitem` | 25,474 | Bibliography entries |
 | `matrix_col_delim` | — | `&` column separator (Phase D) |
 | `matrix_row_delim` | — | `\\` row separator (Phase D) |
+| `equivalent_to` | 134,723 | Cross-paper structural expression matches (Phase G) |
 | `graph_edges` | 265,629 | Cross-reference graph edges |
 | `type_annotation` | 7,314 | Inferred types (ℝ, ℤ, ℂ, ℕ) |
 | `constraint` | 3,384 | Value/range constraints |
