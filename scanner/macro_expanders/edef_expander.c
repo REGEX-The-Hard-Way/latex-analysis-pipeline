@@ -2788,7 +2788,7 @@ int main(int argc, char **argv) {
 					}
 					_ctr112:
 						{
-#line 800 "macro_expanders/../latex.rl"
+#line 808 "macro_expanders/../latex.rl"
 						n--; }
 					
 #line 2768 "macro_expanders/edef_expander.c"
@@ -2796,7 +2796,7 @@ int main(int argc, char **argv) {
 					goto _st107;
 					_ctr107:
 						{
-#line 802 "macro_expanders/../latex.rl"
+#line 810 "macro_expanders/../latex.rl"
 						n=0;}
 					
 #line 2775 "macro_expanders/edef_expander.c"
@@ -2804,7 +2804,7 @@ int main(int argc, char **argv) {
 					goto _st107;
 					_ctr111:
 						{
-#line 799 "macro_expanders/../latex.rl"
+#line 807 "macro_expanders/../latex.rl"
 						n++; }
 					
 #line 2782 "macro_expanders/edef_expander.c"

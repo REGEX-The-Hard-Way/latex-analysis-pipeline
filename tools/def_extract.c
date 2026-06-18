@@ -123,9 +123,9 @@ static int replace_math(const char *in, int ilen, char *out) {
         else if(in[i]=='\\'&&i+1<ilen){if(in[i+1]=='('){dl=2;ed=2;}else if(in[i+1]=='['){dl=2;ed=2;}}
         if(!dl){out[o++]=in[i];continue;}
         i+=dl; int bs=i, j=i;
-        if(ed==1){while(j<ilen&&in[j]!='$')j++;}
-        else{while(j+1<ilen&&!(in[j]=='\\'&&(in[j+1]==')'||in[j+1]==']'))&&!(in[j]=='$'&&in[j+1]=='$'))j++;j+=2;}
-        if(j>=ilen){o+=snprintf(out+o,MAX_TEX-o,"MATHVAL");i=j;continue;}
+        if(ed==1){while(j<ilen&&in[j]!='$'&&j-i<300)j++;}
+        else{while(j+1<ilen&&!(in[j]=='\\'&&(in[j+1]==')'||in[j+1]==']'))&&!(in[j]=='$'&&in[j+1]=='$')&&j-i<2000)j++;j+=2;}
+        if(j>=ilen||(ed==1&&in[j]!='$')){o+=snprintf(out+o,MAX_TEX-o,"MATHVAL");i=j;continue;}
         int bl=(ed==1)?(j-i):(j-2-i); if(bl<0)bl=0;
         char sym[64]=""; int rel=hasrel(in+bs,bl);
         symkey(in+bs,bl,sym,sizeof(sym));
@@ -285,15 +285,9 @@ static int p2(int si, int pi, def_result_t *r) {
     return 0;
 }
 
-/* ---- pattern 3: equation ---- */
+/* ---- pattern 3: equation (deprioritized - often noisy) ---- */
 static int p3(int si, int pi, def_result_t *r) {
-    char s[MAX_SENT_LEN]; int sl=getsent(si,s,sizeof(s)); if(sl<5)return 0;
-    char pat[64]; snprintf(pat,sizeof(pat),"VARSYM%04d",pi);
-    char *vp=strstr(s,pat); if(!vp)return 0;
-    char *eq=vp+10; while(eq<s+sl&&*eq!='M')eq++;
-    if(eq+7<=s+sl&&!strncmp(eq,"MATHVAL",7)){
-        scpy(r->definition,ph[pi].raw,sizeof(r->definition)); r->symbol=ph[pi].sym;
-        r->char_start=ph[pi].s;r->char_end=ph[pi].e;r->pattern=3;return 1;}
+    (void)si; (void)pi; (void)r;
     return 0;
 }
 
@@ -337,15 +331,51 @@ static int p5(int si, int pi, def_result_t *r) {
     r->char_start=ph[pi].s;r->char_end=ph[pi].e;r->pattern=5;return 1;
 }
 
+/* ---- pattern 6: NP-before-var (e.g. "electron mass VAR") ---- */
+static int p6(int si, int pi, def_result_t *r) {
+    char s[MAX_SENT_LEN]; int sl=getsent(si,s,sizeof(s)); if(sl<5)return 0;
+    char pat[64]; snprintf(pat,sizeof(pat),"VARSYM%04d",pi);
+    char *vp=strstr(s,pat); if(!vp)return 0;
+    if(vp<=s)return 0;
+    char *lf=vp-1; while(lf>s&&*lf==' ')lf--;
+    char np[256]; int nl=0;
+    while(lf>s&&nl<200&&(vp-lf)<80){
+        int is_ph=0;
+        for(int k=0;k<7&&lf-k>=s;k++){
+            if(!strncmp(lf-k,"MATHVAL",7)){is_ph=1;lf=lf-k;break;}
+            if(k<6&&!strncmp(lf-k,"VARSYM",6)){is_ph=1;lf=lf-k;break;}
+        }
+        if(is_ph)break;
+        if(*lf=='.'||*lf==';'||*lf=='!'||*lf=='?'||*lf=='('||*lf==':')break;
+        if(*lf==','&&lf>s&&!isalpha((unsigned char)lf[-1]))break;
+        np[nl++]=*lf--;
+    }
+    if(nl<3)return 0;
+    for(int i=0;i<nl/2;i++){char t=np[i];np[i]=np[nl-1-i];np[nl-1-i]=t;}
+    np[nl]=0;
+    while(nl>0&&np[0]==' ') {memmove(np,np+1,nl);nl--;} np[nl]=0;
+    while(nl>0&&(np[nl-1]==' '||np[nl-1]==','||np[nl-1]=='('))nl--; np[nl]=0;
+    if(nl<3||vague(np))return 0;
+    if(strstr(np,ph[pi].sym))return 0;
+    /* require definition to look like a noun phrase */
+    if(!strncmp(np,"the ",4)||!strncmp(np,"a ",2)||!strncmp(np,"an ",3)){}
+    else if(!strstr(np,"mass")&&!strstr(np,"constant")&&!strstr(np,"ratio")
+         &&!strstr(np,"speed")&&!strstr(np,"energy")&&!strstr(np,"radius")
+         &&!strstr(np,"length")&&!strstr(np,"number")&&!strstr(np,"charge")
+         &&!strstr(np,"density")&&!strstr(np,"velocity")
+         &&!strstr(np,"frequency")&&!strstr(np,"temperature")
+         &&!strstr(np,"pressure")&&!strstr(np,"distance")
+         &&!strstr(np,"time")&&!strstr(np,"limit"))return 0;
+    scpy(r->definition,np,sizeof(r->definition));r->symbol=ph[pi].sym;
+    r->char_start=ph[pi].s;r->char_end=ph[pi].e;r->pattern=6;return 1;
+}
+
 /* ---- main ---- */
 int def_extract(const char *tex, int len, const char **want, int nw,
                 def_result_t *r, int max) {
     if(!tex||len<=0||!want||nw<=0)return 0;
     if(len>MAX_TEX-1)len=MAX_TEX-1;
     preprocess(tex,len); split_sents();
-    { FILE *dbg = fopen("/tmp/defextract_preproc.txt","w");
-      if(dbg){fwrite(W,1,Wlen,dbg);fclose(dbg);}
-      fprintf(stderr,"PREPROC: %d sents, %d chars\n",ns,Wlen); }
     int n=0;
     for(int si=0;si<ns&&n<max;si++)
         for(int wi=0;wi<nw&&n<max;wi++){
@@ -354,8 +384,28 @@ int def_extract(const char *tex, int len, const char **want, int nw,
                 char pat[64];snprintf(pat,sizeof(pat),"VARSYM%04d",pi);
                 if(strstr(W+ss[si],pat)){phi=pi;break;}}
             if(phi<0)continue;
+            /* try patterns in priority order */
             if(p1(si,phi,&r[n])||p2(si,phi,&r[n])||p4(si,phi,&r[n])
-             ||p5(si,phi,&r[n])||p3(si,phi,&r[n]))n++;
+             ||p5(si,phi,&r[n])||p6(si,phi,&r[n])) {
+                /* deduplicate: skip if we already have this definition */
+                int dup=0;
+                for(int d=0;d<n;d++)if(!strcmp(r[d].symbol,r[n].symbol)
+                 &&!strcmp(r[d].definition,r[n].definition)){dup=1;break;}
+                if(!dup)n++;
+            }
         }
+    /* prefer strong definitions: if we have a multi-word def and
+       a single-word one for the same symbol, drop the single-word */
+    for(int i=0;i<n;i++){
+        int strong=0;for(const char *p=r[i].definition;*p;p++)if(*p==' '){strong=1;break;}
+        if(strong)continue;
+        for(int j=0;j<n;j++){
+            int s2=0;for(const char *p=r[j].definition;*p;p++)if(*p==' '){s2=1;break;}
+            if(s2&&!strcmp(r[i].symbol,r[j].symbol)){r[i].definition[0]=0;break;}
+        }
+    }
+    int n2=0;
+    for(int i=0;i<n;i++)if(r[i].definition[0])r[n2++]=r[i];
+    n=n2;
     return n;
 }

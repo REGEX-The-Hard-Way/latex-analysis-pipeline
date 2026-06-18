@@ -126,7 +126,7 @@ int main(int argc, char *argv[]) {
         }
         printf("]\n");
     } else {
-        const char *pnames[] = {"", "copula", "apposition", "equation", "defines", "parenthetical"};
+        const char *pnames[] = {"", "copula", "apposition", "equation", "defines", "parenthetical", "np-before"};
         printf("=== %d definitions ===\n\n", n);
         for (int i = 0; i < n; i++) {
             def_result_t *r = &results[i];

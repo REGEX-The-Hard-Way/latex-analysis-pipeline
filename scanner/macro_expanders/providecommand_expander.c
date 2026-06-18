@@ -3565,7 +3565,7 @@ int main(int argc, char **argv) {
 				}
 				_ctr117:
 					{
-#line 800 "macro_expanders/../latex.rl"
+#line 808 "macro_expanders/../latex.rl"
 					n--; }
 				
 #line 3544 "macro_expanders/providecommand_expander.c"
@@ -3573,7 +3573,7 @@ int main(int argc, char **argv) {
 				goto _st111;
 				_ctr109:
 					{
-#line 802 "macro_expanders/../latex.rl"
+#line 810 "macro_expanders/../latex.rl"
 					n=0;}
 				
 #line 3551 "macro_expanders/providecommand_expander.c"
@@ -3581,7 +3581,7 @@ int main(int argc, char **argv) {
 				goto _st111;
 				_ctr116:
 					{
-#line 799 "macro_expanders/../latex.rl"
+#line 807 "macro_expanders/../latex.rl"
 					n++; }
 				
 #line 3558 "macro_expanders/providecommand_expander.c"
