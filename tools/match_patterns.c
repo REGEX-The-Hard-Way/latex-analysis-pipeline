@@ -41,6 +41,10 @@ static int append_word(tree_t *t, int leaf_idx, char *buf, int *bp, int bufsz) {
     int wlen = n->text_len;
     char *w = t->text + n->text_off;
     if (wlen < 1) return 0;
+    /* skip token IDs (all-digit leaves of 4+ chars) */
+    int all_digit = 1;
+    for (int i = 0; i < wlen; i++) if (!isdigit((unsigned char)w[i])) { all_digit = 0; break; }
+    if (all_digit && wlen >= 4) return 0;
     /* skip pure punctuation */
     if (wlen == 1 && strchr(".,:;!?\"'`", w[0])) return 0;
     if (!strcmp(w, "''") || !strcmp(w, "``")) return 0;
@@ -169,35 +173,23 @@ static int p2_np_before(tree_t *t, int cd_idx, char *buf, int bufsz) {
     return (len >= 3) ? len : 0;
 }
 
-/* P3: copula — (S (NP ..CD..) (VP (VBZ is/are) (NP def))) */
+/* P3: copula — find VP AFTER the CD-containing NP */
 static int p3_copula(tree_t *t, int cd_idx, char *buf, int bufsz) {
-    /* walk up to S */
     int s_node = -1;
-    for (int n = t->nodes[cd_idx].parent; n >= 0; n = t->nodes[n].parent) {
+    for (int n = t->nodes[cd_idx].parent; n >= 0; n = t->nodes[n].parent)
         if (t->nodes[n].label == L_S) { s_node = n; break; }
-    }
     if (s_node < 0) return 0;
-
-    /* find VP with copula verb */
-    for (int c = t->nodes[s_node].first_child; c >= 0;
-         c = t->nodes[c].next_sibling) {
-        if (t->nodes[c].label != L_VP) continue;
-        if (node_contains(t, c, cd_idx)) continue;
-        /* check for copula: VBZ is/are/was/were, VBP are, VBD was/were */
+    bool found_cd = false;
+    for (int c = t->nodes[s_node].first_child; c >= 0; c = t->nodes[c].next_sibling) {
+        if (!found_cd && node_contains(t, c, cd_idx)) { found_cd = true; continue; }
+        if (!found_cd || t->nodes[c].label != L_VP) continue;
         int vb = t->nodes[c].first_child;
-        while (vb >= 0 && t->nodes[vb].label != L_VBZ &&
-               t->nodes[vb].label != L_VBP && t->nodes[vb].label != L_VBD)
+        while (vb >= 0 && t->nodes[vb].label != L_VBZ && t->nodes[vb].label != L_VBP && t->nodes[vb].label != L_VBD)
             vb = t->nodes[vb].next_sibling;
         if (vb < 0) continue;
         char *vw = n_text(t, t->nodes[vb].first_child);
-        if (!vw) continue;
-        if (strcmp(vw, "is") && strcmp(vw, "are") &&
-            strcmp(vw, "was") && strcmp(vw, "were") &&
-            strcmp(vw, "Is") && strcmp(vw, "Are"))
-            continue;
-        /* find NP under this VP */
-        for (int vc = t->nodes[c].first_child; vc >= 0;
-             vc = t->nodes[vc].next_sibling) {
+        if (!vw || (strcmp(vw,"is") && strcmp(vw,"are") && strcmp(vw,"was") && strcmp(vw,"were") && strcmp(vw,"Is") && strcmp(vw,"Are"))) continue;
+        for (int vc = t->nodes[c].first_child; vc >= 0; vc = t->nodes[vc].next_sibling) {
             if (t->nodes[vc].label == L_NP) {
                 int len = collect_np_phrase(t, vc, cd_idx, buf, bufsz);
                 if (len >= 3) return len;
